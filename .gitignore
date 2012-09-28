@@ -1,0 +1,12 @@
+#----------------
+# Git Ignore list
+#----------------
+
+# Ignore Virtual Env
+curling_tools/apps
+
+# Ignore all python bin
+*.pyc
+
+# Settings File
+curling_tools/curling_tools/settings.py

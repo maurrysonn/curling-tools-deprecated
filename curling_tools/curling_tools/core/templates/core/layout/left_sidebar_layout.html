@@ -1,0 +1,18 @@
+{% extends "core/index.html" %}
+
+{% block main_layout %}
+
+<div class="row-fluid">
+  <div class="span2">
+	<div class="well well-small" id="ct-left-sidebar-layout">
+	  {% block left_sidebar_layout %}
+	  {% if ct_submenu %}{% include ct_submenu.template %}{% endif %}
+	  {% endblock %}
+	</div>
+  </div>
+  <div class="span10" id="ct-center-layout">
+	{% block center_layout %}{% endblock %}
+  </div>
+</div>
+
+{% endblock main_layout %}
