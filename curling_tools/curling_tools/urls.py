@@ -2,7 +2,7 @@
 from django.conf.urls import patterns, include, url
 from django.views.generic import TemplateView
 
-from curling_tools.core.views import TestView
+from curling_tools.core.views import TestView, TestListView
 
 from django.contrib import admin
 admin.autodiscover()
@@ -18,10 +18,9 @@ urlpatterns = patterns('',
                        # url(r'^design/', include('curling_tools.design.urls', namespace='design')),
 
                        # Test Core Views
-                       url(r'^test/view/$', TestView.as_view(),
-                           name='test-view'),
-                       url(r'^test/view/2/$', TestView.as_view(template_name='core/test/test_view.html'),
-                           name='test-view-2'),
+                       url(r'^test/view/$', TestView.as_view(), name='test-view'),
+                       url(r'^test/view/2/$', TestView.as_view(), name='test-view-2'),
+                       url(r'^test/view/list/$', TestListView.as_view(), name='test-list'),
 
                        # Uncomment the admin/doc line below to enable admin documentation
                        # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
