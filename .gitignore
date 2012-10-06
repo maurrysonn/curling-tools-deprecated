@@ -10,3 +10,6 @@ curling_tools/apps
 
 # Settings File
 curling_tools/curling_tools/settings.py
+
+# DB Files
+*.sqlite

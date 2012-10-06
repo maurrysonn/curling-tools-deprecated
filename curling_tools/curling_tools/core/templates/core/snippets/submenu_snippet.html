@@ -17,6 +17,7 @@ Bug Fix : This DIV allows to use the data-parent property
   </ul>
   <ul class="nav nav-list collapse{% if forloop.first %} in{% endif %}"
 	  id="submenu{{ forloop.counter }}">
+	{% if forloop.last %}<li class="divider"></li>{% endif %}
 	{% for link in item.links %}
 	<li><a href="{{ link.url }}">{{ link.title }}</a></li>
 	{% endfor %}

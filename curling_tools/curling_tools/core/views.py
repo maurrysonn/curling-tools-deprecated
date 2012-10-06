@@ -1,9 +1,22 @@
 # -*- coding: utf-8 -*-
 from django.conf import settings
-from django.core.urlresolvers import reverse_lazy
 # Django Generic Views
 from django.views.generic import TemplateView
 from django.views.generic.list import ListView
+
+
+class CTModelContextMixin(object):
+
+    def get_context_data(self, **kwargs):
+        model_data = {}
+        if self.model:
+            model_data['app_label'] = self.model._meta.app_label
+            model_data['verbose_name'] = self.model._meta.verbose_name
+            model_data['verbose_name_plural'] = self.model._meta.verbose_name_plural
+        # Updating context
+        context = super(CTModelContextMixin, self).get_context_data(**kwargs)
+        context.update(model_data)
+        return context
 
 
 class CTSubmenuMixin(object):
@@ -35,7 +48,7 @@ class CTSubmenuMixin(object):
         return context
 
 
-class CTModelListMixin(object):
+class CTModelListMixin(CTModelContextMixin):
     
     snippet_model_list = None
     
@@ -47,6 +60,7 @@ class CTModelListMixin(object):
     
     def get_context_data(self, **kwargs):
         context = super(CTModelListMixin, self).get_context_data(**kwargs)
+        print "CONTEXT :", context
         # Add snippet template infos will be included
         context[settings.CONTEXT_MODEL_LIST] = {'snippet': self.get_snippet_model_list()}
         return context
@@ -57,33 +71,7 @@ class CTModelListMixin(object):
 # ---------------
 
 class CTTemplateView(CTSubmenuMixin, TemplateView): pass
-class CTListView(CTSubmenuMixin, CTModelListMixin, ListView): pass
-
-
-# ---------------
-# TESTS Views
-# ---------------
-
-class TestSubmenu(CTSubmenuMixin):
-    "Define a submenu for a module."
-    submenu_items = (
-        ('Global Menu', (('Item #1', reverse_lazy('test-view')),
-                         ('Item #2', reverse_lazy('test-view')))),
-        ('Other Submenu', (('Other Item #1', reverse_lazy('test-view-2')),
-                           ('Ohther Item #2', reverse_lazy('test-view-2'))))
-        )
-    
-class TestView(TestSubmenu, CTTemplateView):
-    "Simple template view"
-    template_name = 'core/test/test_view.html'
-
-    
-class TestListView(CTModelListMixin, TestSubmenu, TemplateView):
+class CTListView(CTSubmenuMixin, CTModelListMixin, ListView):
     template_name = 'core/model_list.html'
-    
-    def get_context_data(self, **kwargs):
-        context = super(TestListView, self).get_context_data(**kwargs)
-        # Add object list like MultipleObjectMixin
-        context['object_list'] = range(25)
-        print "CONTEXT =", context
-        return context
+    list_display = ()
+    list_display_links = ()
