@@ -11,13 +11,16 @@ clean:
 env_create:
 	virtualenv --distribute --no-site-packages apps
 
-env_upgrade: requirements.txt
+env_upgrade:
 	pip install -r env_requirements.txt
 
 env_freeze:
 	pip freeze > env_requirements.txt
 
+# Sync DB and add initial values
+syncdb:
+	python manage.py syncdb
+
 # Run dev server
 runserver:
 	python -Wd manage.py runserver 0.0.0.0:8000
-
