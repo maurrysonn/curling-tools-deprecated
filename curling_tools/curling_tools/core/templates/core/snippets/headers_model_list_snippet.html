@@ -1,0 +1,7 @@
+{% if cl %}
+<tr>
+  {% for header in cl.headers %}
+  <th>{{ header.verbose_name|capfirst }}</th>
+  {% endfor %}
+</tr>
+{% endif %}

@@ -1,0 +1,21 @@
+COUNTRY
+-------
+name
+code
+flag
+
+CITY
+----
+name
+country (pk)
+
+ADDRESS
+-------
+extra (str)
+number (str)
+route (str)
+zipcode (str)
+city (fk)
+country (fk)
+
+

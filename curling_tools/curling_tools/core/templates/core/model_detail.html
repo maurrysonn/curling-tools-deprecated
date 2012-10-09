@@ -1,0 +1,17 @@
+{% extends 'core/layouts/left_sidebar_layout.html' %}
+
+{% block center_layout %}
+{% if ct_model_detail %}
+{% include ct_model_detail.snippet %}
+{% else %}
+<div class="alert alert-error">
+  <button type="button" class="close" data-dismiss="alert">×</button>
+  <p><strong>List View - Improperly configured!</strong></p>
+  <p>If you want use the default model detail template, you need to
+  define a custom <code>model_detail_snippet.html</code> template and
+  set the <code>snippet_model_detail</code> variable in your view.</p>
+  <p>Else you can override the complete <code>model_detail.html</code>
+  template and define the <code>center_layout</code> block.</p>
+</div>
+{% endif %}
+{% endblock %}

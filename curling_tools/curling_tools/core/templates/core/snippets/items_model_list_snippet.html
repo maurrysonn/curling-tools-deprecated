@@ -1,0 +1,11 @@
+{% if items %}
+<tr>
+  {% for item in items %}
+  <td>
+	{% if item.link %}<a href="{{ item.get_absolute_url }}">{% endif %}
+	{{ item.value }}
+	{% if item.link %}</a>{% endif %}
+  </td>
+  {% endfor %}
+</tr>
+{% endif %}

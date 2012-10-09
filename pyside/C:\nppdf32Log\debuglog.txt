@@ -1,0 +1,8 @@
+NPP_Initialize : called
+NPP_Initialize : called
+NPP_Initialize : called
+NPP_Initialize : called
+NPP_Initialize : called
+NPP_Initialize : called
+NPP_Initialize : called
+NPP_Initialize : called
