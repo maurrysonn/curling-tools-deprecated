@@ -24,5 +24,11 @@ class BaseSubmenu(CTSubmenuMixin):
         )
     
 class CountryListView(BaseSubmenu, CTListView):
-    snippet_model_list = 'base/country_list_snippet.html'
+    snippet_model_list = 'base/country/country_list_snippet.html'
     model = Country
+    # list_display = ('name', 'code', 'flag_rendering')
+
+    def get_context_data(self, **kwargs):
+        context = super(CTListView, self).get_context_data(**kwargs)
+        print "Final Context :\n", context
+        return context

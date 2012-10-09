@@ -11,9 +11,21 @@
 		{% headers_list ct_model_list.cl %}
 	  </thead>
 	  <tbody>
+		
 		{% for object in object_list %}
 		{% item_list ct_model_list.cl object %}
 		{% endfor %}
+
+		{% comment %}
+		{% for object in object_list %}
+		{# {% list_item list_display=LIST %} #}
+		<tr>
+		  <td>{{ object.name }}</td>
+		  <td>{{ object.code }}</td>
+		  {# <td><img style="max-width:50px;" src="{% static obj.flag_path %}" /></td>#}
+		</tr>
+		{% endfor %}
+		{% endcomment %}
 	  </tbody>
 	</table>
   </div>
@@ -25,6 +37,5 @@
 	  <button class="btn" type="button"><i class="icon-search"></i></button>
 	</div>
 	<h5>Filters</h5>
-	<p>...</p>
   </div>
 </div>

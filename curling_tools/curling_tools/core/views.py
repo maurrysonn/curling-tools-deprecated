@@ -3,19 +3,22 @@ from django.conf import settings
 # Django Generic Views
 from django.views.generic import TemplateView
 from django.views.generic.list import ListView
+from django.db.models import BooleanField, NullBooleanField
+# Utils
+from curling_tools.core.utils import ChangeListInfosWrapper
 
 
 class CTModelContextMixin(object):
 
     def get_context_data(self, **kwargs):
+        context = super(CTModelContextMixin, self).get_context_data(**kwargs)
         model_data = {}
         if self.model:
             model_data['app_label'] = self.model._meta.app_label
             model_data['verbose_name'] = self.model._meta.verbose_name
             model_data['verbose_name_plural'] = self.model._meta.verbose_name_plural
-        # Updating context
-        context = super(CTModelContextMixin, self).get_context_data(**kwargs)
-        context.update(model_data)
+            # Updating context
+            context['ct_model'] = model_data
         return context
 
 
@@ -51,18 +54,37 @@ class CTSubmenuMixin(object):
 class CTModelListMixin(CTModelContextMixin):
     
     snippet_model_list = None
+    list_display = ()
+    list_display_links = ()
     
+    @property
+    def cl_wrapper(self):
+        "Accessor of change list infos object."
+        if not hasattr(self, 'cl'):
+            self.cl = ChangeListInfosWrapper(self)
+        return self.cl
+
     def get_snippet_model_list(self):
+        "Return snippet template for the items list."
         snippet_list = []
         if self.snippet_model_list:
             return self.snippet_model_list
         return settings.DEFAULT_SNIPPET_MODEL_LIST
-    
+
+    def get_queryset(self):
+        "Compute the queryset with GET params."
+        return super(CTModelListMixin, self).get_queryset()
+
     def get_context_data(self, **kwargs):
         context = super(CTModelListMixin, self).get_context_data(**kwargs)
-        print "CONTEXT :", context
-        # Add snippet template infos will be included
-        context[settings.CONTEXT_MODEL_LIST] = {'snippet': self.get_snippet_model_list()}
+        # RENDERING CHANGE LIST INFOS
+        model_list_infos = {}
+        # Snippet template
+        model_list_infos['snippet'] = self.get_snippet_model_list()
+        # Change List Infos Wrapper
+        model_list_infos['cl'] = self.cl_wrapper
+        # Update context
+        context[settings.CONTEXT_MODEL_LIST] = model_list_infos
         return context
 
 
@@ -73,5 +95,3 @@ class CTModelListMixin(CTModelContextMixin):
 class CTTemplateView(CTSubmenuMixin, TemplateView): pass
 class CTListView(CTSubmenuMixin, CTModelListMixin, ListView):
     template_name = 'core/model_list.html'
-    list_display = ()
-    list_display_links = ()

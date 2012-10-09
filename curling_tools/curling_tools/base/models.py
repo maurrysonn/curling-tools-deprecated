@@ -9,6 +9,7 @@ class Country(models.Model):
     "A basic country entity"
 
     name = models.CharField(_('name'), max_length=50, unique=True)
+    short_name = models.CharField(_(u'short name'), max_length=5, blank=True)
     code = models.CharField(_('code'), max_length=5, unique=True)
     flag = models.CharField(_('flag'), max_length=100, blank=True)
 
