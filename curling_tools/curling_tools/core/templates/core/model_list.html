@@ -1,9 +1,7 @@
 {% extends 'core/layouts/left_sidebar_layout.html' %}
 
 {% block center_layout %}
-MODEL LIST
 {% if ct_model_list %}
-SNIPPET : {{ ct_model_list.snippet }}
 {% include ct_model_list.snippet %}
 {% else %}
 <div class="alert alert-error">

@@ -3,7 +3,7 @@ import os
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext as _
-
+from django.core.urlresolvers import reverse
 
 class Country(models.Model):
     "A basic country entity"
@@ -19,7 +19,15 @@ class Country(models.Model):
             file_path = u'%s%s' % (self.flag, settings.FLAGS_COUNTRIES_EXT)
         else:
             file_path = u'%s%s' % (settings.DEFAULT_FLAG_COUNTRIES, settings.FLAGS_COUNTRIES_EXT)
-        return os.path.join(settings.STATIC_FLAGS_COUNTRIES, file_path)
+        path = os.path.join(settings.STATIC_FLAGS_COUNTRIES, file_path)
+        print "PATH =", path
+        return path
+
+    def get_absolute_url(self):
+        # FIXME :
+        # Use reverse urls
+        return reverse('base:country-detail', args=[self.pk])
+        # return '/base/country/%d' % self.pk
 
     def __unicode__(self):
         return u'%s (%s)' % (self.name, self.code)

@@ -3,6 +3,7 @@ from django.conf import settings
 # Django Generic Views
 from django.views.generic import TemplateView
 from django.views.generic.list import ListView
+from django.views.generic.detail import DetailView
 from django.db.models import BooleanField, NullBooleanField
 # Utils
 from curling_tools.core.utils import ChangeListInfosWrapper
@@ -88,6 +89,28 @@ class CTModelListMixin(CTModelContextMixin):
         return context
 
 
+class CTModelDetailMixin(CTModelContextMixin):
+    
+    snippet_model_detail = None
+
+    def get_snippet_model_list(self):
+        "Return snippet template for the detail view."
+        snippet_list = []
+        if self.snippet_model_detail:
+            return self.snippet_model_detail
+        return settings.DEFAULT_SNIPPET_MODEL_DETAIL
+
+    def get_context_data(self, **kwargs):
+        context = super(CTModelDetailMixin, self).get_context_data(**kwargs)
+        # RENDERING CHANGE LIST INFOS
+        model_detail_infos = {}
+        # Snippet template
+        model_detail_infos['snippet'] = self.get_snippet_model_list()
+        # Update context
+        context[settings.CONTEXT_MODEL_DETAIL] = model_detail_infos
+        return context
+
+        
 # ---------------
 # Base Views
 # ---------------
@@ -95,3 +118,5 @@ class CTModelListMixin(CTModelContextMixin):
 class CTTemplateView(CTSubmenuMixin, TemplateView): pass
 class CTListView(CTSubmenuMixin, CTModelListMixin, ListView):
     template_name = 'core/model_list.html'
+class CTDetailView(CTSubmenuMixin, CTModelDetailMixin, DetailView):
+    template_name = 'core/model_detail.html'
