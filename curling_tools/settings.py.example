@@ -18,7 +18,7 @@ INTERNAL_IPS = ('0.0.0.0',)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'curling_tools.db',                      # Or path to database file if using sqlite3.
+        'NAME': 'curling_tools.sqlite',      # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
@@ -136,8 +136,9 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # 'django.contrib.admindocs',
     'django.contrib.webdesign',
-    'curling_tools.core',
     'curling_tools.design',
+    'curling_tools.core',
+    'curling_tools.base',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -172,9 +173,24 @@ LOGGING = {
 # ----------------
 # Layouts Settings
 # ----------------
-DEFAULT_SUBMENU_TEMPLATE = 'core/submenu.html'
-DEFAULT_TEMPLATE = 'core/layout/center_layout.html'
-
+# Snippets
+DEFAULT_SNIPPET_SUBMENU = 'core/snippets/submenu_snippet.html'
+DEFAULT_SNIPPET_MODEL_LIST = 'core/snippets/model_list_snippet.html'
+DEFAULT_SNIPPET_MODEL_DETAIL = 'core/snippets/model_detail_snippet.html'
+# Layouts Template
+DEFAULT_LAYOUT = 'core/layouts/center_layout.html'
+# Context variable
+CONTEXT_SUBMENU = 'ct_submenu'
+CONTEXT_MODEL_LIST = 'ct_model_list'
+CONTEXT_MODEL_DETAIL = 'ct_model_detail'
+# Html ID
 CENTER_LAYOUT_ID = 'ct-center-layout'
 LEFT_SIDEBAR_LAYOUT_ID = 'ct-left-sidebar-layout'
 # ----------------
+
+# ------------------
+# Statics Ressources
+# ------------------
+STATIC_FLAGS_COUNTRIES = 'base/images/flags'
+FLAGS_COUNTRIES_EXT = '.png'
+DEFAULT_FLAG_COUNTRIES = 'default'
