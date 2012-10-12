@@ -3,7 +3,7 @@
 from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse_lazy
 # Core views
-from curling_tools.core.views import CTSubmenuMixin, CTListView, CTDetailView
+from curling_tools.core.views import CTSubmenuMixin, CTAppHome, CTListView, CTDetailView
 # Models module
 from curling_tools.base.models import Country
 
@@ -23,6 +23,10 @@ class BaseSubmenu(CTSubmenuMixin):
           (_(u'Add a person'), '/base/person/add/')))
         )
     
+class BaseHome(BaseSubmenu, CTAppHome):
+    pass
+
+
 class CountryListView(BaseSubmenu, CTListView):
     snippet_model_list = 'base/country/country_list_snippet.html'
     model = Country

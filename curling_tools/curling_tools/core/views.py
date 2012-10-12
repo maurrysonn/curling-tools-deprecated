@@ -8,6 +8,26 @@ from django.db.models import BooleanField, NullBooleanField
 # Utils
 from curling_tools.core.utils import ChangeListInfosWrapper
 
+# TODO
+
+# class CTTemplateMixin(object):
+#     pass
+
+# class CTSubmenuMixin(object):
+#     pass
+
+# class CTModelListMixin(object):
+#     pass
+
+# class CTModelDetailMixin(object):
+#     pass
+
+# class CTModelFormMixin(object):
+#     pass
+
+# class CTModelDeleteMixin(object):
+#     pass
+
 
 class CTModelContextMixin(object):
 
@@ -116,6 +136,8 @@ class CTModelDetailMixin(CTModelContextMixin):
 # ---------------
 
 class CTTemplateView(CTSubmenuMixin, TemplateView): pass
+class CTAppHome(CTTemplateView):
+    template_name = 'core/app_home.html'
 class CTListView(CTSubmenuMixin, CTModelListMixin, ListView):
     template_name = 'core/model_list.html'
 class CTDetailView(CTSubmenuMixin, CTModelDetailMixin, DetailView):

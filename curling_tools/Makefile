@@ -24,3 +24,7 @@ syncdb:
 # Run dev server
 runserver:
 	python -Wd manage.py runserver 0.0.0.0:8000
+
+# Settings
+cp_settings:
+	cp settings.py.example curling_tools/settings.py
