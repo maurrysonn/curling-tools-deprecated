@@ -3,7 +3,7 @@
 from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse_lazy
 # Core views
-from curling_tools.core.views import CTSubmenuMixin, CTAppHome, CTListView, CTDetailView
+from curling_tools.core.views import CTSubmenuMixin, CTAppHomeView, CTListView, CTDetailView
 # Models module
 from curling_tools.base.models import Country
 
@@ -23,23 +23,25 @@ class BaseSubmenu(CTSubmenuMixin):
           (_(u'Add a person'), '/base/person/add/')))
         )
     
-class BaseHome(BaseSubmenu, CTAppHome):
-    pass
+
+class BaseHome(BaseSubmenu, CTAppHomeView):
+    template_name = 'base/app_home.html'
 
 
 class CountryListView(BaseSubmenu, CTListView):
     snippet_model_list = 'base/country/country_list_snippet.html'
     model = Country
-    # list_display = ('name', 'code', 'flag_rendering')
 
     def get_context_data(self, **kwargs):
         context = super(CountryListView, self).get_context_data(**kwargs)
         print "Final Context :\n", context
         return context
 
+
 class CountryDetailView(BaseSubmenu, CTDetailView):
     snippet_model_detail = 'base/country/country_detail_snippet.html'
     model = Country
+
     def get_context_data(self, **kwargs):
         context = super(CountryDetailView, self).get_context_data(**kwargs)
         print "Final Context :\n", context
