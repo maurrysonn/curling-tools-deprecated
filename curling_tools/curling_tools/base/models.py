@@ -3,9 +3,17 @@ import os
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext as _
-from django.core.urlresolvers import reverse
 
-class Country(models.Model):
+from curling_tools.core.models import CTModel
+
+# ------------------
+# Statics Ressources
+# ------------------
+STATIC_FLAGS_COUNTRIES = 'base/images/flags'
+FLAGS_COUNTRIES_EXT = '.png'
+DEFAULT_FLAG_COUNTRIES = 'default'
+
+class Country(CTModel):
     "A basic country entity"
 
     name = models.CharField(_('name'), max_length=50, unique=True)
@@ -16,18 +24,11 @@ class Country(models.Model):
     @property
     def flag_path(self):
         if self.flag:
-            file_path = u'%s%s' % (self.flag, settings.FLAGS_COUNTRIES_EXT)
+            file_path = u'%s%s' % (self.flag, FLAGS_COUNTRIES_EXT)
         else:
-            file_path = u'%s%s' % (settings.DEFAULT_FLAG_COUNTRIES, settings.FLAGS_COUNTRIES_EXT)
-        path = os.path.join(settings.STATIC_FLAGS_COUNTRIES, file_path)
-        print "PATH =", path
+            file_path = u'%s%s' % (DEFAULT_FLAG_COUNTRIES, FLAGS_COUNTRIES_EXT)
+        path = os.path.join(STATIC_FLAGS_COUNTRIES, file_path)
         return path
-
-    def get_absolute_url(self):
-        # FIXME :
-        # Use reverse urls
-        return reverse('base:country-detail', args=[self.pk])
-        # return '/base/country/%d' % self.pk
 
     def __unicode__(self):
         return u'%s (%s)' % (self.name, self.code)
@@ -35,6 +36,7 @@ class Country(models.Model):
     class Meta:
         verbose_name = _(u'country')
         verbose_name_plural = _(u'countries')
+        ordering = ('name',)
 
 
 class City(models.Model):

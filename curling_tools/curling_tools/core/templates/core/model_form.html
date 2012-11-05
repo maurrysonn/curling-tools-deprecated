@@ -1,0 +1,34 @@
+{% extends 'core/layouts/left_sidebar_layout.html' %}
+{% load i18n %}
+
+{% block center_layout %}
+
+{% block title_container %}
+<div class="page-header">
+  <h2>{% block title %}{% if object %}{% trans "Edition of" %} {{ object }}{% else %}{% trans "Creation of" %} {{ ct_model.verbose_name }}{% endif %}{% endblock title %}</h2>
+</div>
+{% endblock title_container %}
+
+{% block global_form_container %}
+<div class="row-fluid">
+  <div class="span9">
+	<form enctype="multipart/form-data" action="." method="post">
+	  {% csrf_token %}
+	  {{ form }}
+	  <div class="form-actions">
+		<button type="submit" class="btn btn-primary">
+		  {% if object %}{% trans "Save changes" %}{% else %}{% trans "Create" %}{% endif %}
+		</button>
+		{% if ct_model_edit.cancel_url %}
+		<a class="btn" href="{{ ct_model_edit.cancel_url }}">{% trans "Cancel" %}</a>
+		{% else %}
+		<button type="button" class="btn" onclick="window.history.back()">{% trans "Cancel" %}</button>
+		{% endif %}
+	  </div>
+	</form>
+  </div>
+</div>
+{% endblock global_form_container %}
+
+
+{% endblock center_layout %}

@@ -3,7 +3,8 @@
 from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse_lazy
 # Core views
-from curling_tools.core.views import CTSubmenuMixin, CTAppHomeView, CTListView, CTDetailView
+from curling_tools.core.views import (CTSubmenuMixin, CTAppHomeView,
+                                      CTListView, CTDetailView)
 # Models module
 from curling_tools.base.models import Country
 
@@ -13,7 +14,7 @@ class BaseSubmenu(CTSubmenuMixin):
 
     submenu_items = (
         (_(u'Countries'),
-         ((_(u'List of countries'), reverse_lazy('base:country-list')),
+         ((_(u'List of countries'), '/base/country/'),
           (_(u'Add a country'), '/base/country/add'))),
         (_(u'Cities'),
          ((_(u'List of cities'), '/base/city/'),
@@ -24,8 +25,7 @@ class BaseSubmenu(CTSubmenuMixin):
         )
     
 
-class BaseHome(BaseSubmenu, CTAppHomeView):
-    template_name = 'base/app_home.html'
+class BaseHomeView(BaseSubmenu, CTAppHomeView): pass
 
 
 class CountryListView(BaseSubmenu, CTListView):

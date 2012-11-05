@@ -1,0 +1,9 @@
+{% extends 'core/model_detail.html' %}
+{% load i18n static %}
+
+{% block object_fields %}
+<tr><th>{% trans "Name" %}</th><td>{{ object.name }}</td></tr>
+<tr><th>{% trans "Short Name" %}</th><td>{{ object.short_name }}</td></tr>
+<tr><th>{% trans "Code" %}</th><td>{{ object.code }}</td></tr>
+<tr><th>{% trans "Flag" %}</th><td><img src="{% static object.flag_path %}"/></td></tr>
+{% endblock object_fields %}

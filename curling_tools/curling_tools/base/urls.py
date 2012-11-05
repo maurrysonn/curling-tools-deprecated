@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
 from django.conf.urls import patterns, include, url
 from django.views.generic import TemplateView
-# Module views
-from curling_tools.base.views import BaseHome, CountryListView, CountryDetailView
 
+from curling_tools.core.utils import get_default_model_url
+
+# Module views
+from curling_tools.base.views import (BaseSubmenu,
+                                      BaseHomeView)
+from curling_tools.base.models import Country
 
 urlpatterns = patterns('',
-                       url(r'^$', BaseHome.as_view(), name='dashboard'),
-                       # Country views
-                       url(r'^country/$', CountryListView.as_view(), name='country-list'),
-                       url(r'^country/(?P<pk>\d+)/$', CountryDetailView.as_view(), name='country-detail'),
+                       # App Home View
+                       url(r'^$', BaseHomeView.as_view(), name='home'),
                        )
+
+urlpatterns += get_default_model_url(Country, submenu_mixin=BaseSubmenu)

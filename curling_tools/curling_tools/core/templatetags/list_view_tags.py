@@ -1,10 +1,15 @@
 # -*- coding: utf-8 -*-
 from django.conf import settings
+from django.core.urlresovers import reverse
 from django.utils.translation import ugettext as _
 from django import template
 
 register = template.Library()
 
+
+# ---------------------
+# Change List Tags
+# ---------------------
 
 def get_cl_context(context):
     ct_model_list = context.get(settings.CONTEXT_MODEL_LIST, None)

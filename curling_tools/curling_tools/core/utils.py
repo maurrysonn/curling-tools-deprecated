@@ -1,99 +1,87 @@
 # -*- coding: utf-8 -*-
+from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
+from django.forms import models as model_forms
+from django.conf.urls import patterns, url
 
-# --------------------------
-# CHANGE LIST UTILS
-# --------------------------
+from curling_tools.core.forms import CTModelForm
+# Generic Curling Tools views
+from curling_tools.core.views import (CTListView,
+                                      CTDetailView,
+                                      CTUpdateView,
+                                      CTCreationView,
+                                      CTDeleteView)
 
-CL_SEARCH_STR = 'q'
-CL_ORDERING_STR = 'o'
+# ---------------
+# URLs Tools
+# ---------------
 
-class ChangeListInfosWrapper(object):
-    "Wrapper infos about change list."
+def get_default_model_url(model,
+                          submenu_mixin=None,
+                          form_class=None,
+                          url_name=None,
+                          prefix_pattern='',
+                          prefix_name='',
+                          list_view=CTListView,
+                          detail_view=CTDetailView,
+                          creation_view=CTCreationView,
+                          update_view=CTUpdateView,
+                          delete_view=CTDeleteView):
 
-    def __init__(self, list_view):
-        # Init list_view data
-        self.list_view_class = list_view.__class__.__name__
-        self.model = list_view.model
-        self.list_display = list_view.list_display
-        self.list_display_links = list_view.list_display_links
-        self.GET_params = list_view.request.GET
-        self._prepare_GET_params()
-        # Internal data
-        self._fields_data = None
+    module_name = model._meta.module_name
+    # Get default FormClass for model
+    if not form_class:
+        form_class = model_forms.modelform_factory(model, CTModelForm)
+    # Get default URL name
+    if not url_name:
+        url_name = module_name
+    # Generation of urlpatterns
+    urlpatterns = patterns('')
+    # Kargs of Views
+    view_kwargs = {}
+    if submenu_mixin:
+        view_kwargs['submenu_items'] = submenu_mixin.submenu_items
+    # List View
+    if list_view:
+        list_view_instance = list_view.as_view(model=model, **view_kwargs)
+        urlpatterns += patterns('',
+                               url(r'^%s%s/$' % (prefix_pattern, module_name),
+                                   list_view_instance,
+                                   name='%s%s%s' % (prefix_name,url_name, settings.URL_LIST_SUFFIX)))
+    # Detail View
+    if detail_view:
+        urlpatterns += patterns('',
+                               url(r'^%s%s/(?P<pk>\d+)/$' % (prefix_pattern, module_name),
+                                   detail_view.as_view(model=model, **view_kwargs),
+                                   name="%s%s%s" % (prefix_name, url_name, settings.URL_DETAIL_SUFFIX)))
 
-    def _prepare_GET_params(self):
-        self.search_params = self.GET_params.get(CL_SEARCH_STR, None)
-        self.ordering_params = self.GET_params.get(CL_ORDERING_STR, None)
+    # Add View
+    if creation_view:
+        # First, get form class define in view
+        view_form_class = getattr(creation_view, 'form_class', None)
+        # Then, get form class parameter or generic model form
+        if not view_form_class:
+            view_form_class = form_class
+        urlpatterns += patterns('',
+                                url(r'^%s%s/add/$' % (prefix_pattern, module_name),
+                                    creation_view.as_view(model=model, form_class=view_form_class, **view_kwargs),
+                                    name="%s%s%s" % (prefix_name, url_name, settings.URL_ADD_SUFFIX)))
+    # Update View
+    if update_view:
+        # First, get form class define in view
+        view_form_class = getattr(update_view, 'form_class', None)
+        # Then, get form class parameter or generic model form
+        if not view_form_class:
+            view_form_class = form_class
+        urlpatterns += patterns('',
+                                url(r'^%s%s/(?P<pk>\d+)/edit/$' % (prefix_pattern, module_name),
+                                   update_view.as_view(model=model, form_class=view_form_class, **view_kwargs),
+                                   name="%s%s%s" % (prefix_name, url_name, settings.URL_EDIT_SUFFIX)))
+    # Delete View
+    if delete_view:
+        urlpatterns += patterns('',
+                               url(r'^%s%s/(?P<pk>\d+)/delete/$' % (prefix_pattern, module_name),
+                                   delete_view.as_view(model=model, **view_kwargs),
+                                   name="%s%s%s" % (prefix_name, url_name, settings.URL_DELETE_SUFFIX)))
 
-    def _prepare_fields_data(self):
-        "Compute infos needed about fields."
-        self._fields_data = []
-        model_fields_list = self.model._meta.get_all_field_names()
-        for field in self.list_display:
-            data = {}
-            # Classic Model Field
-            if field not in model_fields_list:
-                # Not in model fields so error
-                raise ImproperlyConfigured("View %s Error : Model `%s` hasn't field named `%s`." % (
-                        self.list_view_class, self.model.__name__, field))
-            # Field Name
-            data['attr'] = field
-            # Model Field
-            model_field = self.model._meta.get_field(field)
-            data['field'] = model_field
-            # Verbose Name
-            data['verbose_name'] = model_field.verbose_name
-            # Is link field ?
-            data['link'] = field in self.list_display_links
-            # Add this field in fields_data
-            self._fields_data.append(data)
-
-    @property
-    def current_url(self):
-        current_url = []
-        if self.search_params:
-            current_url.append(u'%s=%s' % (CL_SEARCH_STR, self.search_params))
-        if self.ordering_params:
-            current_url.append(u'%s%s' % (CL_ORDERING_STR, self.ordering_params))
-        if current_url:
-            return u'?%s' % ( '&'.join(current_url)) 
-        return u''
-
-    @property
-    def fields_data(self):
-        "Return infos about all displayed fields."
-        if self._fields_data is None:
-            self._prepare_fields_data()
-        return self._fields_data
-
-    @property
-    def headers(self):
-        """
-        Return list of the headers informations.
-        
-        List of dict which contains verbose name header
-        and infos about ordering.
-        """
-        return [ {'verbose_name': col['verbose_name']}
-                 for col in self.fields_data]
-
-    def items_for_obj(self, obj):
-        "Get all fields infos for a specific object."
-        items_fields = []
-        for field in self.fields_data:
-            items = {}
-            # Get attribute of object
-            attr = getattr(obj, field['attr'])
-            # Check if callable attribute
-            if field.get('callable', False):
-                attr = attr()
-            # Save value
-            items['value'] = attr
-            # Check if boolean attribute
-            items['is_boolean'] = field.get('boolean', False)
-            # Check if link fields
-            items['link'] = field['link']
-            # Add this items to the list
-            items_fields.append(items)
-        return items_fields
+    return urlpatterns
