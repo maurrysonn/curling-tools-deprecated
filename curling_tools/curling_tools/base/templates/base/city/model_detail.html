@@ -1,0 +1,9 @@
+{% extends 'core/model_detail.html' %}
+{% load i18n static %}
+
+{% block object_fields %}
+<tr><th>{% trans "Name" %}</th><td>{{ object.name }}</td></tr>
+<tr><th>{% trans "Short Name" %}</th><td>{{ object.short_name }}</td></tr>
+<tr><th>{% trans "Zipcode" %}</th><td>{{ object.default_zipcode }}</td></tr>
+<tr><th>{% trans "Country" %}</th><td>{{ object.country }}</td></tr>
+{% endblock object_fields %}
