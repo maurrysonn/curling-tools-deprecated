@@ -39,7 +39,7 @@ class Country(CTModel):
         ordering = ('name',)
 
 
-class City(models.Model):
+class City(CTModel):
     "A basic city entity"
 
     name = models.CharField(_(u'name'), max_length=50)
@@ -53,6 +53,7 @@ class City(models.Model):
     class Meta:
         verbose_name = _(u'city')
         verbose_name_plural = _(u'cities')
+        ordering = ('name',)
 
 
 class Address(models.Model):

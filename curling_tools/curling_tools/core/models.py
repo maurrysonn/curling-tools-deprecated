@@ -18,6 +18,10 @@ class CTModel(models.Model):
         url_name = u'%s:%s%s' % (self.app_label, self.module_name, settings.URL_DETAIL_SUFFIX)
         return reverse(url_name, args=[self.pk])
 
+    def get_absolute_list_url(self):
+        url_name = u'%s:%s%s' % (self.app_label, self.module_name, settings.URL_LIST_SUFFIX)
+        return reverse(url_name)
+
     def get_absolute_edit_url(self):
         url_name = u'%s:%s%s' % (self.app_label, self.module_name, settings.URL_EDIT_SUFFIX)
         return reverse(url_name, args=[self.pk])

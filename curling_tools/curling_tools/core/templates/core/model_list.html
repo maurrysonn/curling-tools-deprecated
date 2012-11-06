@@ -14,12 +14,12 @@
 <div class="row-fluid">
   <div class="span9">
 	{% block list_container %}
-	<table class="table table-striped table-bordered table-hover">
+	<table class="table table-striped table-bordered table-hover table-vertical-align">
 	  <thead>
 		{% block list_header %}
 		<tr>
 		  <th>{{ ct_model.verbose_name|capfirst }}</th>
-		  <th>{% trans "Actions" %}</th>
+		  <th style="width: 20%; text-align: center;">{% trans "Actions" %}</th>
 		</tr>
 		{% endblock list_header %}
 	  </thead>
@@ -29,9 +29,9 @@
 		<tr>
 		  {% block list_object %}
 		  <td><a href="{{ object.get_absolute_url }}">{{ object }}</a></td>
-		  <td>
-			<a class="btn btn-primary" href="{{ object.get_absolute_edit_url }}"><i class="icon-edit icon-white"></i></a>
-			<a class="btn btn-danger" href="{{ object.get_absolute_url }}delete/"><i class="icon-trash icon-white"></i></a>
+		  <td style="text-align: center;">
+			<a class="btn btn-primary" href="{{ object.get_absolute_edit_url }}" title="{% trans 'Edit' %}"><i class="icon-edit icon-white"></i></a>
+			<a class="btn btn-danger" href="{{ object.get_absolute_url }}delete/" title="{% trans 'Delete' %}"><i class="icon-trash icon-white"></i></a>
 		  </td>
 		  {% endblock list_object %}
 		</tr>
