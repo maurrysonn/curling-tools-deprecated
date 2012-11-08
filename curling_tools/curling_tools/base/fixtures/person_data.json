@@ -1,0 +1,17 @@
+[
+  {
+    "pk": 1, 
+    "model": "base.person", 
+    "fields": {
+      "first_name": "Amaury", 
+      "last_name": "Pernette", 
+      "dob": "1986-05-18", 
+      "photo": "", 
+      "phone": "+33 (0)3 81 58 20 43", 
+      "mobile_phone": "+33 (0)6 78 02 77 12", 
+      "address": null, 
+      "nickname": "Amo", 
+      "email": "amaury.pernette@gmail.com"
+    }
+  }
+]

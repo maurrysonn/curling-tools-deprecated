@@ -1,0 +1,18 @@
+<address>
+  {# Number & Street #}
+  {% if object.number or object.street %}{% if object.number %}{{object.number}}&nbsp;{% endif %}{{ object.street }}<br/>{% endif %}
+  {# Extra infos #}
+  {% if object.extra %}{{ object.extra }}<br/>{% endif %}
+  {# Zipcode #}
+  {% if object.zipcode or object.city.default_zipcode %}{% firstof object.zipcode object.city.default_zipcode '' %}&nbsp;{% endif %}
+  {# City #}
+  {{ object.city.name }}
+  {# Extra infos City #}
+  {% if object.extra_city %}{{ object.extra_city }}{% endif %}
+  <br/>
+  {% if object.area %}
+  {{ object.area }}<br/>
+  {% endif %}
+  {# Country #}
+  {{ object.city.country.name }}
+</address>

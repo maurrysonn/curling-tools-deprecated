@@ -1,0 +1,82 @@
+[
+  {
+    "pk": 3, 
+    "model": "base.country", 
+    "fields": {
+      "flag": "DE", 
+      "code": "DE", 
+      "name": "Allemagne", 
+      "short_name": "ALL"
+    }
+  }, 
+  {
+    "pk": 5, 
+    "model": "base.country", 
+    "fields": {
+      "flag": "BE", 
+      "code": "BE", 
+      "name": "Belgique", 
+      "short_name": "BEL"
+    }
+  }, 
+  {
+    "pk": 8, 
+    "model": "base.country", 
+    "fields": {
+      "flag": "CA", 
+      "code": "CA", 
+      "name": "Canada", 
+      "short_name": "CAN"
+    }
+  }, 
+  {
+    "pk": 7, 
+    "model": "base.country", 
+    "fields": {
+      "flag": "ES", 
+      "code": "ES", 
+      "name": "Espagne", 
+      "short_name": "ESP"
+    }
+  }, 
+  {
+    "pk": 1, 
+    "model": "base.country", 
+    "fields": {
+      "flag": "FR", 
+      "code": "FR", 
+      "name": "France", 
+      "short_name": "FRA"
+    }
+  }, 
+  {
+    "pk": 6, 
+    "model": "base.country", 
+    "fields": {
+      "flag": "IT", 
+      "code": "IT", 
+      "name": "Italie", 
+      "short_name": "ITA"
+    }
+  }, 
+  {
+    "pk": 4, 
+    "model": "base.country", 
+    "fields": {
+      "flag": "GB", 
+      "code": "UK", 
+      "name": "Royaume Uni", 
+      "short_name": "ROY"
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "base.country", 
+    "fields": {
+      "flag": "CH", 
+      "code": "CH", 
+      "name": "Suisse", 
+      "short_name": "SUI"
+    }
+  }
+]
