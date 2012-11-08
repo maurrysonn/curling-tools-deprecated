@@ -72,31 +72,27 @@ class Address(models.Model):
         return u'%s' % (self.city)
 
     class Meta:
-        abstract = True
         verbose_name = _(u'address')
         verbose_name_plural = _(u'addresses')
 
 
-class Person(Address):
+class Person(CTModel):
     "A basic person entity"
 
     first_name = models.CharField(_(u'first name'), max_length=50)
     last_name = models.CharField(_(u'last name'), max_length=50)
     nickname = models.CharField(_(u'nickname'), max_length=50, blank=True)
     phone = models.CharField(_(u'phone'), max_length=20, blank=True)
+    mobile_phone = models.CharField(_(u'mobile phone'), max_length=20, blank=True)
     email = models.EmailField(_(u'email'), blank=True)
     dob = models.DateField(_(u'date of birth'), blank=True, null=True)
-    # TODO : photo
+    address = models.OneToOneField(Address, blank=True, null=True)
+    photo = models.FileField(_(u'photo'), upload_to='base/person', max_length=200, blank=True)
 
     def __unicode__(self):
         return u'%s (%s)' % (self.first_name, self.last_name)
 
     class Meta:
-        # FIXME
-        #Abstract : If a personn is a player AND a coach, we
-        # need to create 2 "person" entities
-        # If not : we create a player an then re-use player
-        # infos for creating a coach.
-        # abstract = True
         verbose_name = _(u'person')
         verbose_name_plural = _(u'persons')
+        ordering = ('last_name', 'first_name')

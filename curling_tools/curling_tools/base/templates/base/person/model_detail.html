@@ -1,0 +1,14 @@
+{% extends 'core/model_detail.html' %}
+{% load i18n static %}
+
+{% block object_fields %}
+<tr><th>{% trans "First Name" %}</th><td>{{ object.first_name }}</td></tr>
+<tr><th>{% trans "Last Name" %}</th><td>{{ object.last_name }}</td></tr>
+<tr><th>{% trans "Nickname" %}</th><td>{{ object.nickname }}</td></tr>
+<tr><th>{% trans "Photo" %}</th><td><img src="{{ MEDIAS_URL }}{{ object.photo }}"/></td></tr>
+<tr><th>{% trans "Phone" %}</th><td>{{ object.phone }}</td></tr>
+<tr><th>{% trans "Mobile phone" %}</th><td>{{ object.mobile_phone }}</td></tr>
+<tr><th>{% trans "Email" %}</th><td>{{ object.email }}</td></tr>
+<tr><th>{% trans "Date of birth" %}</th><td>{{ object.dob }}</td></tr>
+<tr><th>{% trans "Address" %}</th><td>{{ object.address }}</td></tr>
+{% endblock object_fields %}

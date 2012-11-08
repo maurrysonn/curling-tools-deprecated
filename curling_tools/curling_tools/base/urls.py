@@ -5,7 +5,7 @@ from curling_tools.core.utils import get_default_model_url
 # Module views
 from curling_tools.base.views import BaseSubmenu, BaseHomeView
 # Module models
-from curling_tools.base.models import Country, City
+from curling_tools.base.models import Country, City, Person
 
 urlpatterns = patterns('',
                        # App Home View
@@ -15,3 +15,4 @@ urlpatterns = patterns('',
 # Models views
 urlpatterns += get_default_model_url(Country, submenu_mixin=BaseSubmenu)
 urlpatterns += get_default_model_url(City, submenu_mixin=BaseSubmenu)
+urlpatterns += get_default_model_url(Person, submenu_mixin=BaseSubmenu)
