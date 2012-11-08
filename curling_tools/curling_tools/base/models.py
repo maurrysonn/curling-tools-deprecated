@@ -87,10 +87,10 @@ class Person(CTModel):
     email = models.EmailField(_(u'email'), blank=True)
     dob = models.DateField(_(u'date of birth'), blank=True, null=True)
     address = models.OneToOneField(Address, blank=True, null=True)
-    photo = models.FileField(_(u'photo'), upload_to='base/person', max_length=200, blank=True)
+    photo = models.ImageField(_(u'photo'), upload_to='base/person', max_length=200, blank=True)
 
     def __unicode__(self):
-        return u'%s (%s)' % (self.first_name, self.last_name)
+        return u'%s %s' % (self.first_name, self.last_name)
 
     class Meta:
         verbose_name = _(u'person')

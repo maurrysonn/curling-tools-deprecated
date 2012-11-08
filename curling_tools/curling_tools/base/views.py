@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 # Django tools
 from django.utils.translation import ugettext as _
-from django.core.urlresolvers import reverse_lazy
+from django.core.urlresolvers import reverse, reverse_lazy
 # Core views
-from curling_tools.core.views import (CTSubmenuMixin, CTAppHomeView,
-                                      CTListView, CTDetailView)
+from curling_tools.core.views import (CTSubmenuMixin,
+                                      CTAppHomeView,
+                                      CTUpdateView)
 # Models module
-from curling_tools.base.models import Country
+from curling_tools.base.models import Country, Person, Address
 
 
 class BaseSubmenu(CTSubmenuMixin):
@@ -28,21 +29,18 @@ class BaseSubmenu(CTSubmenuMixin):
 class BaseHomeView(BaseSubmenu, CTAppHomeView): pass
 
 
-class CountryListView(BaseSubmenu, CTListView):
-    snippet_model_list = 'base/country/country_list_snippet.html'
-    model = Country
+class PersonAddressUpdateView(BaseSubmenu, CTUpdateView):
 
-    def get_context_data(self, **kwargs):
-        context = super(CountryListView, self).get_context_data(**kwargs)
-        print "Final Context :\n", context
-        return context
+    model = Address
 
+    def get_queryset(self):
+        return Person.objects.all()
 
-class CountryDetailView(BaseSubmenu, CTDetailView):
-    snippet_model_detail = 'base/country/country_detail_snippet.html'
-    model = Country
+    def get_object(self, *args, **kwargs):
+        # Get the person object
+        person = super(PersonAddressUpdateView, self).get_object()
+        # Return the address
+        return person.address
 
-    def get_context_data(self, **kwargs):
-        context = super(CountryDetailView, self).get_context_data(**kwargs)
-        print "Final Context :\n", context
-        return context
+    def get_success_url(self):
+        return reverse('base:person-detail', args=[self.get_object().person.pk])

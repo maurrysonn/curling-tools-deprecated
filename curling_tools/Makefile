@@ -19,7 +19,8 @@ env_freeze:
 
 # Sync DB and add initial values
 syncdb:
-	python manage.py syncdb
+	mv curling_tools.sqlite curling_tools.sqlite.save
+	python manage.py syncdb --noinput
 
 # Run dev server
 runserver:
@@ -28,3 +29,14 @@ runserver:
 # Settings
 cp_settings:
 	cp settings.py.example curling_tools/settings.py
+
+# Initial Data
+dump_initial_data:
+	mv initial_data.json initial_data.json.save
+	python manage.py dumpdata --indent=2 --natural auth.User > initial_data.json
+	python manage.py dumpdata --natural --indent=2 base.Person > person_data.json
+
+load_data:
+	python manage.py loaddata curling_tools/base/fixtures/country_data.json
+	python manage.py loaddata curling_tools/base/fixtures/city_data.json
+	python manage.py loaddata curling_tools/base/fixtures/person_data.json

@@ -30,6 +30,7 @@
 	  <i class="icon-edit icon-white"></i>&nbsp;{% trans "Edit" %}</a>
 	<a class="btn btn-block btn-large btn-danger" href="{{ object.get_absolute_delete_url }}">
 	  <i class="icon-trash icon-white"></i>&nbsp;{% trans "Delete" %}</a>
+	{% block object_extra_actions %}{% endblock object_extra_actions %}
 	{% endblock object_actions %}
   </div>
   {% endblock object_actions_container %}

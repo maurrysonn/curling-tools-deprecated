@@ -13,3 +13,4 @@ curling_tools/curling_tools/settings.py
 
 # DB Files
 *.sqlite
+*.save
