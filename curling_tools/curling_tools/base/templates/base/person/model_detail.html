@@ -19,11 +19,8 @@
 	</table>
   </div>
   <div class="span3 text-center">
-	{% if object.photo %}
-	<img class="img-polaroid img-rounded" style="max-height: 200px; max-width:200px;" src="{{ object.photo.url }}" />
-	{% else %}
-	No Photo ...
-	{% endif %}
+	<img class="img-polaroid img-rounded" style="max-height: 180px; max-width:185px;"
+		 src="{% if object.photo %}{{ object.photo.url }}{% else %}{% static 'base/images/person.png' %}{% endif %}" />
   </div>
 </div>
 
@@ -55,11 +52,14 @@
 	<tr><th colspan="2" style="text-align: center;">{% trans "Player Informations" %}</th></tr>
   </thead>
   <tbody>
-	<tr>
-	  {% if not object.player %}
-	  <td colspan="2" style="text-align: center;"><em>{% trans "No informations available." %}</em></td>
-	  {% endif %}
-	</tr>
+	{% with object.player as player %}
+	{% if player %}
+	<tr><th>{% trans "Licence number" %}</th><td>{{ player.licence_number }}</td></tr>
+	<tr><th>{% trans "Club"%}</th><td>{{ player.club }}</td></tr>
+	{% else %}
+	<tr><td colspan="2" style="text-align: center;"><em>{% trans "No informations available." %}</em></td></tr>
+	{% endif %}
+	{% endwith %}
   </tbody>
 </table>
 
@@ -83,12 +83,23 @@
 <h4 class="text-center">{% trans "Extra actions" %}</h4>
 <a class="btn btn-block btn-large" href="{% url 'base:person-address-edit' object.pk %}">
   <i class="icon-envelope"></i>&nbsp;{% trans "Edit address" %}</a>
-{# Player Card button #}
-<a class="btn btn-block btn-large{% if not object.player %} disabled{% endif %}"
-   {% if object.player %}href="#"{% endif %}>
-  <i class="icon-arrow-right"></i>&nbsp;{% trans "Player card" %}</a>
-{# Coach Card button #}
-<a class="btn btn-block btn-large{% if not object.coach %} disabled{% endif %}"
-   {% if object.coach %}href="#"{% endif %}>
-  <i class="icon-arrow-right"></i>&nbsp;{% trans "Coach card" %}</a>
+{# Create Player button #}
+{% if not person.player %}
+<a class="btn btn-block btn-large" href="{% url 'base:person-player-add' object.pk %}">
+  <i class="icon-plus"></i>&nbsp;{% trans "Create player" %}
+</a>
+{% else %}
+<a class="btn btn-block btn-large" href="{% url 'base:person-player-edit' object.pk %}">
+  <i class="icon-edit"></i>&nbsp;{% trans "Edit player" %}
+</a>
+{% endif %}
+{% if not person.coach %}
+<a class="btn btn-block btn-large" href="#">
+  <i class="icon-plus"></i>&nbsp;{% trans "Create Coach" %}
+</a>
+{% else %}
+<a class="btn btn-block btn-large" href="#">
+  <i class="icon-edit"></i>&nbsp;{% trans "Edit coach" %}
+</a>
+{% endif %}
 {% endblock object_extra_actions %}

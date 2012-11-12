@@ -9,7 +9,7 @@ from curling_tools.core.forms import CTModelForm
 from curling_tools.core.views import (CTListView,
                                       CTDetailView,
                                       CTUpdateView,
-                                      CTCreationView,
+                                      CTCreateView,
                                       CTDeleteView)
 
 # ---------------
@@ -24,7 +24,7 @@ def get_default_model_url(model,
                           prefix_name='',
                           list_view=CTListView,
                           detail_view=CTDetailView,
-                          creation_view=CTCreationView,
+                          creation_view=CTCreateView,
                           update_view=CTUpdateView,
                           delete_view=CTDeleteView):
 

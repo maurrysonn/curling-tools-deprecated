@@ -6,16 +6,22 @@ from django.utils.translation import ugettext as _
 
 from curling_tools.core.models import CTModel
 
-# ------------------
-# Statics Ressources
-# ------------------
+
+# -------------------------------
+# Statics Ressources of countries
+# -------------------------------
 STATIC_FLAGS_COUNTRIES = 'base/images/flags'
 FLAGS_COUNTRIES_EXT = '.png'
 DEFAULT_FLAG_COUNTRIES = 'default'
 
-class Country(CTModel):
-    "A basic country entity"
 
+# --------------------
+# Geo Items Models
+# --------------------
+class Country(CTModel):
+    """
+    A basic country entity
+    """
     name = models.CharField(_('name'), max_length=50, unique=True)
     short_name = models.CharField(_(u'short name'), max_length=5, blank=True)
     code = models.CharField(_('code'), max_length=5, unique=True)
@@ -40,7 +46,9 @@ class Country(CTModel):
 
 
 class City(CTModel):
-    "A basic city entity"
+    """
+    A basic city entity
+    """
 
     name = models.CharField(_(u'name'), max_length=50)
     short_name = models.CharField(_(u'short name'), max_length=5, blank=True)
@@ -57,7 +65,9 @@ class City(CTModel):
 
 
 class Address(models.Model):
-    "A basic address informations"
+    """
+    A basic address informations
+    """
 
     number = models.CharField(max_length=10, blank=True)
     street = models.CharField(max_length=100, blank=True)
@@ -76,9 +86,62 @@ class Address(models.Model):
         verbose_name_plural = _(u'addresses')
 
 
-class Person(CTModel):
-    "A basic person entity"
+# --------------------
+# Club Model
+# --------------------
 
+class Club(CTModel):
+    """
+    A Club Entity
+    """
+    name = models.CharField(_(u'name'), max_length=100)
+    short_name = models.CharField(_(u'short name'), max_length=10, blank=True)
+    address = models.OneToOneField(Address, blank=True, null=True)
+
+    def __unicode__(self):
+        short_name_txt = u""
+        if self.short_name:
+            short_name_txt = u" (%s)" % self.short_name
+        return u"%s%s" % (self.name, short_name_txt)
+
+    class Meta:
+        verbose_name = _(u'club')
+        verbose_name_plural = _(u'clubs')
+        ordering = ('name',)
+
+
+
+# --------------------
+# Place Model
+# --------------------
+
+class Rink(CTModel):
+    """
+    A Rink Entity
+    """
+    name = models.CharField(_(u"name"), max_length=100)
+    address = models.OneToOneField(Address, blank=True, null=True)
+
+    def __unicode__(self):
+        city_str = u''
+        if self.address:
+            city_str = u' (%s - %s)' % (self.address.city.name, self.address.city.country.name)
+        return u'%s%s' % (self.name, city_str)
+
+    class Meta:
+        verbose_name = _(u'rink')
+        verbose_name_plural = _(u'rinks')
+        ordering = ('name',)
+
+
+# --------------------
+# Persons Models
+# --------------------
+
+class Person(CTModel):
+    """
+    A basic person entity
+    """
     first_name = models.CharField(_(u'first name'), max_length=50)
     last_name = models.CharField(_(u'last name'), max_length=50)
     nickname = models.CharField(_(u'nickname'), max_length=50, blank=True)
@@ -96,3 +159,85 @@ class Person(CTModel):
         verbose_name = _(u'person')
         verbose_name_plural = _(u'persons')
         ordering = ('last_name', 'first_name')
+
+
+class Player(CTModel):
+    """
+    A Player Entity
+    """
+    person = models.OneToOneField(Person, unique=True)
+    licence_number = models.CharField(_(u'licence number'), max_length=50, blank=True, null=True)
+    club = models.ForeignKey(Club, related_name='players')
+
+    def __unicode__(self):
+        return self.person.__unicode__()
+
+    class Meta:
+        verbose_name = _(u'player')
+        verbose_name_plural = _(u'players')
+
+
+class Coach(CTModel):
+    """
+    A Coach Entity
+    """
+    person = models.OneToOneField(Person, unique=True)
+
+    class Meta:
+        verbose_name = _(u'coach')
+        verbose_name_plural = _(u'coaches')
+
+        
+# --------------------
+# Team Models
+# --------------------
+
+class Team(CTModel):
+    """
+    A Team Entity
+    """
+    name = models.CharField(_(u"name"), max_length=100)
+    club = models.ForeignKey(Club, related_name="teams")
+    coach = models.ForeignKey(Coach, related_name="teams")
+    players = models.ManyToManyField(Player, related_name="teams",
+                                     through="TeamMembership")
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _(u'team')
+        verbose_name_plural = _(u'teams')
+        ordering = ('name',)
+
+
+class TeamMembership(models.Model):
+    """
+    A Member Team Entity.
+    """
+    POSITION_CHOICES = (
+        ("1", _(u"Lead")),
+        ("2", _(u"Second")),
+        ("3", _(u"Third")),
+        ("4", _(u"Fourth")),
+        ("0", _(u"Alternate"))
+        )
+    player = models.ForeignKey(Player, related_name="team_membership")
+    team = models.ForeignKey(Team, related_name="team_membership")
+    position = models.CharField(_("position"), max_length=1, choices=POSITION_CHOICES)
+    is_vice = models.BooleanField(_("is vice ?"), default=False)
+    is_skip = models.BooleanField(_("is skip ?"), default=False)
+
+    def __unicode__(self):
+        return u"%s - %s : %s" % (self.player, self.team, self.get_position_display())
+
+    def clean(self):
+        # Canot be both skip and vice.
+        if self.is_skip and self.is_vice:
+            raise ValidationError(_(u"A player can't be both vice and skip."))
+
+    class Meta:
+        unique_together = ("player", "team")
+        verbose_name = _(u"team member")
+        verbose_name_plural = _(u"team members")
+        ordering = ["team", "-position"]

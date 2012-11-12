@@ -1,0 +1,41 @@
+[
+  {
+    "pk": 1, 
+    "model": "base.address", 
+    "fields": {
+      "city": 1, 
+      "extra_city": "", 
+      "extra": "", 
+      "area": "", 
+      "zipcode": "", 
+      "number": "4N", 
+      "street": "Rue Louis Pergaud"
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "base.address", 
+    "fields": {
+      "city": 3, 
+      "extra_city": "", 
+      "extra": "", 
+      "area": "", 
+      "zipcode": "", 
+      "number": "130", 
+      "street": "Chemin des Mouilles"
+    }
+  }, 
+  {
+    "pk": 3, 
+    "model": "base.address", 
+    "fields": {
+      "city": 6, 
+      "extra_city": "", 
+      "extra": "", 
+      "area": "", 
+      "zipcode": "", 
+      "number": "26", 
+      "street": "Rue de la Roberde"
+    }
+  }
+]

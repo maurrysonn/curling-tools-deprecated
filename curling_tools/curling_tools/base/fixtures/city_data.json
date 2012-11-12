@@ -24,9 +24,19 @@
     "model": "base.city", 
     "fields": {
       "country": 1, 
-      "default_zipcode": "74000", 
+      "default_zipcode": "74400", 
       "name": "Chamonix", 
       "short_name": "CHA"
+    }
+  }, 
+  {
+    "pk": 6, 
+    "model": "base.city", 
+    "fields": {
+      "country": 1, 
+      "default_zipcode": "25320", 
+      "name": "Chemaudin", 
+      "short_name": "CHE"
     }
   }, 
   {

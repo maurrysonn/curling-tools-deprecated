@@ -3,7 +3,9 @@ from django.conf.urls import patterns, include, url
 from django.views.generic import TemplateView
 from curling_tools.core.utils import get_default_model_url
 # Module views
-from curling_tools.base.views import BaseSubmenu, BaseHomeView, PersonAddressUpdateView
+from curling_tools.base.views import (BaseSubmenu, BaseHomeView,
+                                      PersonAddressUpdateView,
+                                      PersonPlayerCreateView, PersonPlayerUpdateView)
 # Module models
 from curling_tools.base.models import Country, City, Person, Address
 # Module forms
@@ -23,5 +25,11 @@ urlpatterns += patterns('',
                         url(r'^person/(?P<pk>\d+)/address/edit/$',
                             PersonAddressUpdateView.as_view(),
                             name='person-address-edit'),
+                        url(r'^person/(?P<pk>\d+)/player/add/$',
+                            PersonPlayerCreateView.as_view(),
+                            name='person-player-add'),
+                        url(r'^person/(?P<pk>\d+)/player/edit/$',
+                            PersonPlayerUpdateView.as_view(),
+                            name='person-player-edit'),
                         )
 urlpatterns += get_default_model_url(Address, submenu_mixin=BaseSubmenu)

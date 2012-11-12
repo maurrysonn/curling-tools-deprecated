@@ -197,6 +197,6 @@ class CTTemplateView(CTSubmenuMixin, TemplateView): pass
 class CTAppHomeView(CTSubmenuMixin, CTAppHomeMixin, TemplateView): pass
 class CTListView(CTSubmenuMixin, CTModelListMixin, ListView): pass
 class CTDetailView(CTSubmenuMixin, CTModelDetailMixin, DetailView): pass
-class CTCreationView(CTSubmenuMixin, CTBaseModelMixin, CreateView): pass
+class CTCreateView(CTSubmenuMixin, CTBaseModelMixin, CreateView): pass
 class CTUpdateView(CTSubmenuMixin, CTModelUpdateMixin, UpdateView): pass
 class CTDeleteView(CTSubmenuMixin, CTModelDeleteMixin, DeleteView): pass
