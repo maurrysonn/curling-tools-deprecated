@@ -1,0 +1,23 @@
+{% extends 'core/model_detail.html' %}
+{% load i18n static address_tags %}
+{% load url from future %}
+
+{% block object_fields %}
+<tr><th>{% trans "Name" %}</th><td>{{ object.name }}</td></tr>
+<tr><th>{% trans "Short Name" %}</th><td>{{ object.short_name }}</td></tr>
+<tr><th>{% trans "Address" %}</th>
+  <td>
+	{% if object.address %}
+	{% html_address object.address %}
+	{% else %}
+	<em>{% trans "Not specified" %}</em>
+	{% endif %}
+  </td>
+</tr>
+{% endblock object_fields %}
+
+{% block object_extra_actions %}
+<h4 class="text-center">{% trans "Extra actions" %}</h4>
+<a class="btn btn-block btn-large" href="{% url 'base:club-address-edit' object.pk %}">
+  <i class="icon-envelope"></i>&nbsp;{% trans "Edit address" %}</a>
+{% endblock object_extra_actions %}

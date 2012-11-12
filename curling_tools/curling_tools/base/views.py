@@ -10,9 +10,11 @@ from curling_tools.core.views import (CTSubmenuMixin,
                                       CTUpdateView,
                                       CTCreateView)
 # Models module
-from curling_tools.base.models import Country, Person, Address, Player
+from curling_tools.base.models import (Country, Person, Address,
+                                       Player, Coach, Club, Rink)
 # Forms module
-from curling_tools.base.forms import PersonPlayerForm
+from curling_tools.base.forms import (PersonPlayerForm, PersonCoachForm,
+                                      ClubForm, RinkForm)
 
 
 class BaseSubmenu(CTSubmenuMixin):
@@ -27,71 +29,95 @@ class BaseSubmenu(CTSubmenuMixin):
           (_(u'Add a city'), '/base/city/add/'))),
         (_(u'Persons'),
          ((_(u'List of persons'), '/base/person/'),
-          (_(u'Add a person'), '/base/person/add/')))
+          (_(u'Add a person'), '/base/person/add/'))),
+        # (_(u'Players'),
+        #  ((_(u'List of players'), '/base/player/'),
+        #   (_(u'Add a player'), '/base/player/add/')))
+        (_(u'Clubs'),
+         ((_(u'List of clubs'), reverse_lazy('base:club-list')),
+          (_(u'Add a player'), reverse_lazy('base:club-add')))),
+        (_(u'Rinks'),
+         ((_(u'List of rinks'), reverse_lazy('base:rink-list')),
+          (_(u'Add a rink'), reverse_lazy('base:rink-add')))),
         )
     
 
 class BaseHomeView(BaseSubmenu, CTAppHomeView): pass
 
 
-# ------------
-# Person views
-# ------------
+# ----------------------------
+# Objects Related Mixins
+# ----------------------------
 
-class PersonAttrMixin(object):
+class ObjectRelatedMixin(object):
+    rel_model = None
 
     @property
-    def person(self):
-        if not hasattr(self, '_person'):
-            self._person = get_object_or_404(
-                Person, pk=self.kwargs.get('pk', 0))
-        return self._person
+    def rel_obj(self):
+        rel_attr = '_%s' % (self.rel_model._meta.module_name)
+        if not hasattr(self, rel_attr):
+            setattr(self, rel_attr, get_object_or_404(
+                    self.rel_model, pk=self.kwargs.get('pk', 0)))
+        return getattr(self, rel_attr)
     
-
-class PersonAddressUpdateView(PersonAttrMixin, BaseSubmenu, CTUpdateView):
-
-    model = Address
-
-    def get_object(self, *args, **kwargs):
-        # Return the address
-        return self.person.address
-
     def get_success_url(self):
-        return reverse('base:person-detail', args=[self.person.pk])
-
-    def form_valid(self, form):
-        if self.object is None:
-            address = form.save()
-            self.person.address = address
-            self.person.save()
-        return super(PersonAddressUpdateView, self).form_valid(form)
+        return self.rel_obj.get_absolute_url()
 
 
-# ------------
-# Player views
-# ------------
+# ----------------------------
+# Person Mixins
+# ----------------------------
 
-class PersonPlayerCreateView(PersonAttrMixin, BaseSubmenu, CTCreateView):
+class PersonRelatedMixin(ObjectRelatedMixin):
+    rel_model = Person
+
+
+class PersonRelatedCreateMixin(PersonRelatedMixin, BaseSubmenu, CTCreateView):
     """
     View that create a player from a person detail view.
     """
-    model = Player
-    form_class = PersonPlayerForm
-    
-    def get_success_url(self):
-        return self.person.get_absolute_url()
-
     def form_valid(self, form):
         # Create instance object
         self.object = form.save(commit=False)
         # Update person attr
-        self.object.person = self.person
+        self.object.person = self.rel_obj
         # Save the new object
         self.object.save()
         return HttpResponseRedirect(self.get_success_url())
 
 
-class PersonPlayerUpdateView(PersonAttrMixin, BaseSubmenu, CTUpdateView):
+# ----------------------------
+# Address Related Mixin
+# ----------------------------
+
+class AddressRelatedUpdateMixin(ObjectRelatedMixin, BaseSubmenu, CTUpdateView):
+    model = Address
+
+    def get_object(self, *args, **kwargs):
+        return self.rel_obj.address
+
+    def form_valid(self, form):
+        if self.object is None:
+            address = form.save()
+            self.rel_obj.address = address
+            self.rel_obj.save()
+        return super(AddressRelatedUpdateMixin, self).form_valid(form)
+
+# ----------------------------
+# Person Views
+# ----------------------------
+
+
+class PersonAddressUpdateView(PersonRelatedMixin, AddressRelatedUpdateMixin,
+                              BaseSubmenu, CTUpdateView): pass
+
+
+class PersonPlayerCreateView(PersonRelatedCreateMixin):
+    model = Player
+    form_class = PersonPlayerForm
+
+
+class PersonPlayerUpdateView(PersonRelatedMixin, BaseSubmenu, CTUpdateView):
     """
     View that edit a player infos from a person detail view.
     """
@@ -99,11 +125,61 @@ class PersonPlayerUpdateView(PersonAttrMixin, BaseSubmenu, CTUpdateView):
     form_class = PersonPlayerForm
 
     def get_object(self, *args, **kwargs):
-        return self.person.player
-        # # Get the person object
-        # person = super(PersonPlayerUpdateView, self).get_object()
-        # # Return the address
-        # return person.player
-    
-    def get_success_url(self):
-        return reverse('base:person-detail', args=[self.get_object().person.pk])
+        return self.rel_obj.player
+
+
+class PersonCoachCreateView(PersonRelatedCreateMixin):
+    model = Coach
+    form_class = PersonCoachForm
+
+
+class PersonCoachUpdateView(PersonRelatedMixin, BaseSubmenu, CTUpdateView):
+    """
+    View that edit a player infos from a person detail view.
+    """
+    model = Coach
+    form_class = PersonCoachForm
+
+    def get_object(self, *args, **kwargs):
+        return self.rel_obj.coach
+
+
+# ------------
+# Player Views
+# ------------
+
+# def player_update_view(request, pk):
+#     player = get_object_or_404(Player, pk=pk)
+#     if request.method == 'POST':
+#         player_form = PlayerForm(request.POST, instance=player, prefix="player")
+#         person_form = PersonForm(request.POST, instance=player.person, prefix="person")
+#         if person_form.is_valid() and player_form.is_valid():
+#             person = person_form.save()
+#             player = player_form.save()
+#             return HttpResponseRedirect(player.get_absolute_url())
+#     else:
+#         person_form = PersonForm(instance=person, prefix='person')
+#         player_form = PlayerForm(instance=person.player, prefix="player")
+#     return render_to_response(get_template_names_for_model(Player),
+#                               {'player_form': player_form,
+#                                'person_form': person_form,},
+#                               context_instance=RequestContext(request))
+
+
+# ------------
+# Club Views
+# ------------
+
+class ClubAddressUpdateView(AddressRelatedUpdateMixin,
+                            BaseSubmenu, CTUpdateView):
+    rel_model = Club
+    form_class = ClubForm
+
+# ------------
+# Rink Views
+# ------------
+
+class RinkAddressUpdateView(AddressRelatedUpdateMixin,
+                            BaseSubmenu, CTUpdateView):
+    rel_model = Rink
+    form_class = RinkForm

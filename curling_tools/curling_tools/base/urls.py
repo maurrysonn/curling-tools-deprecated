@@ -5,11 +5,14 @@ from curling_tools.core.utils import get_default_model_url
 # Module views
 from curling_tools.base.views import (BaseSubmenu, BaseHomeView,
                                       PersonAddressUpdateView,
-                                      PersonPlayerCreateView, PersonPlayerUpdateView)
+                                      PersonPlayerCreateView, PersonPlayerUpdateView,
+                                      PersonCoachCreateView, PersonCoachUpdateView,
+                                      ClubAddressUpdateView, RinkAddressUpdateView,
+                                      )
 # Module models
-from curling_tools.base.models import Country, City, Person, Address
+from curling_tools.base.models import Country, City, Person, Club, Rink
 # Module forms
-from curling_tools.base.forms import PersonForm
+from curling_tools.base.forms import PersonForm, ClubForm, RinkForm
 
 
 urlpatterns = patterns('',
@@ -31,5 +34,24 @@ urlpatterns += patterns('',
                         url(r'^person/(?P<pk>\d+)/player/edit/$',
                             PersonPlayerUpdateView.as_view(),
                             name='person-player-edit'),
+                        url(r'^person/(?P<pk>\d+)/coach/add/$',
+                            PersonCoachCreateView.as_view(),
+                            name='person-coach-add'),
+                        url(r'^person/(?P<pk>\d+)/coach/edit/$',
+                            PersonCoachUpdateView.as_view(),
+                            name='person-coach-edit'),
                         )
-urlpatterns += get_default_model_url(Address, submenu_mixin=BaseSubmenu)
+# urlpatterns += get_default_model_url(Player, submenu_mixin=BaseSubmenu)
+urlpatterns += get_default_model_url(Club, submenu_mixin=BaseSubmenu, form_class=ClubForm)
+urlpatterns += patterns('',
+                        url(r'^club/(?P<pk>\d+)/address/edit/$',
+                            ClubAddressUpdateView.as_view(),
+                            name='club-address-edit'),
+                        )
+
+urlpatterns += get_default_model_url(Rink, submenu_mixin=BaseSubmenu, form_class=RinkForm)
+urlpatterns += patterns('',
+                        url(r'^rink/(?P<pk>\d+)/address/edit/$',
+                            RinkAddressUpdateView.as_view(),
+                            name='rink-address-edit'),
+                        )

@@ -168,6 +168,7 @@ class Player(CTModel):
     person = models.OneToOneField(Person, unique=True)
     licence_number = models.CharField(_(u'licence number'), max_length=50, blank=True, null=True)
     club = models.ForeignKey(Club, related_name='players')
+    player_since = models.DateField(_(u'Player since'), blank=True, null=True)
 
     def __unicode__(self):
         return self.person.__unicode__()
@@ -182,7 +183,7 @@ class Coach(CTModel):
     A Coach Entity
     """
     person = models.OneToOneField(Person, unique=True)
-
+    coach_since = models.DateField(_(u'coach since'), blank=True, null=True)
     class Meta:
         verbose_name = _(u'coach')
         verbose_name_plural = _(u'coaches')

@@ -39,7 +39,7 @@
 		{% if object.address %}
 		{% html_address object.address %}
 		{% else %}
-		<em>{% trans "No address yet defined." %}</em>
+		<em>{% trans "Not specified" %}</em>
 		{% endif %}
 	  </td>
 	</tr>
@@ -56,6 +56,10 @@
 	{% if player %}
 	<tr><th>{% trans "Licence number" %}</th><td>{{ player.licence_number }}</td></tr>
 	<tr><th>{% trans "Club"%}</th><td>{{ player.club }}</td></tr>
+	<tr>
+	  <th>{% trans "Plays since"%}</th>
+	  <td>{% if player.player_since %}{{ player.player_since }}{% else %}<em>{% trans "Not specified" %}</em>{% endif %}</td>
+	</tr>
 	{% else %}
 	<tr><td colspan="2" style="text-align: center;"><em>{% trans "No informations available." %}</em></td></tr>
 	{% endif %}
@@ -70,9 +74,16 @@
   </thead>
   <tbody>
 	<tr>
-	  {% if not object.coach %}
+	  {% with person.coach as coach %}
+	  {% if coach %}
+	  <tr>
+		<th>{% trans "Coach since" %}</th>
+		<td>{% if coach.since %}{{ coach.coach_since }}{% else %}<em>{% trans "Not specified" %}</em>{% endif %}</td>
+	  </tr>
+	  {% else %}
 	  <td colspan="2" style="text-align: center;"><em>{% trans "No informations available." %}</em></td>
 	  {% endif %}
+	  {% endwith %}
 	</tr>
   </tbody>
 </table>
@@ -94,11 +105,11 @@
 </a>
 {% endif %}
 {% if not person.coach %}
-<a class="btn btn-block btn-large" href="#">
+<a class="btn btn-block btn-large" href="{% url 'base:person-coach-add' object.pk %}">
   <i class="icon-plus"></i>&nbsp;{% trans "Create Coach" %}
 </a>
 {% else %}
-<a class="btn btn-block btn-large" href="#">
+<a class="btn btn-block btn-large" href="{% url 'base:person-coach-edit' object.pk %}">
   <i class="icon-edit"></i>&nbsp;{% trans "Edit coach" %}
 </a>
 {% endif %}
