@@ -5,6 +5,7 @@
     "fields": {
       "club": 1, 
       "person": 1, 
+      "player_since": null, 
       "licence_number": "12345"
     }
   }
