@@ -194,3 +194,18 @@ LEFT_SIDEBAR_LAYOUT_ID = 'ct-left-sidebar-layout'
 STATIC_FLAGS_COUNTRIES = 'base/images/flags'
 FLAGS_COUNTRIES_EXT = '.png'
 DEFAULT_FLAG_COUNTRIES = 'default'
+
+
+URL_LIST_SUFFIX = '-list'
+URL_DETAIL_SUFFIX = '-detail'
+URL_ADD_SUFFIX = '-add'
+URL_EDIT_SUFFIX = '-edit'
+URL_DELETE_SUFFIX = '-delete'
+
+APP_HOME_TEMPLATE = 'app_home.html'
+
+CORE_MODULE = 'core'
+
+DEFAULT_APP_HOME_TEMPLATE = '%s/%s' % (CORE_MODULE, APP_HOME_TEMPLATE)
+CONTEXT_MODEL_INFOS = 'ct_model'
+CONTEXT_MODEL_EDIT = 'ct_model_edit'
