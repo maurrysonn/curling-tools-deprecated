@@ -27,7 +27,10 @@ runserver:
 	python -Wd manage.py runserver 0.0.0.0:8000
 
 # Settings
-cp_settings:
+settings_freeze:
+	cp curling_tools/settings.py settings.py.example
+
+settings_upgrade:
 	cp settings.py.example curling_tools/settings.py
 
 # Initial Data
