@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from curling_tools.core.forms import CTModelForm
-from curling_tools.base.models import Person, Player, Coach, Club, Rink
+from curling_tools.base.models import Person, Player, Coach, Club, Rink, Team
 
 
 class PersonForm(CTModelForm):
@@ -32,3 +32,7 @@ class RinkForm(CTModelForm):
         model = Rink
         exclude = ('address',)
 
+class TeamForm(CTModelForm):
+    class Meta:
+        model = Team
+        exclude = ('players',)

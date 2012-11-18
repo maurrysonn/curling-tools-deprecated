@@ -22,23 +22,23 @@ class BaseSubmenu(CTSubmenuMixin):
 
     submenu_items = (
         (_(u'Countries'),
-         ((_(u'List of countries'), '/base/country/'),
-          (_(u'Add a country'), '/base/country/add'))),
+         ((_(u'List of countries'), reverse_lazy('base:country-list')),
+          (_(u'Add a country'), reverse_lazy('base:country-add')))),
         (_(u'Cities'),
-         ((_(u'List of cities'), '/base/city/'),
-          (_(u'Add a city'), '/base/city/add/'))),
+         ((_(u'List of cities'), reverse_lazy('base:city-list')),
+          (_(u'Add a city'), reverse_lazy('base:city-add')))),
         (_(u'Persons'),
-         ((_(u'List of persons'), '/base/person/'),
-          (_(u'Add a person'), '/base/person/add/'))),
-        # (_(u'Players'),
-        #  ((_(u'List of players'), '/base/player/'),
-        #   (_(u'Add a player'), '/base/player/add/')))
+         ((_(u'List of persons'), reverse_lazy('base:person-list')),
+          (_(u'Add a person'), reverse_lazy('base:person-add')))),
         (_(u'Clubs'),
          ((_(u'List of clubs'), reverse_lazy('base:club-list')),
-          (_(u'Add a player'), reverse_lazy('base:club-add')))),
+          (_(u'Add a club'), reverse_lazy('base:club-add')))),
         (_(u'Rinks'),
          ((_(u'List of rinks'), reverse_lazy('base:rink-list')),
           (_(u'Add a rink'), reverse_lazy('base:rink-add')))),
+        (_(u'Teams'),
+         ((_(u'List of teams'), reverse_lazy('base:team-list')),
+          (_(u'Add a team'), reverse_lazy('base:team-add')))),
         )
     
 
@@ -145,6 +145,28 @@ class PersonCoachUpdateView(PersonRelatedMixin, BaseSubmenu, CTUpdateView):
 
 
 # ------------
+# Club Views
+# ------------
+
+class ClubRelatedMixin(ObjectRelatedMixin):
+    rel_model = Club
+
+class ClubAddressUpdateView(ClubRelatedMixin, AddressRelatedUpdateMixin,
+                              BaseSubmenu, CTUpdateView): pass
+
+
+# ------------
+# Rink Views
+# ------------
+
+class RinkRelatedMixin(ObjectRelatedMixin):
+    rel_model = Rink
+
+class RinkAddressUpdateView(RinkRelatedMixin, AddressRelatedUpdateMixin,
+                              BaseSubmenu, CTUpdateView): pass
+
+
+# ------------
 # Player Views
 # ------------
 
@@ -164,22 +186,3 @@ class PersonCoachUpdateView(PersonRelatedMixin, BaseSubmenu, CTUpdateView):
 #                               {'player_form': player_form,
 #                                'person_form': person_form,},
 #                               context_instance=RequestContext(request))
-
-
-# ------------
-# Club Views
-# ------------
-
-class ClubAddressUpdateView(AddressRelatedUpdateMixin,
-                            BaseSubmenu, CTUpdateView):
-    rel_model = Club
-    form_class = ClubForm
-
-# ------------
-# Rink Views
-# ------------
-
-class RinkAddressUpdateView(AddressRelatedUpdateMixin,
-                            BaseSubmenu, CTUpdateView):
-    rel_model = Rink
-    form_class = RinkForm

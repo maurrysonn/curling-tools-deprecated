@@ -3,25 +3,51 @@
 Bug Fix : This DIV allows to use the data-parent property
 (and add 'accordion-patch' to delete group style).
 {% endcomment %}
+{% load submenu_tags %}
 
+{% with request.path as request_url %}
 <div class="accordion-group patch">
-{% for item in ct_submenu.items %}
-  <ul class="nav nav-list">
-	<li class="nav-header"
-		data-toggle="collapse"
-		{#data-parent="#ct-left-sidebar-layout"#}
-		data-target="#submenu{{ forloop.counter }}">
-	  <a href="#">{{ item.title }}</a>
-	</li>
-	{% if not forloop.last %}<li class="divider"></li>{% endif %}
-  </ul>
-  <ul class="nav nav-list collapse{#{% if forloop.first %}#} in{#{% endif %}#}"
-	  id="submenu{{ forloop.counter }}">
-	{% if forloop.last %}<li class="divider"></li>{% endif %}
-	{% for link in item.links %}
-	<li><a href="{{ link.url }}">{{ link.title }}</a></li>
-	{% endfor %}
-	{% if not forloop.last %}<li class="divider"></li>{% endif %}
-  </ul>
-{% endfor %}
+  {% for item in ct_submenu.items %}
+  <div class="ct-submenu-hover-ctn">
+	<ul class="nav nav-list ct-submenu-header">
+	  <li class="nav-header"
+		  {#data-toggle="collapse"#}
+		  {#data-parent="#ct-left-sidebar-layout"#}
+		  {#data-target="#submenu{{ forloop.counter }}"#}>
+		<a href="#">{{ item.title }}</a>
+	  </li>
+	  {% if not forloop.last %}<li class="divider"></li>{% endif %}
+	</ul>
+	<ul class="nav nav-list ct-submenu-items collapse{% if item|is_active_item:request_url %} in ct-submenu-active{% endif %}"
+		id="submenu{{ forloop.counter }}">
+	  {% if forloop.last %}<li class="divider"></li>{% endif %}
+	  {% for link in item.links %}
+	  <li{% if link.url == request_url %} class="active"{% endif %}><a href="{{ link.url }}">{{ link.title }}</a></li>
+	  {% endfor %}
+	  {% if not forloop.last %}<li class="divider"></li>{% endif %}
+	</ul>
+  </div>
+  {% endfor %}
 </div>
+{% endwith %}
+
+
+<script type="text/javascript">
+  function collapseSubmenu(item, type){
+    var submenu_items = $(item).children('ul.ct-submenu-items');
+    if(!submenu_items.hasClass('ct-submenu-active')){
+      submenu_items.collapse(type);
+    }
+  }
+
+  $(document).ready(function(){
+    $('#ct-left-sidebar-layout div.ct-submenu-hover-ctn').each(function(){
+      $(this).hover(function(){
+        collapseSubmenu(this, 'show');
+      }, function(){
+        collapseSubmenu(this, 'hide');
+      });
+    });
+  });
+</script>
+

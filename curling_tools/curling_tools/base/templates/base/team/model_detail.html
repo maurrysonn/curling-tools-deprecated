@@ -1,0 +1,18 @@
+{% extends 'core/model_detail.html' %}
+{% load i18n static %}
+{% load url from future %}
+
+{% block object_fields %}
+<tr><th>{% trans "Name" %}</th><td>{{ object.name }}</td></tr>
+<tr><th>{% trans "Club" %}</th><td>{{ object.club }}</td></tr>
+<tr>
+  <th>{% trans "Coach" %}</th>
+  <td>{% if object.coach %}{{ object.coach }{% else %}<em>{% trans 'Not specified' %}</em>{% endif %}</td>
+</tr>
+{% endblock object_fields %}
+
+{% block object_extra_actions %}
+<h4 class="text-center">{% trans "Extra actions" %}</h4>
+<a class="btn btn-block btn-large" href="#">
+  <i class="icon-plus"></i>&nbsp;{% trans "Add player" %} - TODO</a>
+{% endblock object_extra_actions %}

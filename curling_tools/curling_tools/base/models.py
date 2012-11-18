@@ -199,7 +199,7 @@ class Team(CTModel):
     """
     name = models.CharField(_(u"name"), max_length=100)
     club = models.ForeignKey(Club, related_name="teams")
-    coach = models.ForeignKey(Coach, related_name="teams")
+    coach = models.ForeignKey(Coach, related_name="teams", blank=True, null=True)
     players = models.ManyToManyField(Player, related_name="teams",
                                      through="TeamMembership")
 

@@ -4,10 +4,12 @@
 
 <div class="row-fluid">
   <div class="span2">
-	<div class="well well-small" id="ct-left-sidebar-layout">
-	  {% block left_sidebar_layout %}
-	  {% if ct_submenu %}{% include ct_submenu.snippet %}{% endif %}
-	  {% endblock %}
+	<div id="ct-left-sidebar-layout">
+	  <div class="well well-small">
+		{% block left_sidebar_layout %}
+		{% if ct_submenu %}{% include ct_submenu.snippet %}{% endif %}
+		{% endblock %}
+	  </div>
 	</div>
   </div>
   <div class="span10" id="ct-center-layout">

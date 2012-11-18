@@ -10,9 +10,9 @@ from curling_tools.base.views import (BaseSubmenu, BaseHomeView,
                                       ClubAddressUpdateView, RinkAddressUpdateView,
                                       )
 # Module models
-from curling_tools.base.models import Country, City, Person, Club, Rink
+from curling_tools.base.models import Country, City, Person, Club, Rink, Team
 # Module forms
-from curling_tools.base.forms import PersonForm, ClubForm, RinkForm
+from curling_tools.base.forms import PersonForm, ClubForm, RinkForm, TeamForm
 
 
 urlpatterns = patterns('',
@@ -55,3 +55,5 @@ urlpatterns += patterns('',
                             RinkAddressUpdateView.as_view(),
                             name='rink-address-edit'),
                         )
+
+urlpatterns += get_default_model_url(Team, submenu_mixin=BaseSubmenu, form_class=TeamForm)
