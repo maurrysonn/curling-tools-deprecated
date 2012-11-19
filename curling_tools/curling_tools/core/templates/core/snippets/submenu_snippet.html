@@ -33,20 +33,28 @@ Bug Fix : This DIV allows to use the data-parent property
 
 
 <script type="text/javascript">
+  function showSubmenu(submenu){
+    if(!submenu.hasClass('in')){ submenu.collapse('show'); }
+  }
+
+  function hideSubmenu(submenu){
+    if(submenu.hasClass('in')){ submenu.collapse('hide'); }
+  }
+
   function collapseSubmenu(item, type){
     var submenu_items = $(item).children('ul.ct-submenu-items');
     if(!submenu_items.hasClass('ct-submenu-active')){
-      submenu_items.collapse(type);
+      if(type == 'show'){ showSubmenu(submenu_items); }
+      if(type == 'hide'){ hideSubmenu(submenu_items); }
     }
   }
 
   $(document).ready(function(){
     $('#ct-left-sidebar-layout div.ct-submenu-hover-ctn').each(function(){
-      $(this).hover(function(){
-        collapseSubmenu(this, 'show');
-      }, function(){
-        collapseSubmenu(this, 'hide');
-      });
+      $(this).hover(
+        function(){ collapseSubmenu(this, 'show'); },
+        function(){ collapseSubmenu(this, 'hide'); }
+      );
     });
   });
 </script>
