@@ -184,6 +184,10 @@ class Coach(CTModel):
     """
     person = models.OneToOneField(Person, unique=True)
     coach_since = models.DateField(_(u'coach since'), blank=True, null=True)
+
+    def __unicode__(self):
+        return u'%s' % self.person
+
     class Meta:
         verbose_name = _(u'coach')
         verbose_name_plural = _(u'coaches')
@@ -202,6 +206,9 @@ class Team(CTModel):
     coach = models.ForeignKey(Coach, related_name="teams", blank=True, null=True)
     players = models.ManyToManyField(Player, related_name="teams",
                                      through="TeamMembership")
+
+    def members_list(self):
+        return TeamMembership.objects.filter(team=self).order_by("-position")
 
     def __unicode__(self):
         return self.name
@@ -236,6 +243,20 @@ class TeamMembership(models.Model):
         # Canot be both skip and vice.
         if self.is_skip and self.is_vice:
             raise ValidationError(_(u"A player can't be both vice and skip."))
+    
+    def get_absolute_url(self):
+        return self.team.get_absolute_url()
+
+    def get_absolute_list_url(self):
+        return self.team.get_absolute_url()
+
+    def get_absolute_edit_url(self):
+        url_name = u'%s:%s%s' % (self.app_label, self.module_name, settings.URL_EDIT_SUFFIX)
+        return reverse(url_name, args=[self.team.pk, self.pk])
+
+    def get_absolute_delete_url(self):
+        url_name = u'%s:%s%s' % (self.app_label, self.module_name, settings.URL_DELETE_SUFFIX)
+        return reverse(url_name, args=[self.team.pk])
 
     class Meta:
         unique_together = ("player", "team")

@@ -157,6 +157,7 @@ class CTModelUpdateMixin(CTBaseModelMixin):
     "Defines mechanism of detail object view."
 
     def get_cancel_url(self):
+        # return self.object.get_absolute_url()
         return None
 
     def get_context_data(self, **kwargs):
@@ -169,6 +170,7 @@ class CTModelDeleteMixin(CTBaseModelMixin):
     "Defines mechanism of delete object view."
 
     def get_cancel_url(self):
+        # return self.object.get_absolute_url()
         return None
 
     def get_success_url(self):
@@ -186,7 +188,7 @@ class CTModelDeleteMixin(CTBaseModelMixin):
 
     def get_context_data(self, **kwargs):
         context = super(CTModelDeleteMixin, self).get_context_data(**kwargs)
-        context[settings.CONTEXT_MODEL_DELETE] = {}
+        context[settings.CONTEXT_MODEL_DELETE] = {'cancel_url': self.get_cancel_url()}
         return context
 
 # ---------------

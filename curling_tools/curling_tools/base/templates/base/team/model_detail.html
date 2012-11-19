@@ -2,17 +2,51 @@
 {% load i18n static %}
 {% load url from future %}
 
+{# TEAM INFOS #}
 {% block object_fields %}
 <tr><th>{% trans "Name" %}</th><td>{{ object.name }}</td></tr>
 <tr><th>{% trans "Club" %}</th><td>{{ object.club }}</td></tr>
 <tr>
   <th>{% trans "Coach" %}</th>
-  <td>{% if object.coach %}{{ object.coach }{% else %}<em>{% trans 'Not specified' %}</em>{% endif %}</td>
+  <td>{% if object.coach %}{{ object.coach }}{% else %}<em>{% trans 'Not specified' %}</em>{% endif %}</td>
 </tr>
 {% endblock object_fields %}
 
+
+{% block extra_object_infos %}
+<table class="table table-striped table-bordered table-hover table-vertical-align">
+  <thead>
+	<tr>
+	  <th>{% trans "Player" %}</th>
+	  <th>{% trans "Position" %}</th>
+	  <th class="text-center" style="width: 20%;">{% trans "Actions" %}</th></tr>
+  </thead>
+  <tbody>
+	{% for member in object.members_list %}
+	<tr>
+	  <td>{{ member.player }}&nbsp;
+		{% if member.is_skip %}(<strong>{% trans "Skip" %}</strong>){% else %}
+		{% if member.is_vice %}(<strong>{% trans "Vice" %}</strong>){% endif %}{% endif %}
+	  </td>
+	  <td>{{ member.get_position_display }}</td>
+	  <td class="text-center">
+		<a class="btn btn-primary"
+		   href="/base/team/{{ object.pk }}/member/{{ member.pk}}/edit/"
+		   title="{% trans 'Edit' %}"><i class="icon-edit icon-white"></i></a>
+		<a class="btn btn-danger"
+		   href="{% url 'base:teammembership-delete' object.pk member.pk %}"
+		   title="{% trans 'Delete' %}"><i class="icon-trash icon-white"></i></a>
+	  </td>
+	</tr>
+	{% endfor %}
+  </tbody>
+</table>
+{% endblock extra_object_infos %}
+
+
 {% block object_extra_actions %}
 <h4 class="text-center">{% trans "Extra actions" %}</h4>
-<a class="btn btn-block btn-large" href="#">
-  <i class="icon-plus"></i>&nbsp;{% trans "Add player" %} - TODO</a>
+<a class="btn btn-block btn-large"
+   href="{% url 'base:teammembership-add' object.pk %}">
+  <i class="icon-plus"></i>&nbsp;{% trans "Add player" %}</a>
 {% endblock object_extra_actions %}

@@ -18,12 +18,13 @@
 	  {% block object_fields %}
 	  {% endblock object_fields %}
 	</table>
+	{% block extra_object_infos %}{% endblock extra_object_infos %}
 	{% endblock object_container %}
   </div>
   {% block object_actions_container %}
   <div class="span3 well well-small">
 	{% block object_actions %}
-	<h4 style="text-align: center;">{% trans "Actions" %}</h4>
+	<h4 class="text-center">{% trans "Actions" %}</h4>
 	<a class="btn btn-block btn-large" href="{{ object.get_absolute_list_url }}">
 	  <i class="icon-list"></i>&nbsp;{% trans "Go back to list" %}</a>
 	<a class="btn btn-block btn-large btn-primary" href="{{ object.get_absolute_edit_url }}">

@@ -4,17 +4,21 @@ from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
+from django.db import IntegrityError
 # Core views
 from curling_tools.core.views import (CTSubmenuMixin,
                                       CTAppHomeView,
                                       CTUpdateView,
-                                      CTCreateView)
+                                      CTCreateView,
+                                      CTDeleteView)
 # Models module
 from curling_tools.base.models import (Country, Person, Address,
-                                       Player, Coach, Club, Rink)
+                                       Player, Coach, Club, Rink,
+                                       Team, TeamMembership)
 # Forms module
 from curling_tools.base.forms import (PersonPlayerForm, PersonCoachForm,
-                                      ClubForm, RinkForm)
+                                      ClubForm, RinkForm,
+                                      TeamMembershipForm, TeamMembershipUpdateForm)
 
 
 class BaseSubmenu(CTSubmenuMixin):
@@ -166,23 +170,46 @@ class RinkAddressUpdateView(RinkRelatedMixin, AddressRelatedUpdateMixin,
                               BaseSubmenu, CTUpdateView): pass
 
 
-# ------------
-# Player Views
-# ------------
+# ----------
+# Team Views
+# ----------
 
-# def player_update_view(request, pk):
-#     player = get_object_or_404(Player, pk=pk)
-#     if request.method == 'POST':
-#         player_form = PlayerForm(request.POST, instance=player, prefix="player")
-#         person_form = PersonForm(request.POST, instance=player.person, prefix="person")
-#         if person_form.is_valid() and player_form.is_valid():
-#             person = person_form.save()
-#             player = player_form.save()
-#             return HttpResponseRedirect(player.get_absolute_url())
-#     else:
-#         person_form = PersonForm(instance=person, prefix='person')
-#         player_form = PlayerForm(instance=person.player, prefix="player")
-#     return render_to_response(get_template_names_for_model(Player),
-#                               {'player_form': player_form,
-#                                'person_form': person_form,},
-#                               context_instance=RequestContext(request))
+class TeamRelatedMixin(ObjectRelatedMixin):
+    rel_model = Team
+
+
+class TeamRelatedCreateMixin(TeamRelatedMixin, BaseSubmenu, CTCreateView):
+    """
+    View that create a player from a person detail view.
+    """
+    def form_valid(self, form):
+        # Create instance object
+        self.object = form.save(commit=False)
+        # Update person attr
+        self.object.team = self.rel_obj
+        # Save the new object
+        self.object.save()
+        return HttpResponseRedirect(self.get_success_url())
+
+
+class TeamMembershipCreateView(TeamRelatedCreateMixin):
+    model = TeamMembership
+    form_class = TeamMembershipForm
+
+
+class TeamMembershipDeleteView(BaseSubmenu, CTDeleteView):
+    model = TeamMembership
+    
+    @property
+    def team(self):
+        if not hasattr(self, '_team'):
+            self._team = Team.objects.get(pk=self.kwargs['pk_team'])
+        return self._team
+    
+    def get_success_url(self):
+        return self.team.get_absolute_url()
+
+
+class TeamMembershipUpdateView(BaseSubmenu, CTUpdateView):
+    model = TeamMembership
+    form_class = TeamMembershipUpdateForm
