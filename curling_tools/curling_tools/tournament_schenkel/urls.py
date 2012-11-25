@@ -6,11 +6,9 @@ from curling_tools.core.utils import get_default_model_url
 # Schenkel Tournament Utils
 from curling_tools.tournament_schenkel.utils import PREFIX_URL_TOURNAMENT, ST_get_default_model_url
 # Module views
-from curling_tools.tournament_schenkel.views import (STSubmenu, STHomeView,
-                                                     STDashboardView,
-                                                     STGroupCreateView,
-                                                     STTournamentRoundCreateView,
-                                                     STRoundCreateView)
+from curling_tools.tournament_schenkel.views import (STSubmenu, STDashboardSubmenu,
+                                                     STHomeView, STDashboardView,)
+                                                     
 from curling_tools.tournament_schenkel.forms import *
 # Module models
 from curling_tools.tournament_schenkel.models import (SchenkelTournament,
@@ -31,4 +29,7 @@ urlpatterns += patterns('',
                         # url(r'^%smain-round/(?P<pk_main_round>\d+)/round/add/$' % PREFIX_URL_TOURNAMENT, STRoundCreateView.as_view(), name='round-add'),
                         )
 
-urlpatterns += ST_get_default_model_url(SchenkelGroup, form_class=STGroupForm)
+urlpatterns += ST_get_default_model_url(SchenkelGroup, form_class=STGroupForm,
+                                        submenu_mixin=STDashboardSubmenu)
+urlpatterns += ST_get_default_model_url(SchenkelTournamentRound, form_class=STTournamentRoundForm,
+                                        submenu_mixin=STDashboardSubmenu)

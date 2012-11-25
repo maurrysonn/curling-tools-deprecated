@@ -14,6 +14,9 @@ urlpatterns = patterns('',
                        # Base module
                        url(r'^base/', include('curling_tools.base.urls', namespace='base')),
 
+                       # Base module
+                       url(r'^schenkel/', include('curling_tools.tournament_schenkel.urls', namespace='tournament_schenkel')),
+                       
                        # url(r'^_admin/doc/', include('django.contrib.admindocs.urls')),
                        url(r'^_admin/', include(admin.site.urls)),
                        )

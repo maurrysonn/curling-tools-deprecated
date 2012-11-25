@@ -1,33 +1,30 @@
 {% extends "core/model_detail.html" %}
 {% load i18n %}
 
-
 {% block object_fields %}
 <tr><th>{% trans "Tournament" %}</th><td>{{ object.tournament }}</td></tr>
 <tr><th>{% trans "Name" %}</th><td>{{ object.name }}</td></tr>
 <tr><th>{% trans "Level" %}</th><td>{{ object.level }}</td></tr>
-<tr><th>{% trans "Order" %}</th><td>{{ object.order }}</td></tr>
+<tr><th>{% trans "Type" %}</th><td>{{ object.get_type_display }}</td></tr>
 {% endblock object_fields %}
 
 {% block extra_object_infos %}
-<h3 class="text-center">{% trans "Teams" %}&nbsp;(&nbsp;{{ object.nb_current_teams }}&nbsp;/&nbsp;{{ object.nb_teams}}&nbsp;)</h3>
+<h3 class="text-center">{% trans "Rounds" %}</h3>
 <table class="table table-striped table-bordered table-hover table-vertical-align">
   <thead>
-	<tr><th>{% trans "Name" %}</th><th>{% trans "Skip" %}</th><th>{% trans "Club" %}</th></tr>
+	<tr><th>{% trans "Group" %}</th><th>{% trans "Date" %}</th><th>{% trans "Time" %}</th></tr>
   </thead>
   <tbody>
-	{% for team in object.teams.all %}
-	<tr><td>{{ team.name }}</td><td>{{ team.skip.player.person.full_name }}</td><td>{{ team.club }}</td></tr>
+	{% for round in object.rounds_list %}
+	<tr><td>{% trans "Group" %}&nbsp;{{ round.group.name }}</td><td>{{ round.date|date:"d/m/y" }}</td><td>{{ round.time_start|time:"H:i" }}</td></tr>
 	{% empty %}
-	<tr class="error"><td colspan="3" class="text-center"><em>{% trans "No team available" %}</em></td></tr>
+	<tr class="error"><td colspan="3" class="text-center"><em>{% trans "No round available" %}</em></td></tr>
 	{% endfor %}
   </tbody>
 </table>
 {% endblock extra_object_infos %}
 
 {% block object_extra_actions %}
-{% if object.level == 1 %}
 <a class="btn btn-block btn-large" href="#">
-  <i class="icon-edit"></i>&nbsp;{% trans "Edit teams" %}</a>
-{% endif %}
+  <i class="icon-plus"></i>&nbsp;{% trans "Add round" %}</a>
 {% endblock object_extra_actions %}

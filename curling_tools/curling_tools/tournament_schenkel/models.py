@@ -11,6 +11,25 @@ from curling_tools.base.models import Club, Rink, Team
 from curling_tools.tournament_base.models import End, Sheet
 
 
+class STModelMixin(object):
+
+    def get_absolute_url(self):
+        url_name = u'%s:tournament-%s%s' % (self.app_label, self.module_name, settings.URL_DETAIL_SUFFIX)
+        return reverse(url_name, args=[self.tournament.pk, self.pk])
+
+    def get_absolute_list_url(self):
+        url_name = u'%s:tournament-%s%s' % (self.app_label, self.module_name, settings.URL_LIST_SUFFIX)
+        return reverse(url_name, args=[self.tournament.pk])
+
+    def get_absolute_edit_url(self):
+        url_name = u'%s:tournament-%s%s' % (self.app_label, self.module_name, settings.URL_EDIT_SUFFIX)
+        return reverse(url_name, args=[self.tournament.pk, self.pk])
+
+    def get_absolute_delete_url(self):
+        url_name = u'%s:tournament-%s%s' % (self.app_label, self.module_name, settings.URL_DELETE_SUFFIX)
+        return reverse(url_name, args=[self.tournament.pk, self.pk])
+
+
 class SchenkelTournament(CTModel):
     """
     A basic Tournament Entity
@@ -55,7 +74,7 @@ class SchenkelTournament(CTModel):
         ordering = ["start_date", "name"]
 
 
-class SchenkelTournamentRound(models.Model):
+class SchenkelTournamentRound(STModelMixin, CTModel):
     """
     A matches round of a tournament.
 
@@ -93,11 +112,6 @@ class SchenkelTournamentRound(models.Model):
         # TODO
         pass
 
-    def get_absolute_url(self):
-        # TODO
-        # OLD : return reverse('round-list', args=[self.tournament.pk])
-        return u'/'
-    
     def save(self, *args, **kwargs):
         # If creation
         if not self.pk:
@@ -127,7 +141,7 @@ class SchenkelTournamentRound(models.Model):
         ordering = ["tournament", "level"]
 
 
-class SchenkelGroup(CTModel):
+class SchenkelGroup(STModelMixin, CTModel):
     """
     Represents a group of a round.
     """
@@ -148,22 +162,6 @@ class SchenkelGroup(CTModel):
 
     def __unicode__(self):
         return u'%s - %s (Level:%s - Order:%s)' % (self.tournament, self.name, self.level, self.order)
-
-    def get_absolute_url(self):
-        url_name = u'%s:tournament-%s%s' % (self.app_label, self.module_name, settings.URL_DETAIL_SUFFIX)
-        return reverse(url_name, args=[self.tournament.pk, self.pk])
-
-    def get_absolute_list_url(self):
-        url_name = u'%s:tournament-%s%s' % (self.app_label, self.module_name, settings.URL_LIST_SUFFIX)
-        return reverse(url_name, args=[self.tournament.pk])
-
-    def get_absolute_edit_url(self):
-        url_name = u'%s:tournament-%s%s' % (self.app_label, self.module_name, settings.URL_EDIT_SUFFIX)
-        return reverse(url_name, args=[self.tournament.pk, self.pk])
-
-    def get_absolute_delete_url(self):
-        url_name = u'%s:tournament-%s%s' % (self.app_label, self.module_name, settings.URL_DELETE_SUFFIX)
-        return reverse(url_name, args=[self.tournament.pk, self.pk])
 
     def clean(self):
         if self.nb_teams % 2:

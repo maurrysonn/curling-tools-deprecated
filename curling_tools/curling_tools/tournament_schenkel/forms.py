@@ -16,6 +16,7 @@ class STGroupForm(CTModelForm):
 class STTournamentRoundForm(CTModelForm):
     class Meta:
         model = SchenkelTournamentRound
+        widgets = {'tournament': forms.HiddenInput}
 
 
 class STRoundForm(CTModelForm):

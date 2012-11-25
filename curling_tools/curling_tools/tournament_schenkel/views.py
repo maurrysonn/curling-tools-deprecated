@@ -26,6 +26,27 @@ from curling_tools.tournament_schenkel.forms import (STGroupForm,
 # SCHENKEL TOURNAMENT BASE VIEWS
 # -------------------------------------
 
+class STSubmenu(CTSubmenuMixin):
+    "Define a submenu for the module."
+
+    submenu_items = (
+        (_(u'Tournaments'),
+         ((_(u'List of tournaments'), reverse_lazy('tournament_schenkel:schenkeltournament-list')),
+          (_(u'Add a tournament'), reverse_lazy('tournament_schenkel:schenkeltournament-add')))),
+        )
+
+
+class STDashboardSubmenu(CTSubmenuMixin):
+
+    def get_submenu_items(self):
+        submenu_items = (
+            (u'%s' % self.tournament.name,
+             ((_(u'Dashboard'), reverse('tournament_schenkel:dashboard', args=[self.tournament.pk])),
+              )),
+            )
+        return submenu_items
+
+
 class STBaseMixin(object):
 
     @property
@@ -41,40 +62,29 @@ class STBaseMixin(object):
         return context
 
 
-class STBaseCreateView(STBaseMixin, CTCreateView):
+class STBaseCreateView(STDashboardSubmenu, STBaseMixin, CTCreateView):
     def get_initial(self):
         return {'tournament': self.tournament}
-    # def get_success_url(self):
-    #     return self.tournament.get_absolute_dashboard_url()
 
-class STBaseUpdateView(STBaseMixin, CTUpdateView): pass
-class STBaseDeleteView(STBaseMixin, CTDeleteView):
+class STBaseUpdateView(STDashboardSubmenu, STBaseMixin, CTUpdateView): pass
+
+class STBaseDeleteView(STDashboardSubmenu, STBaseMixin, CTDeleteView):
     def get_success_url(self):
         return self.object.get_absolute_list_url()
 
-class STBaseDetailView(STBaseMixin, CTDetailView): pass
-class STBaseListView(STBaseMixin, CTListView):
+class STBaseDetailView(STDashboardSubmenu, STBaseMixin, CTDetailView): pass
+
+class STBaseListView(STDashboardSubmenu, STBaseMixin, CTListView):
     def get_queryset(self):
         return super(STBaseListView, self).get_queryset().filter(tournament=self.tournament)
 
 # -------------------------------------
 
 
-
-class STSubmenu(CTSubmenuMixin):
-    "Define a submenu for the module."
-
-    submenu_items = (
-        (_(u'Tournaments'),
-         ((_(u'List of tournaments'), reverse_lazy('tournament_schenkel:schenkeltournament-list')),
-          (_(u'Add a tournament'), reverse_lazy('tournament_schenkel:schenkeltournament-add')))),
-        )
-
-
 class STHomeView(STSubmenu, CTAppHomeView): pass
 
 
-class STDashboardView(STSubmenu, STBaseMixin, CTTemplateView):
+class STDashboardView(STDashboardSubmenu, STBaseMixin, CTTemplateView):
     
     template_name = 'tournament_schenkel/schenkeltournament/dashboard.html'
     
