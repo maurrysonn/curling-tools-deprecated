@@ -37,18 +37,20 @@ settings_upgrade:
 dump_initial_data:
 	mv initial_data.json initial_data.json.save
 	python manage.py dumpdata --indent=2 --natural auth.User > initial_data.json
-	python manage.py dumpdata --natural --indent=2 base.Country > curling_tools/base/fixtures/country_data.json
+	python manage.py dumpdata --natural --indent=2 base.Country > curling_tools/base/fixtures/initial_data.json
+
+dump_test_data:
 	python manage.py dumpdata --natural --indent=2 base.City > curling_tools/base/fixtures/city_data.json
-	python manage.py dumpdata --natural --indent=2 base.address > curling_tools/base/fixtures/address_data.json
+	python manage.py dumpdata --natural --indent=2 base.Address > curling_tools/base/fixtures/address_data.json
 	python manage.py dumpdata --natural --indent=2 base.Club > curling_tools/base/fixtures/club_data.json
 	python manage.py dumpdata --natural --indent=2 base.Rink > curling_tools/base/fixtures/rink_data.json
 	python manage.py dumpdata --natural --indent=2 base.Person > curling_tools/base/fixtures/person_data.json
 	python manage.py dumpdata --natural --indent=2 base.Player > curling_tools/base/fixtures/player_data.json
 	python manage.py dumpdata --natural --indent=2 base.Coach > curling_tools/base/fixtures/coach_data.json
 	python manage.py dumpdata --natural --indent=2 base.Team base.TeamMembership > curling_tools/base/fixtures/team_data.json
+	python manage.py dumpdata --natural --indent=2 tournament_schenkel.SchenkelTournament > curling_tools/tournament_schenkel/fixtures/tournament_data.json
 
-load_data:
-	python manage.py loaddata curling_tools/base/fixtures/country_data.json
+load_test_data:
 	python manage.py loaddata curling_tools/base/fixtures/city_data.json
 	python manage.py loaddata curling_tools/base/fixtures/address_data.json
 	python manage.py loaddata curling_tools/base/fixtures/club_data.json
@@ -57,3 +59,4 @@ load_data:
 	python manage.py loaddata curling_tools/base/fixtures/player_data.json
 	python manage.py loaddata curling_tools/base/fixtures/coach_data.json
 	python manage.py loaddata curling_tools/base/fixtures/team_data.json
+	python manage.py loaddata curling_tools/tournament_schenkel/fixtures/tournament_data.json

@@ -8,5 +8,45 @@
       "player_since": null, 
       "licence_number": "12345"
     }
+  }, 
+  {
+    "pk": 2, 
+    "model": "base.player", 
+    "fields": {
+      "club": 1, 
+      "person": 5, 
+      "player_since": "2000-09-01", 
+      "licence_number": "23456"
+    }
+  }, 
+  {
+    "pk": 3, 
+    "model": "base.player", 
+    "fields": {
+      "club": 1, 
+      "person": 2, 
+      "player_since": "2000-09-01", 
+      "licence_number": "34567"
+    }
+  }, 
+  {
+    "pk": 4, 
+    "model": "base.player", 
+    "fields": {
+      "club": 1, 
+      "person": 4, 
+      "player_since": "2000-09-01", 
+      "licence_number": "567890"
+    }
+  }, 
+  {
+    "pk": 5, 
+    "model": "base.player", 
+    "fields": {
+      "club": 1, 
+      "person": 7, 
+      "player_since": "2000-09-01", 
+      "licence_number": "001234"
+    }
   }
 ]

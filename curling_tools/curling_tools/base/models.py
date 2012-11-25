@@ -152,8 +152,12 @@ class Person(CTModel):
     address = models.OneToOneField(Address, blank=True, null=True)
     photo = models.ImageField(_(u'photo'), upload_to='base/person', max_length=200, blank=True)
 
-    def __unicode__(self):
+    @property
+    def full_name(self):
         return u'%s %s' % (self.first_name, self.last_name)
+
+    def __unicode__(self):
+        return self.full_name
 
     class Meta:
         verbose_name = _(u'person')
@@ -201,14 +205,30 @@ class Team(CTModel):
     """
     A Team Entity
     """
+
+    # FIXME
+    # Not possible to be than one skip
+    # - Check validation model and 'skip' method.
+
     name = models.CharField(_(u"name"), max_length=100)
     club = models.ForeignKey(Club, related_name="teams")
     coach = models.ForeignKey(Coach, related_name="teams", blank=True, null=True)
     players = models.ManyToManyField(Player, related_name="teams",
                                      through="TeamMembership")
 
+    @property
     def members_list(self):
         return TeamMembership.objects.filter(team=self).order_by("-position")
+
+    @property
+    def skip(self):
+        print "###############"
+        # Transform 'filter' in 'get'
+        members_skip = self.members_list.filter(is_skip=True)
+        print "SKIPS =", members_skip
+        if members_skip:
+            return members_skip[0]
+        return None
 
     def __unicode__(self):
         return self.name

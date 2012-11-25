@@ -1,0 +1,16 @@
+{% extends 'core/model_detail.html' %}
+{% load i18n static %}
+
+{% block object_fields %}
+<tr><th>{% trans "Name" %}</th><td>{{ object.name }}</td></tr>
+<tr><th>{% trans "Date" %}</th><td>{{ object.start_date }} - {{ object.end_date }}</td></tr>
+<tr><th>{% trans "Club" %}</th><td>{% if object.club %}{{ object.club }}{% endif %}</td></tr>
+<tr><th>{% trans "Rink" %}</th><td>{% if object.rink %}{{ object.rink }}{% endif %}</td></tr>
+{% endblock object_fields %}
+
+{% block object_extra_actions %}
+<h4 class="text-center">{% trans "Extra actions" %}</h4>
+<a class="btn btn-success btn-block btn-large" href="{% url tournament_schenkel:dashboard object.pk  %}">
+  <i class="icon-check icon-white"></i>&nbsp;{% trans "Dashboard" %}</a>
+{% endblock object_extra_actions %}
+

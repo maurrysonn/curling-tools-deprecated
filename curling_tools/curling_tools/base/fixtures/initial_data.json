@@ -1,0 +1,292 @@
+[
+  {
+    "pk": 3, 
+    "model": "base.country", 
+    "fields": {
+      "flag": "DE", 
+      "code": "DE", 
+      "name": "Allemagne", 
+      "short_name": "ALL"
+    }
+  }, 
+  {
+    "pk": 9, 
+    "model": "base.country", 
+    "fields": {
+      "flag": "AT", 
+      "code": "AT", 
+      "name": "Autriche", 
+      "short_name": "AUT"
+    }
+  }, 
+  {
+    "pk": 5, 
+    "model": "base.country", 
+    "fields": {
+      "flag": "BE", 
+      "code": "BE", 
+      "name": "Belgique", 
+      "short_name": "BEL"
+    }
+  }, 
+  {
+    "pk": 10, 
+    "model": "base.country", 
+    "fields": {
+      "flag": "BG", 
+      "code": "BG", 
+      "name": "Bulgarie", 
+      "short_name": "BUL"
+    }
+  }, 
+  {
+    "pk": 8, 
+    "model": "base.country", 
+    "fields": {
+      "flag": "CA", 
+      "code": "CA", 
+      "name": "Canada", 
+      "short_name": "CAN"
+    }
+  }, 
+  {
+    "pk": 29, 
+    "model": "base.country", 
+    "fields": {
+      "flag": "CY", 
+      "code": "CY", 
+      "name": "Chypre", 
+      "short_name": "CHY"
+    }
+  }, 
+  {
+    "pk": 11, 
+    "model": "base.country", 
+    "fields": {
+      "flag": "DK", 
+      "code": "DK", 
+      "name": "Danemark", 
+      "short_name": "DAN"
+    }
+  }, 
+  {
+    "pk": 7, 
+    "model": "base.country", 
+    "fields": {
+      "flag": "ES", 
+      "code": "ES", 
+      "name": "Espagne", 
+      "short_name": "ESP"
+    }
+  }, 
+  {
+    "pk": 12, 
+    "model": "base.country", 
+    "fields": {
+      "flag": "EE", 
+      "code": "EE", 
+      "name": "Estonie", 
+      "short_name": "EST"
+    }
+  }, 
+  {
+    "pk": 13, 
+    "model": "base.country", 
+    "fields": {
+      "flag": "FI", 
+      "code": "FI", 
+      "name": "Finlande", 
+      "short_name": "FIN"
+    }
+  }, 
+  {
+    "pk": 1, 
+    "model": "base.country", 
+    "fields": {
+      "flag": "FR", 
+      "code": "FR", 
+      "name": "France", 
+      "short_name": "FRA"
+    }
+  }, 
+  {
+    "pk": 14, 
+    "model": "base.country", 
+    "fields": {
+      "flag": "GR", 
+      "code": "GR", 
+      "name": "Gr\u00e8ce", 
+      "short_name": "GRE"
+    }
+  }, 
+  {
+    "pk": 15, 
+    "model": "base.country", 
+    "fields": {
+      "flag": "HU", 
+      "code": "HU", 
+      "name": "Hongrie", 
+      "short_name": "HON"
+    }
+  }, 
+  {
+    "pk": 16, 
+    "model": "base.country", 
+    "fields": {
+      "flag": "IE", 
+      "code": "IE", 
+      "name": "Irlande", 
+      "short_name": "IRL"
+    }
+  }, 
+  {
+    "pk": 6, 
+    "model": "base.country", 
+    "fields": {
+      "flag": "IT", 
+      "code": "IT", 
+      "name": "Italie", 
+      "short_name": "ITA"
+    }
+  }, 
+  {
+    "pk": 17, 
+    "model": "base.country", 
+    "fields": {
+      "flag": "LV", 
+      "code": "LV", 
+      "name": "Lettonie", 
+      "short_name": "LET"
+    }
+  }, 
+  {
+    "pk": 18, 
+    "model": "base.country", 
+    "fields": {
+      "flag": "LT", 
+      "code": "LT", 
+      "name": "Lituanie", 
+      "short_name": "LIT"
+    }
+  }, 
+  {
+    "pk": 19, 
+    "model": "base.country", 
+    "fields": {
+      "flag": "LU", 
+      "code": "LU", 
+      "name": "Luxembourg", 
+      "short_name": "LUX"
+    }
+  }, 
+  {
+    "pk": 20, 
+    "model": "base.country", 
+    "fields": {
+      "flag": "MT", 
+      "code": "MT", 
+      "name": "Malte", 
+      "short_name": "MAL"
+    }
+  }, 
+  {
+    "pk": 21, 
+    "model": "base.country", 
+    "fields": {
+      "flag": "NL", 
+      "code": "NL", 
+      "name": "Pays-Bas", 
+      "short_name": "NED"
+    }
+  }, 
+  {
+    "pk": 22, 
+    "model": "base.country", 
+    "fields": {
+      "flag": "PL", 
+      "code": "PL", 
+      "name": "Pologne", 
+      "short_name": "POL"
+    }
+  }, 
+  {
+    "pk": 23, 
+    "model": "base.country", 
+    "fields": {
+      "flag": "PT", 
+      "code": "PT", 
+      "name": "Portugal", 
+      "short_name": "POR"
+    }
+  }, 
+  {
+    "pk": 25, 
+    "model": "base.country", 
+    "fields": {
+      "flag": "RO", 
+      "code": "RO", 
+      "name": "Roumanie", 
+      "short_name": "ROU"
+    }
+  }, 
+  {
+    "pk": 4, 
+    "model": "base.country", 
+    "fields": {
+      "flag": "GB", 
+      "code": "UK", 
+      "name": "Royaume Uni", 
+      "short_name": "ROY"
+    }
+  }, 
+  {
+    "pk": 24, 
+    "model": "base.country", 
+    "fields": {
+      "flag": "CZ", 
+      "code": "CZ", 
+      "name": "R\u00e9publique tch\u00e8que", 
+      "short_name": "CZ"
+    }
+  }, 
+  {
+    "pk": 26, 
+    "model": "base.country", 
+    "fields": {
+      "flag": "SK", 
+      "code": "SK", 
+      "name": "Slovaquie", 
+      "short_name": "SLO"
+    }
+  }, 
+  {
+    "pk": 27, 
+    "model": "base.country", 
+    "fields": {
+      "flag": "SI", 
+      "code": "SI", 
+      "name": "Slov\u00e9nie", 
+      "short_name": "SLO"
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "base.country", 
+    "fields": {
+      "flag": "CH", 
+      "code": "CH", 
+      "name": "Suisse", 
+      "short_name": "SUI"
+    }
+  }, 
+  {
+    "pk": 28, 
+    "model": "base.country", 
+    "fields": {
+      "flag": "SE", 
+      "code": "SE", 
+      "name": "Su\u00e8de", 
+      "short_name": "SUE"
+    }
+  }
+]
