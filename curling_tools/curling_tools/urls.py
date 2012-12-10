@@ -10,10 +10,9 @@ urlpatterns = patterns('',
 
                        # Homepage
                        url(r'^$', TemplateView.as_view(template_name='core/home.html'), name='home'),
+
                        # Base module
                        url(r'^base/', include('curling_tools.base.urls', namespace='base')),
-                       # Design module
-                       url(r'^design/', include('curling_tools.design.urls', namespace='design')),
 
                        # Base module
                        url(r'^schenkel/', include('curling_tools.tournament_schenkel.urls', namespace='tournament_schenkel')),
