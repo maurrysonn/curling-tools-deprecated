@@ -18,12 +18,11 @@ from curling_tools.tournament_schenkel.models import (SchenkelTournament,
                                                       SchenkelTournamentRound,
                                                       SchenkelRound)
 # Module forms
-from curling_tools.tournament_schenkel.forms import (STGroupForm,
-                                                     STTournamentRoundForm,
-                                                     STRoundForm)
+from curling_tools.tournament_schenkel.forms import STRoundForm
+
 
 # -------------------------------------
-# SCHENKEL TOURNAMENT BASE VIEWS
+# BASE MIXINS
 # -------------------------------------
 
 class STSubmenu(CTSubmenuMixin):
@@ -62,6 +61,10 @@ class STBaseMixin(object):
         return context
 
 
+# -------------------------------------
+# BASE VIEWS
+# -------------------------------------
+
 class STBaseCreateView(STDashboardSubmenu, STBaseMixin, CTCreateView):
     def get_initial(self):
         return {'tournament': self.tournament}
@@ -78,8 +81,11 @@ class STBaseListView(STDashboardSubmenu, STBaseMixin, CTListView):
     def get_queryset(self):
         return super(STBaseListView, self).get_queryset().filter(tournament=self.tournament)
 
-# -------------------------------------
 
+
+# -------------------------------------
+# VIEWS
+# -------------------------------------
 
 class STHomeView(STSubmenu, CTAppHomeView): pass
 
@@ -93,6 +99,10 @@ class STDashboardView(STDashboardSubmenu, STBaseMixin, CTTemplateView):
         return context
 
 
+# -------------------------------------
+# GROUP VIEWS
+# -------------------------------------
+
 class STGroupListView(STBaseListView):
 
     model = SchenkelGroup
@@ -100,15 +110,45 @@ class STGroupListView(STBaseListView):
     def get_queryset(self):
         self.tournament.groups.order_by('level', 'order')
 
-class STGroupCreateView(STSubmenu, CTCreateView):
-    model = SchenkelGroup
-    form_class = STGroupForm
+# -------------------------------------
+# ROUND VIEWS
+# -------------------------------------
 
-class STTournamentRoundCreateView(STSubmenu, CTCreateView):
-    model = SchenkelTournamentRound
-    form_class = STTournamentRoundForm
+class STRoundMixin(object):
+
+    @property
+    def tournament_round(self):
+        if not hasattr(self, '_tournament_round'):
+            self._tournament_round = get_object_or_404(SchenkelTournamentRound,
+                                                       pk=self.kwargs['pk_tournament_round'])
+        return self._tournament_round
+
+    def get_context_data(self, **kwargs):
+        context = super(STRoundMixin, self).get_context_data(**kwargs)
+        context['ct_tournament_round'] = self.tournament_round
+        return context
+    
+
+class STRoundListView(STRoundMixin, STDashboardSubmenu, STBaseMixin, CTListView):
+
+    model = SchenkelRound
+
+    def get_queryset(self):
+        return super(CTListView, self).get_queryset().filter(tournament_round=self.tournament_round)
 
 
-class STRoundCreateView(STSubmenu, CTCreateView):
+class STRoundCreateView(STRoundMixin, STBaseCreateView):
+
     model = SchenkelRound
     form_class = STRoundForm
+
+    def get_initial(self):
+        return {'tournament_round': self.tournament_round}
+
+class STRoundUpdateView(STRoundMixin, STBaseUpdateView):
+    
+    model = SchenkelRound
+    form_class = STRoundForm
+
+class STRoundDetailView(STRoundMixin, STBaseDetailView): pass
+

@@ -1,5 +1,6 @@
 {% extends "core/model_detail.html" %}
 {% load i18n %}
+{% load url from future %}
 
 {% block object_fields %}
 <tr><th>{% trans "Tournament" %}</th><td>{{ object.tournament }}</td></tr>
@@ -16,7 +17,14 @@
   </thead>
   <tbody>
 	{% for round in object.rounds_list %}
-	<tr><td>{% trans "Group" %}&nbsp;{{ round.group.name }}</td><td>{{ round.date|date:"d/m/y" }}</td><td>{{ round.time_start|time:"H:i" }}</td></tr>
+	<tr>
+	  <td>
+		<a href="{{ round.get_absolute_url }}">
+		  {% trans "Group" %}&nbsp;{{ round.group.name }}</a>
+	  </td>
+	  <td>{{ round.date|date:"d/m/y" }}</td>
+	  <td>{{ round.time_start|time:"H:i" }}</td>
+	</tr>
 	{% empty %}
 	<tr class="error"><td colspan="3" class="text-center"><em>{% trans "No round available" %}</em></td></tr>
 	{% endfor %}
@@ -25,6 +33,6 @@
 {% endblock extra_object_infos %}
 
 {% block object_extra_actions %}
-<a class="btn btn-block btn-large" href="#">
-  <i class="icon-plus"></i>&nbsp;{% trans "Add round" %}</a>
+<a class="btn btn-block btn-large" href="{% url 'tournament_schenkel:tournament-schenkelround-list' ct_tournament.pk object.pk %}">
+  <i class="icon-edit"></i>&nbsp;{% trans "Edit rounds" %}</a>
 {% endblock object_extra_actions %}

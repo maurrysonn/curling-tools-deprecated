@@ -222,10 +222,8 @@ class Team(CTModel):
 
     @property
     def skip(self):
-        print "###############"
         # Transform 'filter' in 'get'
         members_skip = self.members_list.filter(is_skip=True)
-        print "SKIPS =", members_skip
         if members_skip:
             return members_skip[0]
         return None

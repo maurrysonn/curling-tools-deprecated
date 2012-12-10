@@ -1,0 +1,24 @@
+{% extends "core/model_detail.html" %}
+{% load i18n %}
+{% load url from future %}
+
+{% block title %}
+{{ ct_tournament.name|capfirst }}&nbsp;-&nbsp;
+{% trans "Main Round" %}&nbsp;{{ ct_tournament_round.name|capfirst }}&nbsp;-&nbsp;
+{% trans "Group" %}&nbsp;{{ object.group.name }}
+{% endblock %}
+
+{% block object_fields %}
+{% comment %}
+<tr><th>{% trans "Tournament Round" %}</th><td>{{ object.tournament_round }}</td></tr>
+<tr><th>{% trans "Group" %}</th><td>{{ object.group }}</td></tr>
+<tr><th>{% trans "Date" %}</th><td>{{ object.date }}</td></tr>
+<tr><th>{% trans "Time Start" %}</th><td>{{ object.time_start }}</td></tr>
+<tr><th>{% trans "Time End" %}</th><td>{{ object.time_end }}</td></tr>
+<tr><th>{% trans "Is current" %}</th><td>{{ object.current }}</td></tr>
+<tr><th>{% trans "Is Finished" %}</th><td>{{ object.finished }}</td></tr>
+{% endcomment %}
+<tr><th>{% trans "Date" %}</th><td>{{ object.date }}</td></tr>
+<tr><th>{% trans "Time Start" %}</th><td>{{ object.time_start }}</td></tr>
+<tr><th>{% trans "Time End" %}</th><td>{{ object.time_end }}</td></tr>
+{% endblock object_fields %}

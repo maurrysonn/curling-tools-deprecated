@@ -13,21 +13,48 @@ from curling_tools.tournament_base.models import End, Sheet
 
 class STModelMixin(object):
 
+    # ABSOLUTE URL
+    def get_absolute_url_name(self):
+        return u'%s:tournament-%s%s' % (self.app_label, self.module_name, settings.URL_DETAIL_SUFFIX)
+
+    def get_absolute_url_args(self):
+        return [self.tournament.pk, self.pk]
+
     def get_absolute_url(self):
-        url_name = u'%s:tournament-%s%s' % (self.app_label, self.module_name, settings.URL_DETAIL_SUFFIX)
-        return reverse(url_name, args=[self.tournament.pk, self.pk])
+        return reverse(self.get_absolute_url_name(), args=self.get_absolute_url_args())
+
+    # ABSOLUTE LIST URL
+    def get_absolute_url_list_name(self):
+        return u'%s:tournament-%s%s' % (self.app_label, self.module_name, settings.URL_LIST_SUFFIX)
+
+    def get_absolute_url_list_args(self):
+        return [self.tournament.pk]
 
     def get_absolute_list_url(self):
-        url_name = u'%s:tournament-%s%s' % (self.app_label, self.module_name, settings.URL_LIST_SUFFIX)
-        return reverse(url_name, args=[self.tournament.pk])
+        return reverse(self.get_absolute_url_list_name(),
+                       args=self.get_absolute_url_list_args())
+
+    # ABSOLUTE EDIT URL
+    def get_absolute_url_edit_name(self):
+        return u'%s:tournament-%s%s' % (self.app_label, self.module_name, settings.URL_EDIT_SUFFIX)
+
+    def get_absolute_url_edit_args(self):
+        return [self.tournament.pk, self.pk]
 
     def get_absolute_edit_url(self):
-        url_name = u'%s:tournament-%s%s' % (self.app_label, self.module_name, settings.URL_EDIT_SUFFIX)
-        return reverse(url_name, args=[self.tournament.pk, self.pk])
+        return reverse(self.get_absolute_url_edit_name(),
+                       args=self.get_absolute_url_edit_args())
+
+    # ABSOLUTE DELETE URL
+    def get_absolute_url_delete_name(self):
+        return u'%s:tournament-%s%s' % (self.app_label, self.module_name, settings.URL_DELETE_SUFFIX)
+
+    def get_absolute_url_delete_args(self):
+        return [self.tournament.pk, self.pk]
 
     def get_absolute_delete_url(self):
-        url_name = u'%s:tournament-%s%s' % (self.app_label, self.module_name, settings.URL_DELETE_SUFFIX)
-        return reverse(url_name, args=[self.tournament.pk, self.pk])
+        return reverse(self.get_absolute_url_delete_name(),
+                       args=self.get_absolute_url_delete_args())
 
 
 class SchenkelTournament(CTModel):
@@ -174,7 +201,7 @@ class SchenkelGroup(STModelMixin, CTModel):
         unique_together = ('tournament', 'level', 'order')
 
 
-class SchenkelRound(models.Model):
+class SchenkelRound(STModelMixin, CTModel):
     """
     A Round Entity
 
@@ -189,6 +216,22 @@ class SchenkelRound(models.Model):
     # State infos
     current = models.BooleanField(_(u'is current round ?'), default=False)
     finished = models.BooleanField(_(u'is finished ?'), default=False)
+
+    @property
+    def tournament(self):
+        return self.tournament_round.tournament
+
+    def get_absolute_url_args(self):
+        return [self.tournament.pk, self.tournament_round.pk, self.pk]
+
+    def get_absolute_url_list_args(self):
+        return [self.tournament.pk, self.tournament_round.pk]
+
+    def get_absolute_url_edit_args(self):
+        return [self.tournament.pk, self.tournament_round.pk, self.pk]
+
+    def get_absolute_url_delete_args(self):
+        return [self.tournament.pk, self.tournament_round.pk, self.pk]
 
     def get_matches(self):
         return self.matches.order_by('sheet')
@@ -216,9 +259,6 @@ class SchenkelRound(models.Model):
 
     def __unicode__(self):
         return u"%s - %s" % (self.tournament_round, self.group)
-
-    def get_absolute_url(self):
-        return '/'
 
     class Meta:
         verbose_name = _(u"round")
