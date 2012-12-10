@@ -1,10 +1,18 @@
 # -*- coding: utf-8 -*-
 from django.conf import settings
-from django.core.urlresovers import reverse
+from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext as _
 from django import template
 
 register = template.Library()
+
+
+@register.filter
+def default_add_url(ct_model_infos):
+    try:
+        return reverse(u'%s:%s%s' % (ct_model_infos['app_label'], ct_model_infos['module_name'], settings.URL_ADD_SUFFIX))
+    except:
+        return ''
 
 
 # ---------------------

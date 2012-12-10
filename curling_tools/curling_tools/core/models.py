@@ -15,6 +15,7 @@ class CTModel(models.Model):
         return self._meta.module_name
 
     def get_absolute_url(self):
+        print "CTModel.get_absolute_url()"
         url_name = u'%s:%s%s' % (self.app_label, self.module_name, settings.URL_DETAIL_SUFFIX)
         return reverse(url_name, args=[self.pk])
 

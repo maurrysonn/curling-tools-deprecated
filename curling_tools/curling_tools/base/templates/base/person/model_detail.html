@@ -6,6 +6,8 @@
 
 <div class="row-fluid">
   <div class="span9">
+	
+	{# GLOBAL INFOS #}
 	<table class="table table-striped table-bordered table-hover table-vertical-align">
 	  <thead>
 		<tr><th colspan="2" style="text-align: center;">{% trans "Global Informations" %}</th></tr>
@@ -14,16 +16,19 @@
 		<tr><th>{% trans "First Name" %}</th><td>{{ object.first_name }}</td></tr>
 		<tr><th>{% trans "Last Name" %}</th><td>{{ object.last_name }}</td></tr>
 		<tr><th>{% trans "Nickname" %}</th><td>{{ object.nickname }}</td></tr>
-		<tr><th>{% trans "Date of birth" %}</th><td>{{ object.dob }}</td></tr>
+		<tr><th>{% trans "Date of birth" %}</th><td>{% if object.dob %}{{ object.dob }}{% endif %}</td></tr>
 	  </tbody>
 	</table>
   </div>
+
+  {# PHOTO  #}
   <div class="span3 text-center">
 	<img class="img-polaroid img-rounded" style="max-height: 180px; max-width:185px;"
 		 src="{% if object.photo %}{{ object.photo.url }}{% else %}{% static 'base/images/person.png' %}{% endif %}" />
   </div>
 </div>
 
+{# CONTACT INFOS #}
 <table class="table table-striped table-bordered table-hover table-vertical-align"
 	   style="margin-top:20px;">
   <thead>
@@ -46,6 +51,7 @@
   </tbody>
 </table>
 
+{# PLAYER INFOS #}
 <table class="table table-striped table-bordered table-hover table-vertical-align"
 	   style="margin-top:20px;">
   <thead>
@@ -67,6 +73,7 @@
   </tbody>
 </table>
 
+{# COACH INFOS #}
 <table class="table table-striped table-bordered table-hover table-vertical-align"
 	   style="margin-top:20px;">
   <thead>
@@ -78,7 +85,7 @@
 	  {% if coach %}
 	  <tr>
 		<th>{% trans "Coach since" %}</th>
-		<td>{% if coach.since %}{{ coach.coach_since }}{% else %}<em>{% trans "Not specified" %}</em>{% endif %}</td>
+		<td>{% if coach.coach_since %}{{ coach.coach_since }}{% else %}<em>{% trans "Not specified" %}</em>{% endif %}</td>
 	  </tr>
 	  {% else %}
 	  <td colspan="2" style="text-align: center;"><em>{% trans "No informations available." %}</em></td>

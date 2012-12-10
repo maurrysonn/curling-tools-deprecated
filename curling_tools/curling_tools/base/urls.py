@@ -8,11 +8,12 @@ from curling_tools.base.views import (BaseSubmenu, BaseHomeView,
                                       PersonPlayerCreateView, PersonPlayerUpdateView,
                                       PersonCoachCreateView, PersonCoachUpdateView,
                                       ClubAddressUpdateView, RinkAddressUpdateView,
-                                      )
+                                      TeamMembershipCreateView, TeamMembershipDeleteView,
+                                      TeamMembershipUpdateView)
 # Module models
-from curling_tools.base.models import Country, City, Person, Club, Rink
+from curling_tools.base.models import Country, City, Person, Club, Rink, Team
 # Module forms
-from curling_tools.base.forms import PersonForm, ClubForm, RinkForm
+from curling_tools.base.forms import PersonForm, ClubForm, RinkForm, TeamForm
 
 
 urlpatterns = patterns('',
@@ -54,4 +55,17 @@ urlpatterns += patterns('',
                         url(r'^rink/(?P<pk>\d+)/address/edit/$',
                             RinkAddressUpdateView.as_view(),
                             name='rink-address-edit'),
+                        )
+
+urlpatterns += get_default_model_url(Team, submenu_mixin=BaseSubmenu, form_class=TeamForm)
+urlpatterns += patterns('',
+                        url(r'^team/(?P<pk>\d+)/member/add/$',
+                            TeamMembershipCreateView.as_view(),
+                            name='teammembership-add'),
+                        url(r'^team/(?P<pk_team>\d+)/member/(?P<pk>\d+)/delete/$',
+                            TeamMembershipDeleteView.as_view(),
+                            name='teammembership-delete'),
+                        url(r'^team/(?P<pk_team>\d+)/member/(?P<pk>\d+)/edit/$',
+                            TeamMembershipUpdateView.as_view(),
+                            name='teammembership-edit'),
                         )

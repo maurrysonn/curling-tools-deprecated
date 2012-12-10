@@ -21,8 +21,8 @@
 	  {% csrf_token %}
       <div class="form-actions">
 		<button type="submit" class="btn btn-danger">{% trans "Delete" %}</button>
-		{% if ct_model_edit.cancel_url %}
-		<a class="btn" href="{{ ct_model_edit.cancel_url }}">{% trans "Cancel" %}</a>
+		{% if ct_model_delete.cancel_url %}
+		<a class="btn" href="{{ ct_model_delete.cancel_url }}">{% trans "Cancel" %}</a>
 		{% else %}
 		<button type="button" class="btn" onclick="window.history.back()">{% trans "Cancel" %}</button>
 		{% endif %}

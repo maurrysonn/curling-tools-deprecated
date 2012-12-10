@@ -47,7 +47,7 @@ def get_default_model_url(model,
         urlpatterns += patterns('',
                                url(r'^%s%s/$' % (prefix_pattern, module_name),
                                    list_view_instance,
-                                   name='%s%s%s' % (prefix_name,url_name, settings.URL_LIST_SUFFIX)))
+                                   name='%s%s%s' % (prefix_name, url_name, settings.URL_LIST_SUFFIX)))
     # Detail View
     if detail_view:
         urlpatterns += patterns('',

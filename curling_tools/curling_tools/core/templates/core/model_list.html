@@ -1,6 +1,6 @@
 {% extends 'core/layouts/left_sidebar_layout.html' %}
 {% load url from future %}
-{% load i18n %}
+{% load i18n list_view_tags %}
 
 {% block center_layout %}
 
@@ -30,8 +30,10 @@
 		  {% block list_object %}
 		  <td><a href="{{ object.get_absolute_url }}">{{ object }}</a></td>
 		  <td style="text-align: center;">
+			{% block list_object_actions %}
 			<a class="btn btn-primary" href="{{ object.get_absolute_edit_url }}" title="{% trans 'Edit' %}"><i class="icon-edit icon-white"></i></a>
-			<a class="btn btn-danger" href="{{ object.get_absolute_url }}delete/" title="{% trans 'Delete' %}"><i class="icon-trash icon-white"></i></a>
+			<a class="btn btn-danger" href="{{ object.get_absolute_delete_url }}" title="{% trans 'Delete' %}"><i class="icon-trash icon-white"></i></a>
+			{% endblock list_object_actions %}
 		  </td>
 		  {% endblock list_object %}
 		</tr>
@@ -42,17 +44,28 @@
 	{% endblock list_container %}
   </div>
   {% block list_tools_container %}
-  <div class="span3 well well-small">
-	{% block list_tools %}
-	<h5>Search</h5>
-	<div class="input-append">
-	  <input class="span8" type="search">
-	  <button class="btn" type="button"><i class="icon-remove"></i></button>
-	  <button class="btn" type="button"><i class="icon-search"></i></button>
+  <div class="span3">
+	{% block add_button_container %}
+	<div class="text-center" style="margin-bottom: 15px;">
+	  <a class="btn btn-success btn-large"
+		 href="{% block add_button_url %}{{ ct_model|default_add_url }}{% endblock add_button_url %}">
+		<i class="icon-plus icon-white"></i>&nbsp;{% trans "Add" %}&nbsp;{{ ct_model.verbose_name|capfirst }}
+	  </a>
 	</div>
-	<h5>Filters</h5>
-	<p>...</p>
-	{% endblock list_tools %}
+	{% endblock add_button_container %}
+	{% block extra_actions %}{% endblock extra_actions %}
+	<div class="well well-small">
+	  {% block list_tools %}
+	  <h5>Search</h5>
+	  <div class="input-append">
+		<input class="span8" type="search">
+		<button class="btn" type="button"><i class="icon-remove"></i></button>
+		<button class="btn" type="button"><i class="icon-search"></i></button>
+	  </div>
+	  <h5>Filters</h5>
+	  <p>...</p>
+	  {% endblock list_tools %}
+	</div>
   </div>
   {% endblock list_tools_container %}
 </div>

@@ -1,1 +1,66 @@
-[]
+[
+  {
+    "pk": 1, 
+    "model": "base.team", 
+    "fields": {
+      "club": 1, 
+      "coach": 1, 
+      "name": "Besan\u00e7on Senior"
+    }
+  }, 
+  {
+    "pk": 1, 
+    "model": "base.teammembership", 
+    "fields": {
+      "is_vice": false, 
+      "player": 1, 
+      "position": "4", 
+      "is_skip": true, 
+      "team": 1
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "base.teammembership", 
+    "fields": {
+      "is_vice": true, 
+      "player": 2, 
+      "position": "3", 
+      "is_skip": false, 
+      "team": 1
+    }
+  }, 
+  {
+    "pk": 3, 
+    "model": "base.teammembership", 
+    "fields": {
+      "is_vice": false, 
+      "player": 3, 
+      "position": "2", 
+      "is_skip": false, 
+      "team": 1
+    }
+  }, 
+  {
+    "pk": 4, 
+    "model": "base.teammembership", 
+    "fields": {
+      "is_vice": false, 
+      "player": 4, 
+      "position": "1", 
+      "is_skip": false, 
+      "team": 1
+    }
+  }, 
+  {
+    "pk": 5, 
+    "model": "base.teammembership", 
+    "fields": {
+      "is_vice": false, 
+      "player": 5, 
+      "position": "0", 
+      "is_skip": false, 
+      "team": 1
+    }
+  }
+]

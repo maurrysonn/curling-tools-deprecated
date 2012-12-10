@@ -1,0 +1,13 @@
+[
+  {
+    "pk": 1, 
+    "model": "tournament_schenkel.schenkeltournament", 
+    "fields": {
+      "club": 1, 
+      "rink": 1, 
+      "name": "So'Curl 2012", 
+      "end_date": "2012-05-27", 
+      "start_date": "2012-05-25"
+    }
+  }
+]
