@@ -101,6 +101,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.static',
     'django.core.context_processors.tz',
     'django.contrib.messages.context_processors.messages',
+    'django.core.context_processors.request',
     'curling_tools.core.context_processors.site_infos',
     )
 
@@ -139,6 +140,8 @@ INSTALLED_APPS = (
     'curling_tools.design',
     'curling_tools.core',
     'curling_tools.base',
+    'curling_tools.tournament_base',
+    'curling_tools.tournament_schenkel',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -209,3 +212,4 @@ CORE_MODULE = 'core'
 DEFAULT_APP_HOME_TEMPLATE = '%s/%s' % (CORE_MODULE, APP_HOME_TEMPLATE)
 CONTEXT_MODEL_INFOS = 'ct_model'
 CONTEXT_MODEL_EDIT = 'ct_model_edit'
+CONTEXT_MODEL_DELETE = 'ct_model_delete'
