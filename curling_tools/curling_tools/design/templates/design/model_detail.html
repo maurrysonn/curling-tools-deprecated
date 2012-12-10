@@ -1,0 +1,40 @@
+{% extends 'core/layouts/left_sidebar_layout.html' %}
+{% load i18n %}
+
+{% block center_layout %}
+
+{% block title_container %}
+<div class="page-header">
+  <h2>{% block title %}{{ ct_model.verbose_name|capfirst }} : {{ object }}{% endblock title %}</h2>
+  <div style="clear: both;"></div>
+</div>
+{% endblock title_container %}
+
+{% block global_object_container %}
+<div class="row-fluid">
+  <div class="span9">
+	{% block object_container %}
+	<table class="table table-striped table-bordered table-hover table-vertical-align">
+	  {% block object_fields %}
+	  {% endblock object_fields %}
+	</table>
+	{% endblock object_container %}
+  </div>
+  {% block object_actions_container %}
+  <div class="span3 well well-small">
+	{% block object_actions %}
+	<h4 style="text-align: center;">{% trans "Actions" %}</h4>
+	<a class="btn btn-block btn-large" href="{{ object.get_absolute_list_url }}">
+	  <i class="icon-list"></i>&nbsp;{% trans "Go back to list" %}</a>
+	<a class="btn btn-block btn-large btn-primary" href="{{ object.get_absolute_edit_url }}">
+	  <i class="icon-edit icon-white"></i>&nbsp;{% trans "Edit" %}</a>
+	<a class="btn btn-block btn-large btn-danger" href="{{ object.get_absolute_delete_url }}">
+	  <i class="icon-trash icon-white"></i>&nbsp;{% trans "Delete" %}</a>
+	{% block object_extra_actions %}{% endblock object_extra_actions %}
+	{% endblock object_actions %}
+  </div>
+  {% endblock object_actions_container %}
+</div>
+{% endblock global_object_container %}
+
+{% endblock %}

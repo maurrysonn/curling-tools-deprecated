@@ -1,0 +1,35 @@
+{% extends 'core/layouts/left_sidebar_layout.html' %}
+{% load i18n %}
+
+{% block center_layout %}
+
+{% block title_container %}
+<div class="page-header">
+  <h2>{% block title %}{{ ct_model.verbose_name|capfirst }} : {{ object }}{% endblock title %}</h2>
+</div>
+{% endblock title_container %}
+
+{% block global_delete_container %}
+<div class="row-fluid">
+  <div class="span9">
+    <p><strong>Be careful !</strong></p>
+    <p>{% blocktrans %}Are you sure to delete the following{% endblocktrans %} {{ ct_model.verbose_name }} ?</p>
+    <ul>
+      <li>{{ object }}</li>
+    </ul>
+	<form method="post" action=".">
+	  {% csrf_token %}
+      <div class="form-actions">
+		<button type="submit" class="btn btn-danger">{% trans "Delete" %}</button>
+		{% if ct_model_edit.cancel_url %}
+		<a class="btn" href="{{ ct_model_edit.cancel_url }}">{% trans "Cancel" %}</a>
+		{% else %}
+		<button type="button" class="btn" onclick="window.history.back()">{% trans "Cancel" %}</button>
+		{% endif %}
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock global_delete_container %}
+
+{% endblock %}

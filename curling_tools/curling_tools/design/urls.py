@@ -4,7 +4,7 @@ from django.views.generic import TemplateView
 
 urlpatterns = patterns('',
                        # Main Homepage
-                       url(r'^$', TemplateView.as_view(template_name="design/home.html"), name='home'),
+                       url(r'^$', TemplateView.as_view(template_name="design/index.html"), name='base'),
                        # App Homepage
                        url(r'^app/$', TemplateView.as_view(template_name="design/app_home.html"), name='app-home'),
                        # List View

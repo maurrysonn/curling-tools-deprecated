@@ -1,0 +1,72 @@
+{% load static from staticfiles %}
+{% load url from future %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+	<meta charset="utf-8">
+	<title>Curling Tools</title>
+
+	{# CSS link #}
+	<link rel="stylesheet" type="text/css" href="{% static 'core/bootstrap/css/bootstrap.css' %}">
+	<style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+    </style>
+	{# END CSS link #}
+
+	{# JS link #}
+	<script type="text/javascript" src="{% static 'core/js/jquery-1.8.2.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'core/bootstrap/js/bootstrap.min.js' %}"></script>
+	{# END JS link #}
+
+	{# LESS Files activation #}
+	<link rel="stylesheet/less" type="text/css" href="{% static 'core/css/bug-fixes-bootstrap.less' %}">
+	<link rel="stylesheet/less" type="text/css" href="{% static 'core/css/styles.less' %}">
+	<script type="text/javascript" src="{% static 'core/js/less-1.3.0.min.js' %}"></script>
+	{# END LESS Files activation #}
+  </head>
+
+  <body>
+
+	{# Top Fixed Navbar #}
+	<div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+		<div class="container-fluid">
+          <a class="brand" href="#">Curling Tools</a>
+          <p class="navbar-text pull-right">
+			<i class="icon-user icon-white"></i>&nbsp;<a href="/" class="navbar-link">Username</a>
+          </p>
+          <ul class="nav">
+			<li class="divider-vertical"></li>
+			<li><a href="#"><i class="icon-hdd icon-white"></i>&nbsp;{% trans "Global Data" %}</a></li>
+			<li class="divider-vertical"></li>
+			<li><a href="#"><i class="icon-star icon-white"></i>&nbsp;{% trans "Tournaments" %}</a></li>
+			<li class="divider-vertical"></li>
+			<li><a href="#"><i class="icon-home icon-white"></i>&nbsp;{% trans "My Club" %}</a></li>
+			<li class="divider-vertical"></li>
+			<li><a href="#"><i class="icon-tasks icon-white"></i>&nbsp;{% trans "Statistics" %}</a></li>
+			<li class="divider-vertical"></li>
+			<li><a href="#"><i class="icon-cog icon-white"></i>&nbsp;{% trans "Settings" %}</a></li>
+			<li class="divider-vertical"></li>
+			<li><a href="#"><i class="icon-question-sign icon-white"></i>&nbsp;{% trans "Help" %}</a></li>
+			<li class="divider-vertical"></li>
+          </ul>
+		</div>
+      </div>
+	</div>
+	{# END Top Fixed Navbar #}
+
+	{# Main Layout #}
+	<div class="container-fluid" id="ct-main-layout">
+	  
+	  {% block main_layout %}{% endblock %}
+	
+	</div>
+	{# END Main Layout #}
+	
+  </body>
+</html>
