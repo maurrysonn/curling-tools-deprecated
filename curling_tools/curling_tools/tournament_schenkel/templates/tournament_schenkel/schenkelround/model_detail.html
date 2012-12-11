@@ -22,3 +22,14 @@
 <tr><th>{% trans "Time Start" %}</th><td>{{ object.time_start }}</td></tr>
 <tr><th>{% trans "Time End" %}</th><td>{{ object.time_end }}</td></tr>
 {% endblock object_fields %}
+
+{% block extra_object_infos %}
+<h3>Matches:</h3>
+<ul>
+  {% for match in object.matches.all %}
+  <li>{{ match }}</li>
+  {% empty %}
+  <li>No matches</li>
+  {% endfor %}
+</ul>
+{% endblock extra_object_infos %}

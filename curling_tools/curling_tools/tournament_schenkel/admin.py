@@ -7,4 +7,5 @@ admin.site.register(SchenkelTournament)
 admin.site.register(SchenkelTournamentRound)
 admin.site.register(SchenkelGroup)
 admin.site.register(SchenkelRound)
+admin.site.register(SchenkelMatch)
 

@@ -191,6 +191,8 @@ class SchenkelGroup(STModelMixin, CTModel):
         return u'%s - %s (Level:%s - Order:%s)' % (self.tournament, self.name, self.level, self.order)
 
     def clean(self):
+        if self.nb_teams == 0:
+            raise ValidationError(_(u"The number of teams can't be null."))
         if self.nb_teams % 2:
             raise ValidationError(_(u"The number of teams must be even."))
 
@@ -216,6 +218,31 @@ class SchenkelRound(STModelMixin, CTModel):
     # State infos
     current = models.BooleanField(_(u'is current round ?'), default=False)
     finished = models.BooleanField(_(u'is finished ?'), default=False)
+
+    def _prepare_matches(self):
+        """
+        Creates all matches entities needed.
+        
+        If already done, do nothing.
+        """
+        print "PREPARE MATCHES"
+        nb_matches_total = self.group.nb_teams/2
+        print "nb_matches_total :", nb_matches_total
+        sheet = Sheet.objects.get_first()
+        nb_matches = self.matches.count()
+        print "nb_matches :", nb_matches
+        if nb_matches < nb_matches_total:
+            for i in xrange(nb_matches_total):
+                print "Create match : sheet =", sheet
+                SchenkelMatch.objects.get_or_create(round=self, sheet=sheet)
+                sheet = Sheet.objects.get_next(current_sheet=sheet)
+
+    def save(self, *args, **kwargs):
+        obj = super(SchenkelRound, self).save(*args, **kwargs)
+        # Create match entities
+        self._prepare_matches()
+        # Return obj
+        return obj
 
     @property
     def tournament(self):
@@ -302,6 +329,7 @@ class SchenkelMatch(models.Model):
     class Meta:
         verbose_name = _(u"match")
         verbose_name_plural = _(u"matches")
+        unique_together = ('round', 'sheet')
         ordering = ["round", "sheet"]
 
 

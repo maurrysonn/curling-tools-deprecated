@@ -8,6 +8,19 @@ from curling_tools.core.exceptions import CTImproperlyConfigured
 # Global Models
 # -------------
 
+class SheetManager(models.Manager):
+    
+    def get_next(self, current_sheet=None):
+        if current_sheet is None:
+            next_order = 1
+        else:
+            next_order = current_sheet.order + 1
+        next_sheet, created = self.get_or_create(order=next_order)
+        return next_sheet
+
+    def get_first(self):
+        return self.get_next(current_sheet=None)
+
 class Sheet(models.Model):
     """
     A sheet entity.
@@ -16,6 +29,7 @@ class Sheet(models.Model):
     A rink is generally composed of 4, 6 or 8 sheets.
     """
     order = models.IntegerField(_(u"order"), default=1, unique=True)
+    objects = SheetManager()
 
     @property
     def name(self):
