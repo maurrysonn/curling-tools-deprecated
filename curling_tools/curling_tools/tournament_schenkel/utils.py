@@ -7,7 +7,7 @@ from curling_tools.tournament_schenkel.views import (STBaseListView,
                                                      STBaseDeleteView)
 
 PREFIX_URL_TOURNAMENT = 'tournament/(?P<pk_tournament>\d+)/'
-PREFIX_URL_MAIN_ROUND = '%sschenkeltournamentround/(?P<pk_tournament_round>\d+)/' % PREFIX_URL_TOURNAMENT
+PREFIX_URL_ROUND = '%sschenkelround/(?P<pk_round>\d+)/' % PREFIX_URL_TOURNAMENT
 
 def ST_get_default_model_url(*args, **kwargs):
     # Get specific Initial Data

@@ -2,4 +2,4 @@
 {% load url from future %}
 
 {% block title %}{{ ct_tournament.name|capfirst }}&nbsp;:&nbsp;{{ ct_model.verbose_name_plural|capfirst }}{% endblock %}
-{% block add_button_url %}{% url 'tournament_schenkel:tournament-schenkeltournamentround-add' ct_tournament.pk %}{% endblock %}
+{% block add_button_url %}{% url 'tournament_schenkel:tournament-schenkelgroup-add' ct_tournament.pk %}{% endblock %}

@@ -15,10 +15,9 @@ from curling_tools.core.views import (CTTemplateView,
 # Module models
 from curling_tools.tournament_schenkel.models import (SchenkelTournament,
                                                       SchenkelGroup,
-                                                      SchenkelTournamentRound,
                                                       SchenkelRound)
 # Module forms
-from curling_tools.tournament_schenkel.forms import STRoundForm
+from curling_tools.tournament_schenkel.forms import STGroupForm
 
 
 # -------------------------------------
@@ -103,52 +102,41 @@ class STDashboardView(STDashboardSubmenu, STBaseMixin, CTTemplateView):
 # GROUP VIEWS
 # -------------------------------------
 
-class STGroupListView(STBaseListView):
+class STGroupMixin(object):
+
+    @property
+    def round(self):
+        if not hasattr(self, '_round'):
+            self._round = get_object_or_404(SchenkelRound,
+                                                       pk=self.kwargs['pk_round'])
+        return self._round
+
+    def get_context_data(self, **kwargs):
+        context = super(STGroupMixin, self).get_context_data(**kwargs)
+        context['ct_round'] = self.round
+        return context
+    
+
+class STGroupListView(STGroupMixin, STDashboardSubmenu, STBaseMixin, CTListView):
 
     model = SchenkelGroup
 
     def get_queryset(self):
-        self.tournament.groups.order_by('level', 'order')
-
-# -------------------------------------
-# ROUND VIEWS
-# -------------------------------------
-
-class STRoundMixin(object):
-
-    @property
-    def tournament_round(self):
-        if not hasattr(self, '_tournament_round'):
-            self._tournament_round = get_object_or_404(SchenkelTournamentRound,
-                                                       pk=self.kwargs['pk_tournament_round'])
-        return self._tournament_round
-
-    def get_context_data(self, **kwargs):
-        context = super(STRoundMixin, self).get_context_data(**kwargs)
-        context['ct_tournament_round'] = self.tournament_round
-        return context
-    
-
-class STRoundListView(STRoundMixin, STDashboardSubmenu, STBaseMixin, CTListView):
-
-    model = SchenkelRound
-
-    def get_queryset(self):
-        return super(CTListView, self).get_queryset().filter(tournament_round=self.tournament_round)
+        return super(CTListView, self).get_queryset().filter(round=self.round)
 
 
-class STRoundCreateView(STRoundMixin, STBaseCreateView):
+class STGroupCreateView(STGroupMixin, STBaseCreateView):
 
-    model = SchenkelRound
-    form_class = STRoundForm
+    model = SchenkelGroup
+    form_class = STGroupForm
 
     def get_initial(self):
-        return {'tournament_round': self.tournament_round}
+        return {'round': self.round}
 
-class STRoundUpdateView(STRoundMixin, STBaseUpdateView):
+class STGroupUpdateView(STGroupMixin, STBaseUpdateView):
     
-    model = SchenkelRound
-    form_class = STRoundForm
+    model = SchenkelGroup
+    form_class = STGroupForm
 
-class STRoundDetailView(STRoundMixin, STBaseDetailView): pass
+class STGroupDetailView(STGroupMixin, STBaseDetailView): pass
 

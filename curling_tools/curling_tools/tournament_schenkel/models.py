@@ -70,11 +70,8 @@ class SchenkelTournament(CTModel):
     rink = models.ForeignKey(Rink, related_name="tournaments", null=True, blank=True)
 
 
-    def main_rounds_list(self):
-        return self.tournament_rounds.order_by('level')
-
-    def groups_list(self):
-        return self.groups.order_by('level', 'order')
+    def rounds_list(self):
+        return self.rounds.order_by('order')
 
     def is_finished(self):
         # TODO
@@ -101,34 +98,34 @@ class SchenkelTournament(CTModel):
         ordering = ["start_date", "name"]
 
 
-class SchenkelTournamentRound(STModelMixin, CTModel):
+class SchenkelRound(STModelMixin, CTModel):
     """
     A matches round of a tournament.
 
-    Represents a global round of a tournament.
-    A tournament is genrally composed by many TournamentRound (4 or 5).
-    Each TournamentRound is composed of many Round (1 round for each Group).
+    Represents a round of a tournament.
+    A tournament is generally composed by many Round (4 or 5).
+    Each tRound is composed of many Group.
     """
     TYPES_ROUND_CHOICES = (
         ('G', _(u'Group')),
         ('R', _(u'Ranking')),
         ('F', _(u'Final')),
         )
-    tournament = models.ForeignKey(SchenkelTournament, related_name='tournament_rounds')
+    tournament = models.ForeignKey(SchenkelTournament, related_name='rounds')
     name = models.CharField(_("name"), max_length=100, blank=True)
-    # Level degree into the tournament
-    level = models.IntegerField(_('level'), default=1)
+    # Order degree into the tournament
+    order = models.IntegerField(_('order'), default=0)
     # Type of the round
     type = models.CharField(_("type"), max_length=1,
                             choices=TYPES_ROUND_CHOICES, default='G')
 
-    def rounds_list(self):
-        return self.rounds.order_by('group__order')
+    def groups_list(self):
+        return self.groups.order_by('order')
 
     def is_finished(self):
-        nb_rounds_list = self.rounds.all().count()        
-        if nb_rounds_list:
-            return self.rounds.filter(finished=True).count() == nb_rounds_list
+        nb_groups_list = self.groups.all().count()        
+        if nb_groups_list > 0:
+            return self.groups.filter(finished=True).count() == nb_groups_list
         return False
 
     def get_results(self):
@@ -139,78 +136,53 @@ class SchenkelTournamentRound(STModelMixin, CTModel):
         # TODO
         pass
 
+    def get_name(self):
+        if self.name:
+            return self.name
+        return self.order
+
     def save(self, *args, **kwargs):
-        # If creation
         if not self.pk:
-            # Auto-increment the level
+            # Auto-increment the order if creation
             try:
-                last_round = self.tournament.tournament_rounds\
-                    .filter(tournament=self.tournament).order_by('-level')[0]
-                last_level = last_round.level
-                last_type = last_round.type
+                last_round = self.tournament.rounds.order_by('-order')[0]
+                last_order = last_round.order
             except IndexError:
-                last_level = 0
+                last_order = 0
             # Updating current level
-            self.level = last_level + 1
-        return super(SchenkelTournamentRound, self).save(*args, **kwargs)
+            self.order = last_order + 1
+        return super(SchenkelRound, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        txt = u""
-        if self.name:
-            txt = u"%s " % self.name
-        txt += u"(%s - %s)" % (self.get_type_display(), self.level)
-        return u'%s - %s %s' % (self.tournament, _(u'Main Round'), txt)
+        return u'%s - %s %s (%s - %s)' % (self.tournament,
+                                          _(u'Round'),
+                                          self.get_name(),
+                                          self.get_type_display(),
+                                          self.order)
     
     class Meta:
-        unique_together = ("tournament", "level")
-        verbose_name = _(u"main round")
-        verbose_name_plural = _(u"main rounds")
-        ordering = ["tournament", "level"]
+        unique_together = ("tournament", "order")
+        verbose_name = _(u"round")
+        verbose_name_plural = _(u"rounds")
+        ordering = ["tournament", "order"]
+
+
+
+
 
 
 class SchenkelGroup(STModelMixin, CTModel):
     """
     Represents a group of a round.
+
+    A Group contains all matches of a specific round.
     """
-    tournament = models.ForeignKey(SchenkelTournament, related_name='groups')
+    round = models.ForeignKey(SchenkelRound, related_name='rounds')
     name = models.CharField(_(u"name"), max_length=100)
-    teams = models.ManyToManyField(Team, related_name="groups", blank=True)
     nb_teams = models.IntegerField(_(u'number of teams'), default=12)
-    
-    level = models.IntegerField(_(u'level'), default=1,
-                                help_text=_(u"Level of this group in the tournament. "
-                                            u"(The level is increased for each global ranking.)"))
     order = models.IntegerField(_(u'order'), default=1,
-                                help_text=_(u"Order of this group in the tournament round."))
-
-    @property
-    def nb_current_teams(self):
-        return self.teams.count()
-
-    def __unicode__(self):
-        return u'%s - %s (Level:%s - Order:%s)' % (self.tournament, self.name, self.level, self.order)
-
-    def clean(self):
-        if self.nb_teams == 0:
-            raise ValidationError(_(u"The number of teams can't be null."))
-        if self.nb_teams % 2:
-            raise ValidationError(_(u"The number of teams must be even."))
-
-    class Meta:
-        verbose_name = _(u'group')
-        verbose_name_plural = _(u'groups')
-        ordering = ['tournament', 'level', 'order']
-        unique_together = ('tournament', 'level', 'order')
-
-
-class SchenkelRound(STModelMixin, CTModel):
-    """
-    A Round Entity
-
-    A round regroups all matches of a specific group.
-    """
-    tournament_round = models.ForeignKey(SchenkelTournamentRound, related_name='rounds')
-    group = models.ForeignKey(SchenkelGroup, related_name='rounds')
+                                help_text=_(u"Order of this group in the round."))
+    # teams = models.ManyToManyField(Team, related_name="groups", blank=True)
     # Date/Time infos
     date = models.DateField(_('date'))
     time_start = models.TimeField(_(u'start time'))
@@ -219,23 +191,18 @@ class SchenkelRound(STModelMixin, CTModel):
     current = models.BooleanField(_(u'is current round ?'), default=False)
     finished = models.BooleanField(_(u'is finished ?'), default=False)
 
-    def _prepare_matches(self):
-        """
-        Creates all matches entities needed.
-        
-        If already done, do nothing.
-        """
-        print "PREPARE MATCHES"
-        nb_matches_total = self.group.nb_teams/2
-        print "nb_matches_total :", nb_matches_total
-        sheet = Sheet.objects.get_first()
-        nb_matches = self.matches.count()
-        print "nb_matches :", nb_matches
-        if nb_matches < nb_matches_total:
-            for i in xrange(nb_matches_total):
-                print "Create match : sheet =", sheet
-                SchenkelMatch.objects.get_or_create(round=self, sheet=sheet)
-                sheet = Sheet.objects.get_next(current_sheet=sheet)
+    # @property
+    # def nb_current_teams(self):
+    #     return self.teams.count()
+
+    def __unicode__(self):
+        return u'%s - %s (Order:%s)' % (self.round, self.name, self.order)
+
+    def clean(self):
+        if self.nb_teams == 0:
+            raise ValidationError(_(u"The number of teams can't be null."))
+        if self.nb_teams % 2:
+            raise ValidationError(_(u"The number of teams must be even."))
 
     def save(self, *args, **kwargs):
         obj = super(SchenkelRound, self).save(*args, **kwargs)
@@ -244,60 +211,75 @@ class SchenkelRound(STModelMixin, CTModel):
         # Return obj
         return obj
 
+    def _prepare_matches(self):
+        """
+        Creates all matches entities needed.
+        
+        If already done, do nothing.
+        """
+        print "PREPARE MATCHES"
+        nb_matches_total = self.nb_teams/2
+        print "nb_matches_total :", nb_matches_total
+        sheet = Sheet.objects.get_first()
+        nb_matches = self.matches.count()
+        print "nb_matches :", nb_matches
+        if nb_matches < nb_matches_total:
+            for i in xrange(nb_matches_total):
+                print "Create match : sheet =", sheet
+                SchenkelMatch.objects.get_or_create(group=self, sheet=sheet)
+                sheet = Sheet.objects.get_next(current_sheet=sheet)
+
     @property
     def tournament(self):
-        return self.tournament_round.tournament
+        return self.round.tournament
 
     def get_absolute_url_args(self):
-        return [self.tournament.pk, self.tournament_round.pk, self.pk]
+        return [self.tournament.pk, self.round.pk, self.pk]
 
     def get_absolute_url_list_args(self):
-        return [self.tournament.pk, self.tournament_round.pk]
+        return [self.tournament.pk, self.round.pk]
 
     def get_absolute_url_edit_args(self):
-        return [self.tournament.pk, self.tournament_round.pk, self.pk]
+        return [self.tournament.pk, self.round.pk, self.pk]
 
     def get_absolute_url_delete_args(self):
-        return [self.tournament.pk, self.tournament_round.pk, self.pk]
+        return [self.tournament.pk, self.round.pk, self.pk]
 
-    def get_matches(self):
+    @property
+    def matches_list(self):
         return self.matches.order_by('sheet')
     
-    def get_teams(self):
-        return None
+    # @property
+    # def teams_list(self):
+    #     return None
 
-    def matches_is_created(self):
-        pass
+    # def matches_is_created(self):
+    #     pass
 
-    def matches_is_ready(self):
-        return False
+    # def matches_is_ready(self):
+    #     return False
 
-    def prepare_matches(self):
-        pass
+    # def populate_matches(self):
+    #     pass
 
-    def populate_matches(self):
-        pass
+    # def get_results(self):
+    #     return None
 
-    def get_results(self):
-        return None
-
-    def get_ranking(self):
-        return None
-
-    def __unicode__(self):
-        return u"%s - %s" % (self.tournament_round, self.group)
+    # def get_ranking(self):
+    #     return None
 
     class Meta:
-        verbose_name = _(u"round")
-        verbose_name_plural = _(u"rounds")
-        ordering = ["tournament_round", "group"]
+        verbose_name = _(u'group')
+        verbose_name_plural = _(u'groups')
+        ordering = ['round', 'order']
+        unique_together = ('round', 'order')
 
 
 class SchenkelMatch(models.Model):
     """
     A Match Entity
     """
-    round = models.ForeignKey(SchenkelRound, related_name='matches')
+    group = models.ForeignKey(SchenkelGroup, related_name='matches')
     team_1 = models.ForeignKey(Team, related_name='matches_1',
                                blank=True, null=True)
     team_2 = models.ForeignKey(Team, related_name='matches_2',
@@ -307,13 +289,13 @@ class SchenkelMatch(models.Model):
     finished = models.BooleanField(_(u'is finished ?'), default=False)
 
     def is_ready(self):
-        return self.round and self.team_1 and self.team_2 and self.sheet
+        return self.group and self.team_1 and self.team_2 and self.sheet
 
     def get_absolute_url(self):
         return '/'
 
     def __unicode__(self):
-        return u"%s (%s) : %s - %s" % (self.round, self.sheet, self.team_1, self.team_2)
+        return u"%s (%s) : %s - %s" % (self.group, self.sheet, self.team_1, self.team_2)
 
     @property
     def winner(self):
@@ -329,8 +311,8 @@ class SchenkelMatch(models.Model):
     class Meta:
         verbose_name = _(u"match")
         verbose_name_plural = _(u"matches")
-        unique_together = ('round', 'sheet')
-        ordering = ["round", "sheet"]
+        unique_together = ('group', 'sheet')
+        ordering = ["group", "sheet"]
 
 
 class SchenkelResult(models.Model):

@@ -1,33 +1,35 @@
 {% extends "core/model_detail.html" %}
 {% load i18n %}
+{% load url from future %}
 
+{% block title %}
+{{ ct_tournament.name|capfirst }}&nbsp;-&nbsp;
+{% trans "Main Round" %}&nbsp;{{ ct_tournament_round.name|capfirst }}&nbsp;-&nbsp;
+{% trans "Group" %}&nbsp;{{ object.group.name }}
+{% endblock %}
 
 {% block object_fields %}
-<tr><th>{% trans "Tournament" %}</th><td>{{ object.tournament }}</td></tr>
-<tr><th>{% trans "Name" %}</th><td>{{ object.name }}</td></tr>
-<tr><th>{% trans "Level" %}</th><td>{{ object.level }}</td></tr>
-<tr><th>{% trans "Order" %}</th><td>{{ object.order }}</td></tr>
+{% comment %}
+<tr><th>{% trans "Tournament Round" %}</th><td>{{ object.tournament_round }}</td></tr>
+<tr><th>{% trans "Group" %}</th><td>{{ object.group }}</td></tr>
+<tr><th>{% trans "Date" %}</th><td>{{ object.date }}</td></tr>
+<tr><th>{% trans "Time Start" %}</th><td>{{ object.time_start }}</td></tr>
+<tr><th>{% trans "Time End" %}</th><td>{{ object.time_end }}</td></tr>
+<tr><th>{% trans "Is current" %}</th><td>{{ object.current }}</td></tr>
+<tr><th>{% trans "Is Finished" %}</th><td>{{ object.finished }}</td></tr>
+{% endcomment %}
+<tr><th>{% trans "Date" %}</th><td>{{ object.date }}</td></tr>
+<tr><th>{% trans "Time Start" %}</th><td>{{ object.time_start }}</td></tr>
+<tr><th>{% trans "Time End" %}</th><td>{{ object.time_end }}</td></tr>
 {% endblock object_fields %}
 
 {% block extra_object_infos %}
-<h3 class="text-center">{% trans "Teams" %}&nbsp;(&nbsp;{{ object.nb_current_teams }}&nbsp;/&nbsp;{{ object.nb_teams}}&nbsp;)</h3>
-<table class="table table-striped table-bordered table-hover table-vertical-align">
-  <thead>
-	<tr><th>{% trans "Name" %}</th><th>{% trans "Skip" %}</th><th>{% trans "Club" %}</th></tr>
-  </thead>
-  <tbody>
-	{% for team in object.teams.all %}
-	<tr><td>{{ team.name }}</td><td>{{ team.skip.player.person.full_name }}</td><td>{{ team.club }}</td></tr>
-	{% empty %}
-	<tr class="error"><td colspan="3" class="text-center"><em>{% trans "No team available" %}</em></td></tr>
-	{% endfor %}
-  </tbody>
-</table>
+<h3>Matches:</h3>
+<ul>
+  {% for match in object.matches.all %}
+  <li>{{ match }}</li>
+  {% empty %}
+  <li>No matches</li>
+  {% endfor %}
+</ul>
 {% endblock extra_object_infos %}
-
-{% block object_extra_actions %}
-{% if object.level == 1 %}
-<a class="btn btn-block btn-large" href="#">
-  <i class="icon-edit"></i>&nbsp;{% trans "Edit teams" %}</a>
-{% endif %}
-{% endblock object_extra_actions %}

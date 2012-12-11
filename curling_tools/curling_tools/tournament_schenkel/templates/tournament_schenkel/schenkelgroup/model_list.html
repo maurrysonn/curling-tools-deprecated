@@ -1,5 +1,11 @@
 {% extends "core/model_list.html" %}
+{% load i18n %}
 {% load url from future %}
 
-{% block title %}{{ ct_tournament.name|capfirst }}&nbsp;:&nbsp;{{ ct_model.verbose_name_plural|capfirst }}{% endblock %}
-{% block add_button_url %}{% url 'tournament_schenkel:tournament-schenkelgroup-add' ct_tournament.pk %}{% endblock %}
+{% block title %}
+{{ ct_tournament.name|capfirst }}&nbsp;-&nbsp;
+{% trans "Main Round" %}&nbsp;{{ ct_tournament_round.name|capfirst }}&nbsp;:&nbsp;
+{{ ct_model.verbose_name_plural|capfirst }}
+{% endblock %}
+
+{% block add_button_url %}{% url 'tournament_schenkel:tournament-schenkelround-add' ct_tournament.pk ct_tournament_round.pk %}{% endblock %}
