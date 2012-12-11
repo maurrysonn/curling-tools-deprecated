@@ -2,7 +2,10 @@
 # Django tools
 from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse, reverse_lazy
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+# Django View
+from django.views.generic import View
 # CT views
 from curling_tools.core.views import (CTTemplateView,
                                       CTSubmenuMixin,
@@ -17,7 +20,7 @@ from curling_tools.tournament_schenkel.models import (SchenkelTournament,
                                                       SchenkelGroup,
                                                       SchenkelRound)
 # Module forms
-from curling_tools.tournament_schenkel.forms import STGroupForm
+from curling_tools.tournament_schenkel.forms import STGroupForm, STGroupAutoFilledForm
 
 
 # -------------------------------------
@@ -108,7 +111,7 @@ class STGroupMixin(object):
     def round(self):
         if not hasattr(self, '_round'):
             self._round = get_object_or_404(SchenkelRound,
-                                                       pk=self.kwargs['pk_round'])
+                                            pk=self.kwargs['pk_round'])
         return self._round
 
     def get_context_data(self, **kwargs):
@@ -128,10 +131,23 @@ class STGroupListView(STGroupMixin, STDashboardSubmenu, STBaseMixin, CTListView)
 class STGroupCreateView(STGroupMixin, STBaseCreateView):
 
     model = SchenkelGroup
-    form_class = STGroupForm
+
+    def _is_auto_filled_group(self):
+        return (self.round.order > 1) and (self.round.type == 'G')
+
+    def get_form_class(self):
+        # if self._is_auto_filled_group:
+        #     return STGroupAutoFilledForm
+        return STGroupForm
 
     def get_initial(self):
-        return {'round': self.round}
+        data = {'round': self.round}
+        # if self._is_auto_filled_group:
+        #     prev_group = SchenkelGroup.objects.get_prev_round(self.round)
+        #     if prev_group:
+        #         data['name'] = prev_group.name
+        #         data['nb_teams'] = prev_group.nb_teams
+        return data
 
 class STGroupUpdateView(STGroupMixin, STBaseUpdateView):
     
@@ -140,3 +156,42 @@ class STGroupUpdateView(STGroupMixin, STBaseUpdateView):
 
 class STGroupDetailView(STGroupMixin, STBaseDetailView): pass
 
+class STGroupStartMatchesView(STGroupMixin, STBaseMixin, View):
+
+    http_method_names = ['get']
+
+    @property
+    def group(self):
+        if not hasattr(self, '_group'):
+            self._group = get_object_or_404(SchenkelGroup,
+                                            pk=self.kwargs['pk_group'])
+        return self._group
+
+    def get(self, request, *args, **kwargs):
+        # Check if already current
+        if self.group.current:
+            return redirect(self.group.get_absolute_url_scoring_board())
+        # Check if another Group in progress
+        try:
+            current_group = SchenkelGroup.objects.get_current(self.tournament)
+            # Msg for user
+            messages.error(request, 'Another group already in progress.')
+            # Redirect to detail group view
+            return redirect(self.group)
+        except SchenkelGroup.DoesNotExist:
+            # No group in progress, we continue
+            pass
+        # Check if Group is ready to start
+        if not self.group.is_ready:
+            # Msg for user
+            messages.error(request, u"Group doesn't ready to start.")
+            return redirect(self.group)
+        # It's OK, so we enable the group
+        self.group.current = True
+        self.group.save()
+        # Redirect to Scoring Board
+        return redirect(self.group.get_absolute_url_scoring_board())
+
+
+class STGroupScoringBoardView(STGroupMixin, STDashboardSubmenu, STBaseMixin, CTTemplateView):
+    template_name = u'tournament_schenkel/schenkelgroup/scoring_board.html'

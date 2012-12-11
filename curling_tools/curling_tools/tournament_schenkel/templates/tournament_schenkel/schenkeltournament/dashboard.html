@@ -38,11 +38,12 @@
   <div class="span7">
 	{# Display ROUNDS #}
 	{% for round in ct_tournament.rounds_list %}
-	<table class="table table-striped table-bordered table-hover table-vertical-align">
+	<table class="table table-striped table-bordered table-vertical-align">
 	  <thead>
 		<tr>
-		  <th colspan="4" class="text-center">
-			<a href="{{ round.get_absolute_url }}"> {% trans "Round" %}&nbsp;{{ round.name }}</a>
+		  <th colspan="3" class="text-center">
+			<a href="{{ round.get_absolute_url }}">{% trans "Round" %}&nbsp;{{ round.name }}</a>
+			-&nbsp;<em>{{ round.get_type_display }}</em>
 		  </th>
 		</tr>
 	  </thead>
@@ -50,7 +51,9 @@
 		{# Display GROUPS #}
 		{% for group in round.groups_list %}
 		<tr>
-		  <td>{% trans "Group" %}&nbsp;{{ group.name }}</td>
+		  <td>
+			<a href="{{ group.get_absolute_url }}">{% trans "Group" %}&nbsp;{{ group.name }}</a>
+		  </td>
 		  <td class="text-center">{{ group.date|date:"d/m/y" }} - {{ group.time_start|time:"H:i" }}</td>
 		  {# STATUS #}
 		  <td class="text-center">
@@ -60,38 +63,41 @@
 			{% if group.finished %}
 			<span class="label label-succes">{% trans "Finished" %}</span>
 			{% else %}
-			<span class="label">{% trans "Not started" %}</span>
-			{% endif %}{% endif %}
+			{% if group.is_ready %}
+			<span class="label label-info">{% trans "Ready" %}</span>
+			{% else %}
+			<span class="label">{% trans "Not ready" %}</span>
+			{% endif %}{% endif %}{% endif %}
 		  </td>
 		  {# ACTIONS #}
-		  <td class="text-center">
-			<a class="btn btn-small btn-primary" href="{{ group.get_absolute_url }}"><i class="icon-arrow-right icon-white"></i></a>
-		  </td>
 		</tr>
 		{% empty %}
-		<tr class="error"><td colspan="4" class="text-center"><em>{% trans "No groups available." %}</em></td></tr>
-		{% endfor %}
-		{% comment %}
-		<tr>
+		<tr class="error">
 		  <td colspan="4" class="text-center">
-			<a class="btn btn-primary" href="{% url 'tournament_schenkel:group-add' ct_tournament.pk round.pk %}">
+			<em>{% trans "No groups available." %}</em>
+		  </td>
+		</tr>
+		{% endfor %}
+		<tr class="info">
+		  <td colspan="4" class="text-center">
+			<a class="btn btn-primary"
+			   href="{% url 'tournament_schenkel:tournament-schenkelgroup-add' ct_tournament.pk round.pk %}">
 			  <i class="icon-plus icon-white"></i>&nbsp;{% trans "Add group" %}</a>
 		  </td>
 		</tr>
-		{% endcomment %}
 	  </tbody>
 	</table>
 	{% endfor %}
-	{% comment %}
-	<a class="btn btn-block btn-primary" href="{% url 'tournament_schenkel:round-add' ct_tournament.pk %}">
-	  <i class="icon-plus icon-white"></i>&nbsp;{% trans "Add round" %}</a>
-	{% endcomment %}
   </div>
 </div>
 {% endblock object_container %}
 
 {% block object_actions %}
 <h4 class="text-center">{% trans "Settings" %}</h4>
-<a class="btn btn-block btn-large" href="{% url 'tournament_schenkel:tournament-schenkelround-list' ct_tournament.pk %}">
-  <i class="icon-edit"></i>&nbsp;{% trans "Edit rounds" %}</a>
+<a class="btn btn-block btn-large"
+   href="{% url 'tournament_schenkel:tournament-schenkelround-list' ct_tournament.pk %}">
+  <i class="icon-list"></i>&nbsp;{% trans "List of rounds" %}</a>
+<a class="btn btn-block btn-large btn-primary"
+   href="{% url 'tournament_schenkel:tournament-schenkelround-add' ct_tournament.pk %}">
+  <i class="icon-white icon-plus"></i>&nbsp;{% trans "Add round" %}</a>
 {% endblock object_actions %}

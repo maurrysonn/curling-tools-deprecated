@@ -4,32 +4,59 @@
 
 {% block title %}
 {{ ct_tournament.name|capfirst }}&nbsp;-&nbsp;
-{% trans "Main Round" %}&nbsp;{{ ct_tournament_round.name|capfirst }}&nbsp;-&nbsp;
-{% trans "Group" %}&nbsp;{{ object.group.name }}
+{% trans "Round" %}&nbsp;{{ ct_round.name|capfirst }}&nbsp;-&nbsp;
+{% trans "Group" %}&nbsp;{{ object.name }}
 {% endblock %}
 
 {% block object_fields %}
-{% comment %}
-<tr><th>{% trans "Tournament Round" %}</th><td>{{ object.tournament_round }}</td></tr>
-<tr><th>{% trans "Group" %}</th><td>{{ object.group }}</td></tr>
+<tr><th>{% trans "Teams" %}</th><td>{{ object.nb_teams }}</td></tr>
 <tr><th>{% trans "Date" %}</th><td>{{ object.date }}</td></tr>
 <tr><th>{% trans "Time Start" %}</th><td>{{ object.time_start }}</td></tr>
 <tr><th>{% trans "Time End" %}</th><td>{{ object.time_end }}</td></tr>
 <tr><th>{% trans "Is current" %}</th><td>{{ object.current }}</td></tr>
 <tr><th>{% trans "Is Finished" %}</th><td>{{ object.finished }}</td></tr>
-{% endcomment %}
-<tr><th>{% trans "Date" %}</th><td>{{ object.date }}</td></tr>
-<tr><th>{% trans "Time Start" %}</th><td>{{ object.time_start }}</td></tr>
-<tr><th>{% trans "Time End" %}</th><td>{{ object.time_end }}</td></tr>
 {% endblock object_fields %}
 
 {% block extra_object_infos %}
-<h3>Matches:</h3>
-<ul>
-  {% for match in object.matches.all %}
-  <li>{{ match }}</li>
-  {% empty %}
-  <li>No matches</li>
-  {% endfor %}
-</ul>
+
+{% include "core/snippets/messages_snippet.html" %}
+
+<h3>{% trans "Matches" %}&nbsp;:</h3>
+<table class="table table-striped table-bordered table-vertical-align">
+  <thead>
+	<tr>
+	  <th>{% trans "Sheet" %}</th><th>{% trans "Team" %}&nbsp;1</th><th>{% trans "Team" %}&nbsp;2</th>
+	</tr>
+  </thead>
+  <tbody>
+	{% for match in object.matches.all %}
+	<tr>
+	  <td>{{ match.sheet.name }}</td>
+	  <td>{% if match.team_1 %}{{ match.team_1 }}{% else %}-{% endif %}</td>
+	  <td>{% if match.team_2 %}{{ match.team_2 }}{% else %}-{% endif %}</td>
+	{% empty %}
+	<tr><td colspan="3"><em>{% trans "No matches available." %}</em></td></tr>
+	{% endfor %}
+  </tbody>
+</table>
+
+{% if object.finished %}
+
+
+{% endif %}
+
 {% endblock extra_object_infos %}
+
+{% block object_extra_actions %}
+{% if object.current %}
+<a class="btn btn-block btn-large btn-success"
+   href="{% url 'tournament_schenkel:schenkelgroup-scoring-board' ct_tournament.pk ct_round.pk object.pk %}">
+  <i class="icon-tasks icon-white"></i>&nbsp;{% trans "Scoring Board" %}</a>
+
+{% else %}
+{% if object.is_ready %}
+<a class="btn btn-block btn-large btn-success"
+   href="{% url 'tournament_schenkel:schenkelgroup-start-matches' ct_tournament.pk ct_round.pk object.pk %}">
+  <i class="icon-play icon-white"></i>&nbsp;{% trans "Start matches" %}</a>
+{% endif %}{% endif %}
+{% endblock object_extra_actions %}

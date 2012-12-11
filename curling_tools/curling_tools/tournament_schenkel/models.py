@@ -98,6 +98,19 @@ class SchenkelTournament(CTModel):
         ordering = ["start_date", "name"]
 
 
+class SchenkelRoundManager(models.Manager):
+
+    def get_prev(self, current_round):
+        print "Round :", current_round, type(current_round)
+        if round.order <= 1:
+            return None
+        try:
+            return super(SchenkelRoundManager, self).get_query_set().get(tournament=round.tournament,
+                                                                         order=round.order-1)
+        except SchenkelRound.DoesNotExist:
+            return None
+
+
 class SchenkelRound(STModelMixin, CTModel):
     """
     A matches round of a tournament.
@@ -118,6 +131,8 @@ class SchenkelRound(STModelMixin, CTModel):
     # Type of the round
     type = models.CharField(_("type"), max_length=1,
                             choices=TYPES_ROUND_CHOICES, default='G')
+    # Manager
+    objects = SchenkelRoundManager()
 
     def groups_list(self):
         return self.groups.order_by('order')
@@ -157,8 +172,8 @@ class SchenkelRound(STModelMixin, CTModel):
         return u'%s - %s %s (%s - %s)' % (self.tournament,
                                           _(u'Round'),
                                           self.get_name(),
-                                          self.get_type_display(),
-                                          self.order)
+                                          self.order,
+                                          self.get_type_display())
     
     class Meta:
         unique_together = ("tournament", "order")
@@ -167,8 +182,20 @@ class SchenkelRound(STModelMixin, CTModel):
         ordering = ["tournament", "order"]
 
 
+class SchenkelGroupManager(models.Manager):
 
+    def get_prev_round(self, group):
+        prev_round = SchenkelRound.objects.get_prev(group.round)
+        if prev_round:
+            try:
+                return super(SchenkelGroupManager, self).get_query_set().get(round=prev_round, order=group.order)
+            except SchenkelGroup.DoesNotExist:
+                pass
+        return None
 
+    def get_current(self, tournament):
+        return super(SchenkelGroupManager, self).get_query_set().get(round__tournament=tournament,
+                                                                     current=True)
 
 
 class SchenkelGroup(STModelMixin, CTModel):
@@ -177,7 +204,7 @@ class SchenkelGroup(STModelMixin, CTModel):
 
     A Group contains all matches of a specific round.
     """
-    round = models.ForeignKey(SchenkelRound, related_name='rounds')
+    round = models.ForeignKey(SchenkelRound, related_name='groups')
     name = models.CharField(_(u"name"), max_length=100)
     nb_teams = models.IntegerField(_(u'number of teams'), default=12)
     order = models.IntegerField(_(u'order'), default=1,
@@ -190,6 +217,8 @@ class SchenkelGroup(STModelMixin, CTModel):
     # State infos
     current = models.BooleanField(_(u'is current round ?'), default=False)
     finished = models.BooleanField(_(u'is finished ?'), default=False)
+    # Manager
+    objects = SchenkelGroupManager()
 
     # @property
     # def nb_current_teams(self):
@@ -205,7 +234,16 @@ class SchenkelGroup(STModelMixin, CTModel):
             raise ValidationError(_(u"The number of teams must be even."))
 
     def save(self, *args, **kwargs):
-        obj = super(SchenkelRound, self).save(*args, **kwargs)
+        if not self.pk:
+            # Auto-increment the order if creation
+            try:
+                last_group = self.round.groups.order_by('-order')[0]
+                last_order = last_group.order
+            except IndexError:
+                last_order = 0
+            # Updating current level
+            self.order = last_order + 1
+        obj = super(SchenkelGroup, self).save(*args, **kwargs)
         # Create match entities
         self._prepare_matches()
         # Return obj
@@ -217,15 +255,11 @@ class SchenkelGroup(STModelMixin, CTModel):
         
         If already done, do nothing.
         """
-        print "PREPARE MATCHES"
         nb_matches_total = self.nb_teams/2
-        print "nb_matches_total :", nb_matches_total
-        sheet = Sheet.objects.get_first()
         nb_matches = self.matches.count()
-        print "nb_matches :", nb_matches
         if nb_matches < nb_matches_total:
+            sheet = Sheet.objects.get_first()
             for i in xrange(nb_matches_total):
-                print "Create match : sheet =", sheet
                 SchenkelMatch.objects.get_or_create(group=self, sheet=sheet)
                 sheet = Sheet.objects.get_next(current_sheet=sheet)
 
@@ -245,19 +279,34 @@ class SchenkelGroup(STModelMixin, CTModel):
     def get_absolute_url_delete_args(self):
         return [self.tournament.pk, self.round.pk, self.pk]
 
+    def get_absolute_url_scoring_board(self):
+        return reverse('tournament_schenkel:schenkelgroup-scoring-board',
+                       args=[self.round.tournament.pk, self.round.pk, self.pk])
+
+
     @property
     def matches_list(self):
         return self.matches.order_by('sheet')
     
+    @property
+    def is_ready(self):
+        print "GROUP IS READY ?"
+        matches = self.matches.all()
+        print "Matches :", matches
+        if not matches:
+            return False
+        for match in self.matches_list:
+            if not match.is_ready:
+                return False
+        print 'All matches ok..'
+        return True
+
     # @property
     # def teams_list(self):
     #     return None
 
     # def matches_is_created(self):
     #     pass
-
-    # def matches_is_ready(self):
-    #     return False
 
     # def populate_matches(self):
     #     pass
@@ -288,6 +337,7 @@ class SchenkelMatch(models.Model):
     hammer = models.ForeignKey(Team, blank=True, null=True)
     finished = models.BooleanField(_(u'is finished ?'), default=False)
 
+    @property
     def is_ready(self):
         return self.group and self.team_1 and self.team_2 and self.sheet
 
@@ -295,7 +345,7 @@ class SchenkelMatch(models.Model):
         return '/'
 
     def __unicode__(self):
-        return u"%s (%s) : %s - %s" % (self.group, self.sheet, self.team_1, self.team_2)
+        return u"%s - %s : %s vs %s" % (self.group, self.sheet, self.team_1, self.team_2)
 
     @property
     def winner(self):

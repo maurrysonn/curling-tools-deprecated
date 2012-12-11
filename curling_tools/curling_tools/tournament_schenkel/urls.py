@@ -6,13 +6,15 @@ from curling_tools.core.utils import get_default_model_url
 # Module utils
 from curling_tools.tournament_schenkel.utils import (PREFIX_URL_TOURNAMENT,
                                                      PREFIX_URL_ROUND,
+                                                     PREFIX_URL_GROUP,
                                                      ST_get_default_model_url)
 # Module views
 from curling_tools.tournament_schenkel.views import (STSubmenu, STDashboardSubmenu,
                                                      STHomeView, STDashboardView,
                                                      STGroupListView, STGroupCreateView,
-                                                     STGroupUpdateView, STGroupDetailView
-                                                     )
+                                                     STGroupUpdateView, STGroupDetailView,
+                                                     STGroupStartMatchesView,
+                                                     STGroupScoringBoardView)
 # Module forms
 from curling_tools.tournament_schenkel.forms import (STRoundForm,
                                                      STGroupForm)
@@ -47,3 +49,14 @@ urlpatterns += ST_get_default_model_url(SchenkelGroup,
                                         detail_view=STGroupDetailView,
                                         prefix_pattern=PREFIX_URL_ROUND,
                                         submenu_mixin=STDashboardSubmenu)
+urlpatterns += patterns('',
+                        # Start Matches View
+                        url(r'^%sstart/$' % PREFIX_URL_GROUP,
+                            STGroupStartMatchesView.as_view(),
+                            name='schenkelgroup-start-matches'),
+                        # Scoring Board View
+                        url(r'^%sscoringboard/$' % PREFIX_URL_GROUP,
+                            STGroupScoringBoardView.as_view(),
+                            name='schenkelgroup-scoring-board'),
+                        
+                        )

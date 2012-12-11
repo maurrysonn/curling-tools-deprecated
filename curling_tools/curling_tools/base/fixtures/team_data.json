@@ -3,64 +3,162 @@
     "pk": 1, 
     "model": "base.team", 
     "fields": {
-      "club": 1, 
-      "coach": 1, 
-      "name": "Besan\u00e7on Senior"
+      "club": null, 
+      "coach": null, 
+      "name": "Team 1"
     }
   }, 
   {
-    "pk": 1, 
-    "model": "base.teammembership", 
+    "pk": 10, 
+    "model": "base.team", 
     "fields": {
-      "is_vice": false, 
-      "player": 1, 
-      "position": "4", 
-      "is_skip": true, 
-      "team": 1
+      "club": null, 
+      "coach": null, 
+      "name": "Team 10"
+    }
+  }, 
+  {
+    "pk": 11, 
+    "model": "base.team", 
+    "fields": {
+      "club": null, 
+      "coach": null, 
+      "name": "Team 11"
+    }
+  }, 
+  {
+    "pk": 12, 
+    "model": "base.team", 
+    "fields": {
+      "club": null, 
+      "coach": null, 
+      "name": "Team 12"
+    }
+  }, 
+  {
+    "pk": 13, 
+    "model": "base.team", 
+    "fields": {
+      "club": null, 
+      "coach": null, 
+      "name": "Team 13"
+    }
+  }, 
+  {
+    "pk": 14, 
+    "model": "base.team", 
+    "fields": {
+      "club": null, 
+      "coach": null, 
+      "name": "Team 14"
+    }
+  }, 
+  {
+    "pk": 15, 
+    "model": "base.team", 
+    "fields": {
+      "club": null, 
+      "coach": null, 
+      "name": "Team 15"
+    }
+  }, 
+  {
+    "pk": 16, 
+    "model": "base.team", 
+    "fields": {
+      "club": null, 
+      "coach": null, 
+      "name": "Team 16"
+    }
+  }, 
+  {
+    "pk": 17, 
+    "model": "base.team", 
+    "fields": {
+      "club": null, 
+      "coach": null, 
+      "name": "Team 17"
+    }
+  }, 
+  {
+    "pk": 18, 
+    "model": "base.team", 
+    "fields": {
+      "club": null, 
+      "coach": null, 
+      "name": "Team 18"
     }
   }, 
   {
     "pk": 2, 
-    "model": "base.teammembership", 
+    "model": "base.team", 
     "fields": {
-      "is_vice": true, 
-      "player": 2, 
-      "position": "3", 
-      "is_skip": false, 
-      "team": 1
+      "club": null, 
+      "coach": null, 
+      "name": "Team 2"
     }
   }, 
   {
     "pk": 3, 
-    "model": "base.teammembership", 
+    "model": "base.team", 
     "fields": {
-      "is_vice": false, 
-      "player": 3, 
-      "position": "2", 
-      "is_skip": false, 
-      "team": 1
+      "club": null, 
+      "coach": null, 
+      "name": "Team 3"
     }
   }, 
   {
     "pk": 4, 
-    "model": "base.teammembership", 
+    "model": "base.team", 
     "fields": {
-      "is_vice": false, 
-      "player": 4, 
-      "position": "1", 
-      "is_skip": false, 
-      "team": 1
+      "club": null, 
+      "coach": null, 
+      "name": "Team 4"
     }
   }, 
   {
     "pk": 5, 
-    "model": "base.teammembership", 
+    "model": "base.team", 
     "fields": {
-      "is_vice": false, 
-      "player": 5, 
-      "position": "0", 
-      "is_skip": false, 
-      "team": 1
+      "club": null, 
+      "coach": null, 
+      "name": "Team 5"
+    }
+  }, 
+  {
+    "pk": 6, 
+    "model": "base.team", 
+    "fields": {
+      "club": null, 
+      "coach": null, 
+      "name": "Team 6"
+    }
+  }, 
+  {
+    "pk": 7, 
+    "model": "base.team", 
+    "fields": {
+      "club": null, 
+      "coach": null, 
+      "name": "Team 7"
+    }
+  }, 
+  {
+    "pk": 8, 
+    "model": "base.team", 
+    "fields": {
+      "club": null, 
+      "coach": null, 
+      "name": "Team 8"
+    }
+  }, 
+  {
+    "pk": 9, 
+    "model": "base.team", 
+    "fields": {
+      "club": null, 
+      "coach": null, 
+      "name": "Team 9"
     }
   }
 ]

@@ -9,6 +9,7 @@ from curling_tools.tournament_schenkel.models import (SchenkelGroup,
 class STRoundForm(CTModelForm):
     class Meta:
         model = SchenkelRound
+        exclude = ('order')
         widgets = {'tournament': forms.HiddenInput}
 
 
@@ -17,3 +18,11 @@ class STGroupForm(CTModelForm):
         model = SchenkelGroup
         exclude = ('current', 'finished', 'order')
         widgets = {'round': forms.HiddenInput}
+
+class STGroupAutoFilledForm(CTModelForm):
+    class Meta:
+        model = SchenkelGroup
+        exclude = ('current', 'finished', 'order')
+        widgets = {'round': forms.HiddenInput,
+                   'name': forms.HiddenInput,
+                   'nb_teams': forms.HiddenInput}
