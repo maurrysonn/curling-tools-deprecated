@@ -4,8 +4,12 @@ from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
+import json
+from django.utils.simplejson import dumps
 # Django View
 from django.views.generic import View
+# CT Tools
+from curling_tools.core.utils import render_json_response, render_json_response_500
 # CT views
 from curling_tools.core.views import (CTTemplateView,
                                       CTSubmenuMixin,
@@ -15,10 +19,17 @@ from curling_tools.core.views import (CTTemplateView,
                                       CTDetailView,
                                       CTUpdateView,
                                       CTDeleteView)
+# CT Base models
+from curling_tools.base.models import Team
+# CT Tournament Base models
+from curling_tools.tournament_base.models import End
 # Module models
+from curling_tools.tournament_base.models import End
 from curling_tools.tournament_schenkel.models import (SchenkelTournament,
                                                       SchenkelGroup,
-                                                      SchenkelRound)
+                                                      SchenkelRound,
+                                                      SchenkelResult,
+                                                      SchenkelMatch)
 # Module forms
 from curling_tools.tournament_schenkel.forms import STGroupForm, STGroupAutoFilledForm
 
@@ -193,5 +204,118 @@ class STGroupStartMatchesView(STGroupMixin, STBaseMixin, View):
         return redirect(self.group.get_absolute_url_scoring_board())
 
 
-class STGroupScoringBoardView(STGroupMixin, STDashboardSubmenu, STBaseMixin, CTTemplateView):
+class STGroupFinishMatchesView(View):
+
+    @property
+    def group(self):
+        if not hasattr(self, '_group'):
+            self._group = get_object_or_404(SchenkelGroup,
+                                            pk=self.kwargs['pk_group'])
+        return self._group
+
+    def get(self, request, *args, **kwargs):
+        # Already finished ?
+        if self.group.finished:
+            return redirect(self.group)
+        # If all matches are not finished
+        if not self.group.matches_are_finished():
+            messages.error(request, _(u'All matches are not finished.'))
+            # Go to scoring board
+            return redirect(self.group.get_absolute_url_scoring_board())
+        # Group can be finished
+        self.group.finished = True
+        self.group.current = False
+        self.group.save()
+        # Compute Ranking : TODO
+        # MSG if no errors
+        messages.success(request, _(u'Group is now finished.'))
+        # Go to detail view
+        return redirect(self.group)
+
+
+class STGroupScoringBoardView(STGroupDetailView):
     template_name = u'tournament_schenkel/schenkelgroup/scoring_board.html'
+    model = SchenkelGroup
+    pk_url_kwarg = 'pk_group'
+
+    def get(self, request, *args, **kwargs):
+        response = super(STGroupScoringBoardView, self).get(request, *args, **kwargs)
+        # Check if current group or
+        # if group is finished
+        if self.object.current or self.object.finished:
+            return response
+        # Msg for user
+        messages.error(request, u"This group is not yet started.")
+        return redirect(self.object)
+
+    def get_context_data(self, **kwargs):
+        context = super(STGroupScoringBoardView, self).get_context_data(**kwargs)
+        # Add Ends objects
+        context['ends'] = End.objects.all()[:8]
+        # JS parameters
+        context['url_finish_group'] = reverse('tournament_schenkel:schenkelgroup-finish-matches',
+                                            args=[self.tournament.pk, self.round.pk, self.object.pk])
+        context['js_opts'] = json.dumps({
+                'url_scoring':reverse('tournament_schenkel:match-scoring-end'),
+                'url_finish_match': reverse('tournament_schenkel:match-finish'),
+                'url_finish_group': context['url_finish_group'],
+                })
+        return context
+
+
+class STMatchScoreEndView(View):
+
+    http_method_names = ['post']
+
+    def post(self, request, *args, **kwargs):
+        # Get match, team, end and score
+        try:
+            match = SchenkelMatch.objects.get(pk=request.POST['match_pk'])
+            team = Team.objects.get(pk=request.POST['team_pk'])
+            end = End.objects.get(pk=request.POST['end_pk'])
+            score = int(request.POST['score'])
+        except(KeyError, ValueError, SchenkelMatch.DoesNotExist, Team.DoesNotExist, End.DoesNotExist):
+            return render_json_response_500()
+        # Check if match not finished
+        if match.finished:
+            return render_json_response_500(
+                msg=_(u'Match on sheet %s is already finished.' % match.sheet.name))
+        # Create the result
+        try:
+            result = SchenkelResult.objects.create(match=match,
+                                                   team=team,
+                                                   end=end,
+                                                   scoring=score)
+        except Exception as e:
+            return render_json_response_500(msg=e)
+        # Check if match is now finished
+        if end.order == 8:
+            match.finished = True
+            match.save()
+            all_matches_finished = match.group.matches_are_finished()
+        else:
+            all_matches_finished = False
+        # Return code response and msg for user
+        return render_json_response(
+            match_finished=match.finished,
+            all_matches_finished=all_matches_finished,
+            msg=_(u'<strong>Sheet %s</strong> : <strong>%s</strong> scored <strong>%s</strong> '
+                  u'in <strong>end %s</strong>.') % (match.sheet.name, team.name, score, end.order))
+
+
+class STMatchFinishView(View):
+
+    http_method_names = ['post']
+
+    def post(self, request, *args, **kwargs):
+        try:
+            match = SchenkelMatch.objects.get(pk=request.POST['match_pk'])
+        except SchenkelMatch.DoesNotExist:
+            return render_json_response_500()
+        if not match.finished:
+            match.finished = True
+            match.save()
+        return render_json_response(
+            match_finished=match.finished,
+            all_matches_finished = match.group.matches_are_finished(),
+            msg=_(u'<strong>Sheet %s</strong> : Match is finished.' % match.sheet.name))

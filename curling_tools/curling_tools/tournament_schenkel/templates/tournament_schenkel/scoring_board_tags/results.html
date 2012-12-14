@@ -1,0 +1,22 @@
+{% for res in results %}
+<td class="text-center result"
+	match_pk="{{ match.pk }}"
+	team_pk="{{ team.pk }}"
+	end_pk="{{ forloop.counter }}">
+  {% if res == -1 %}
+  <button class="btn btn-mini btn-primary"
+		  onclick="scoring_board.minus('match-{{ match.pk }}', 'team-{{ team_id }}');">
+	<i class="icon-minus icon-white"></i></button>
+  &nbsp;&nbsp;<span id="match-{{ match.pk }}-team-{{ team_id }}">0</span>&nbsp;&nbsp;
+  <button class="btn btn-mini btn-primary"
+		  onclick="scoring_board.plus('match-{{ match.pk }}', 'team-{{ team_id }}');">
+	<i class="icon-plus icon-white"></i></button>
+  {% else %}
+  {% if res != None %}
+  {{ res }}
+  {% endif %}{% endif %}
+</td>
+{% endfor %}
+{% if total != None %}
+<td class="text-center" id="match-{{ match.pk }}-team-{{ team_id }}-total">{{ total }}</td>
+{% endif %}

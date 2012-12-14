@@ -1,5 +1,84 @@
-{% extends "core/layouts/left_sidebar_layout.html" %}
+{% extends "tournament_schenkel/schenkelgroup/model_detail.html" %}
+{% load static from staticfiles %}
+{% load i18n scoring_board_tags %}
 
-{% block center_layout %}
-<h2>Scoring Board !</h2>
+{% block extra_js %}
+<script type="text/javascript" src="{% static 'tournament_schenkel/js/scoring_board.js' %}"></script>
+<script type="text/javascript">
+  $(document).ready(function(){ scoring_board.init({{ js_opts|safe }}); });
+</script>
+{% endblock extra_js %}
+
+
+{% block title %}
+{{ block.super }}&nbsp;:&nbsp;{% trans "Scoring Board" %}
+{% endblock %}
+
+
+{% block global_object_container %}
+
+<div class="row-fluid" style="min-height: 60px;">
+  <div class="span6 offset2" id="scoring-board-alert-ctn">
+	{% include "core/snippets/messages_snippet.html" %}
+  </div>
+  {% if not object.finished %}
+  <div class="span2 offset2">
+	{% with object.matches_are_finished as matches_finished %}
+	<a id="scoring-board-finish-group-controls"
+	   class="btn btn-block btn-large btn-danger{% if not matches_finished %} disabled{% endif %}"
+	   {% if matches_finished %}href="{{ url_finish_group }}"{% endif %}>{% trans "Finish Group" %}</a>
+	{% endwith %}
+  </div>
+  {% endif %}
+</div>
+
+{% for match in object.matches_list %}
+
+<div class="row-fluid">
+  <div class="span10">
+	{% with match.results_list as results %}
+	<table class="table table-bordered table-vertical-align scoring_board">
+	  <thead>
+		<tr>
+		  <th class="text-center">{% trans "Sheet" %}</th>
+		  <th class="text-center">{% trans "Teams" %}</th>
+		  <th class="text-center">{% trans "Hammer" %}</th>
+		  {% for end in ends %}
+		  <th class="text-center end" pk="end-{{ end.pk }}">{% trans "End" %}&nbsp;{{ end }}</th>
+		  {% endfor %}
+		  <th class="text-center">{% trans "Total" %}</th>
+		</tr>
+	  </thead>
+	  <tbody>
+		<tr id="team-{{ match.team_1.pk }}" class="team">
+		  <th rowspan="2" class="text-center">{{ match.sheet.name }}</th>
+		  <td>{{ match.team_1.name }}</td>
+		  <td class="text-center">{% if match.hammer == match.team_1 %}<i class="icon-ok"></i>{% endif %}</td>
+		  {% show_results match.team_1 %}
+		</tr>
+		<tr id="team-{{ match.team_2.pk }}" class="team">
+		  <td>{{ match.team_2.name }}</td>
+		  <td class="text-center">{% if match.hammer == match.team_2 %}<i class="icon-ok">{% endif %}</td>
+		  {% show_results match.team_2 %}
+		</tr>
+	  </tbody>
+	</table>
+	{% endwith %}
+  </div>
+  <div class="span1" id="controls-match-{{ match.pk}}">
+	{% if not match.finished %}
+	<button class="btn btn-large btn-block btn-primary"
+			onclick="scoring_board.scoring_end({{ match.pk }});">{% trans "Score" %}</button>
+	<button class="btn btn-large btn-block btn-danger"
+			onclick="scoring_board.finish_match({{ match.pk }});">{% trans "Finish" %}</button>
+	{% endif %}
+  </div>
+  {% if not match.group.finished %}
+  <div class="span1">
+	<button class="btn btn-large btn-block" type="button">{% trans "Edit" %}</button>
+  </div>
+  {% endif %}
+</div>
+{% endfor %}
+
 {% endblock %}

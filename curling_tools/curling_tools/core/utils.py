@@ -3,6 +3,9 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.forms import models as model_forms
 from django.conf.urls import patterns, url
+from django.http import HttpResponse
+from django.utils.translation import ugettext as _
+import json
 
 from curling_tools.core.forms import CTModelForm
 # Generic Curling Tools views
@@ -11,6 +14,27 @@ from curling_tools.core.views import (CTListView,
                                       CTUpdateView,
                                       CTCreateView,
                                       CTDeleteView)
+
+# --------------------------
+# JSON rendering methods
+# --------------------------
+
+def render_json_response(**kwargs):
+    # Code Response default : 200
+    if 'code_response' not in kwargs:
+        kwargs['code_response'] = 200
+    return HttpResponse(json.dumps(kwargs),
+                        content_type='application/json')
+
+def render_json_response_500(**kwargs):
+    # Default Code Response = 500
+    if 'code_response' not in kwargs:
+        kwargs['code_response'] = 500
+    # Default Msg
+    if 'msg' not in kwargs:
+        kwargs['msg'] = _(u"An error has occured during the request.")
+    # Return a json response
+    return render_json_response(**kwargs)
 
 # ---------------
 # URLs Tools

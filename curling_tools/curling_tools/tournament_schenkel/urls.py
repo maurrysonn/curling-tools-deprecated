@@ -14,7 +14,10 @@ from curling_tools.tournament_schenkel.views import (STSubmenu, STDashboardSubme
                                                      STGroupListView, STGroupCreateView,
                                                      STGroupUpdateView, STGroupDetailView,
                                                      STGroupStartMatchesView,
-                                                     STGroupScoringBoardView)
+                                                     STGroupFinishMatchesView,
+                                                     STGroupScoringBoardView,
+                                                     STMatchScoreEndView,
+                                                     STMatchFinishView,)
 # Module forms
 from curling_tools.tournament_schenkel.forms import (STRoundForm,
                                                      STGroupForm)
@@ -54,9 +57,20 @@ urlpatterns += patterns('',
                         url(r'^%sstart/$' % PREFIX_URL_GROUP,
                             STGroupStartMatchesView.as_view(),
                             name='schenkelgroup-start-matches'),
+                        # Finish Group View
+                        url(r'^%sfinish/$' % PREFIX_URL_GROUP,
+                            STGroupFinishMatchesView.as_view(),
+                            name='schenkelgroup-finish-matches'),
                         # Scoring Board View
                         url(r'^%sscoringboard/$' % PREFIX_URL_GROUP,
                             STGroupScoringBoardView.as_view(),
                             name='schenkelgroup-scoring-board'),
-                        
-                        )
+                        # Result of end
+                        url(r'^scoring/end/$',
+                            STMatchScoreEndView.as_view(),
+                            name='match-scoring-end'),
+                        # Finish Match
+                        url(r'^match/finish/$',
+                            STMatchFinishView.as_view(),
+                            name='match-finish'),
+                         )

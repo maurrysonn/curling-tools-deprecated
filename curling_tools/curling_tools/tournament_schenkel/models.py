@@ -9,6 +9,8 @@ from curling_tools.core.models import CTModel
 from curling_tools.base.models import Club, Rink, Team
 # CT tournament base
 from curling_tools.tournament_base.models import End, Sheet
+# CT Schenkel Tools
+from curling_tools.tournament_schenkel.tools import get_complete_results_for_match
 
 
 class STModelMixin(object):
@@ -137,11 +139,9 @@ class SchenkelRound(STModelMixin, CTModel):
     def groups_list(self):
         return self.groups.order_by('order')
 
-    def is_finished(self):
-        nb_groups_list = self.groups.all().count()        
-        if nb_groups_list > 0:
-            return self.groups.filter(finished=True).count() == nb_groups_list
-        return False
+    def finished(self):
+        return self.gourps.filter(finished=False).count() == 0
+    
 
     def get_results(self):
         # TODO
@@ -283,39 +283,35 @@ class SchenkelGroup(STModelMixin, CTModel):
         return reverse('tournament_schenkel:schenkelgroup-scoring-board',
                        args=[self.round.tournament.pk, self.round.pk, self.pk])
 
-
     @property
     def matches_list(self):
         return self.matches.order_by('sheet')
     
     @property
     def is_ready(self):
-        print "GROUP IS READY ?"
+        # Group is ready if all its matches are ready.
         matches = self.matches.all()
-        print "Matches :", matches
         if not matches:
             return False
         for match in self.matches_list:
             if not match.is_ready:
                 return False
-        print 'All matches ok..'
         return True
 
-    # @property
-    # def teams_list(self):
-    #     return None
+    def matches_are_finished(self):
+        if not self.finished:
+            return self.matches.filter(finished=False).count() == 0
+        return self.finished
 
-    # def matches_is_created(self):
-    #     pass
+    def get_results(self):
+        if self.finished:
+            return [match.get_complete_results() for match in self.matches_list]
+        return None
 
-    # def populate_matches(self):
-    #     pass
-
-    # def get_results(self):
-    #     return None
-
-    # def get_ranking(self):
-    #     return None
+    def get_ranking(self):
+        if self.finished:
+            return []
+        return None
 
     class Meta:
         verbose_name = _(u'group')
@@ -348,6 +344,10 @@ class SchenkelMatch(models.Model):
         return u"%s - %s : %s vs %s" % (self.group, self.sheet, self.team_1, self.team_2)
 
     @property
+    def results_list(self):
+        return self.results.all().order_by('end__order')
+
+    @property
     def winner(self):
         scoring_team_1 = self.results.filter(team=self.team_1).aggregate(models.Sum('scoring'))['scoring__sum']
         scoring_team_2 = self.results.filter(team=self.team_2).aggregate(models.Sum('scoring'))['scoring__sum']
@@ -357,6 +357,15 @@ class SchenkelMatch(models.Model):
             return self.team_2
         else:
             return None
+
+    def get_complete_results(self):
+        print "MATCH : ", self
+        if self.finished:
+            global_results = get_complete_results_for_match(self)
+            print 'GLOBAL RESULTS:', global_results
+            return global_results
+        print "NOT FINISHED !"
+        return None
 
     class Meta:
         verbose_name = _(u"match")
