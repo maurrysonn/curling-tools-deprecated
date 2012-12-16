@@ -14,3 +14,8 @@ curling_tools/curling_tools/settings.py
 # DB Files
 *.sqlite
 *.save
+
+# Aptana Settings files
+.project
+.pydevproject
+.settings
