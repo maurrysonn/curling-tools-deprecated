@@ -48,7 +48,7 @@ dump_test_data:
 	python manage.py dumpdata --natural --indent=2 base.Player > curling_tools/base/fixtures/player_data.json
 	python manage.py dumpdata --natural --indent=2 base.Coach > curling_tools/base/fixtures/coach_data.json
 	python manage.py dumpdata --natural --indent=2 base.Team base.TeamMembership > curling_tools/base/fixtures/team_data.json
-	python manage.py dumpdata --natural --indent=2 tournament_schenkel.SchenkelTournament > curling_tools/tournament_schenkel/fixtures/tournament_data.json
+	python manage.py dumpdata --natural --indent=2 tournament_schenkel > curling_tools/tournament_schenkel/fixtures/tournament_data.json
 
 load_test_data:
 	python manage.py loaddata curling_tools/base/fixtures/city_data.json

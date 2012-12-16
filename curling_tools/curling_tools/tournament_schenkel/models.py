@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
+from curling_tools.base.models import Club, Rink, Team
+from curling_tools.core.models import CTModel
+from curling_tools.tournament_base.models import End, Sheet
+from curling_tools.tournament_schenkel.tools import \
+    get_complete_results_for_match
+from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.translation import ugettext as _
-from django.core.urlresolvers import reverse
-from django.conf import settings
-# CT core
-from curling_tools.core.models import CTModel
-# CT base
-from curling_tools.base.models import Club, Rink, Team
-# CT tournament base
-from curling_tools.tournament_base.models import End, Sheet
-# CT Schenkel Tools
-from curling_tools.tournament_schenkel.tools import get_complete_results_for_match
 
 
 class STModelMixin(object):
@@ -320,6 +318,34 @@ class SchenkelGroup(STModelMixin, CTModel):
         unique_together = ('round', 'order')
 
 
+class GroupRanking(models.Model):
+    """
+    Model which regroups informations about ranking of round for a specific group.
+
+    Ranking informations for each team of a group are saved:
+    rank, points, ends, stones, ends recevived and stones received.
+    """
+    group = models.ForeignKey(SchenkelGroup)
+    team = models.ForeignKey(Team)
+    
+    rank = models.IntegerField(_(u"rank"))
+    points = models.IntegerField(_(u"points"))
+    ends = models.IntegerField(_(u"ends"))
+    stones = models.IntegerField(_(u"stones"))
+    ends_received = models.IntegerField(_(u"ends received"))
+    stones_received = models.IntegerField(_(u"stones received"))
+
+    def __unicode__(self):
+        return _(u"Rank : %s - %s : %s (P:%s E:%s S:%s ER:%s SR:%s)") \
+            % (self.group, self.team, self.rank, self.points, self.ends, self.stones,
+               self.ends_received, self.stones_received)
+    
+    class Meta:
+        verbose_name = _(u"Ranking")
+        verbose_name_plural = _(u"Rankings")        
+        ordering = ('group', 'rank')
+        
+        
 class SchenkelMatch(models.Model):
     """
     A Match Entity
