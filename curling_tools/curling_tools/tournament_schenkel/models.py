@@ -2,14 +2,14 @@
 from curling_tools.base.models import Club, Rink, Team
 from curling_tools.core.models import CTModel
 from curling_tools.tournament_base.models import End, Sheet
-from curling_tools.tournament_schenkel.tools import \
-    get_complete_results_for_match
+from curling_tools.tournament_schenkel.tools import get_results_for_match, \
+    add_results_to_ranking, convert_ranking_db_to_team_results, compute_ranking
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.utils.translation import ugettext as _
 from django.template.defaultfilters import default
+from django.utils.translation import ugettext as _
 
 
 class STModelMixin(object):
@@ -146,25 +146,52 @@ class SchenkelRound(STModelMixin, CTModel):
         pass
 
     def compute_ranking_for_group(self, group):
+        print "Round.compute_ranking_for_group() : ", group
         if not group.finished:
-            return None
+            return []
         if self.type == 'G':
-            # Compute ranking
-            results = round.get_resulst()
+            print "Round type : G"
+            # Get results for the group
+            results = group.get_results()
+            print "Current Results :"
+            print results
+            # Get old ranking if exists
+            # and compute new global results
             if self.order > 1:
-                # Get old ranking
-                # TODO
-                pass
-            
-            # Create/update GoupRanking objects
-        pass
+                prev_group = SchenkelGroup.objects.get_prev_round(group)
+                print "Prev group :", prev_group
+                prev_ranking_db = prev_group.get_ranking()
+                print "Prev ranking :", prev_ranking_db
+                new_results = add_results_to_ranking(convert_ranking_db_to_team_results(prev_ranking_db), results)
+            else:
+                print "No prev group..."
+                new_results = results
+            print "New results :"
+            print new_results
+            # Compute new ranking
+            new_ranking = compute_ranking(new_results)
+            print "NEW RANKING:"
+            for rank in new_ranking:
+                print '\t', rank
+            # Create GoupRanking objects
+            new_ranking_objs = []
+            for rank in new_ranking:
+                obj = SchenkelGroupRanking.objects.create(group=group, team=rank.team,
+                                                          rank=rank.rank, ex_aequo=rank.ex_aequo,
+                                                          points=rank.points, ends=rank.ends, stones=rank.stones,
+                                                          ends_received=rank.ends_received, stones_received=rank.stones_received)
+                new_ranking_objs.append(obj)
+            return new_ranking_objs
 
     def get_ranking_for_group(self, group):
         if not group.finished:
-            return None
-        if self.type == 'G':
             return []
-        return None
+        if self.type == 'G':
+            ranking = SchenkelGroupRanking.objects.filter(group=group).order_by('rank', 'team')
+            if not ranking:
+                return self.compute_ranking_for_group(group)
+            return ranking
+        return []
 
     def get_ranking(self):
         # TODO
@@ -322,15 +349,22 @@ class SchenkelGroup(STModelMixin, CTModel):
             return self.matches.filter(finished=False).count() == 0
         return self.finished
 
-    def get_results(self):
+    def get_match_results(self):
         if self.finished:
             return [match.get_complete_results() for match in self.matches_list]
-        return None
+        return []
 
+    def get_results(self):
+        results_list = []
+        for mr in self.get_match_results():
+            results_list.append(mr['team_1'])
+            results_list.append(mr['team_2'])
+        return results_list
+    
     def get_ranking(self):
         if self.finished:
             return self.round.get_ranking_for_group(self)
-        return None
+        return []
 
     class Meta:
         verbose_name = _(u'group')
@@ -407,13 +441,10 @@ class SchenkelMatch(models.Model):
             return None
 
     def get_complete_results(self):
-        print "MATCH : ", self
         if self.finished:
-            global_results = get_complete_results_for_match(self)
-            print 'GLOBAL RESULTS:', global_results
+            global_results = get_results_for_match(self)
             return global_results
-        print "NOT FINISHED !"
-        return None
+        return []
 
     class Meta:
         verbose_name = _(u"match")

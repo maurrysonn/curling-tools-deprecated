@@ -3,9 +3,9 @@
 {% load url from future %}
 
 {% block title %}
-{{ ct_tournament.name|capfirst }}&nbsp;-&nbsp;
-{% trans "Round" %}&nbsp;{{ ct_round.name|capfirst }}&nbsp;-&nbsp;
-{% trans "Group" %}&nbsp;{{ object.name }}
+{{ ct_tournament.name|capfirst }} -
+{% trans "Round" %} {{ ct_round.name|capfirst }} -
+{% trans "Group" %} {{ object.name }}
 {% endblock %}
 
 {% block object_fields %}
@@ -23,23 +23,24 @@
 
 
 {% if object.finished %}
-<h3>{% trans "Results" %}&nbsp;:</h3>
+<h3>{% trans "Results" %} :</h3>
 <table class="table table-striped table-bordered table-vertical-align">
   <thead>
 	<tr>
 	  <th class="text-center">{% trans "Sheet" %}</th>
-	  <th class="text-center">{% trans "Team" %}&nbsp;1</th>
+	  <th class="text-center">{% trans "Team" %} 1</th>
 	  <th class="text-center">{% trans "Points" %}</th>
 	  <th class="text-center">{% trans "Ends" %}</th>
 	  <th class="text-center">{% trans "Stones" %}</th>
-	  <th class="text-center">{% trans "Team" %}&nbsp;2</th>
+	  <th class="text-center">{% trans "Team" %} 2</th>
 	  <th class="text-center">{% trans "Points" %}</th>
 	  <th class="text-center">{% trans "Ends" %}</th>
 	  <th class="text-center">{% trans "Stones" %}</th>
 	</tr>
   </thead>
   <tbody>
-	{% for result_match in object.get_results %}
+  	{% for match in object.matches_list %}
+  	{% with match.get_complete_results as result_match %}
 	<tr>
 	  <td class="text-center">{{ match.sheet.name }}</td>
 	  <td>{{ result_match.team_1.team.name }}</td>
@@ -51,11 +52,12 @@
 	  <td class="text-center">{{ result_match.team_2.ends }}</td>
 	  <td class="text-center">{{ result_match.team_2.stones }}</td>
 	</tr>
+	{% endwith %}
 	{% endfor %}
   </tbody>
 </table>
 
-<h3>{% trans "Ranking" %}&nbsp;:</h3>
+<h3>{% trans "Ranking" %} :</h3>
 <table class="table table-striped table-bordered table-vertical-align">
   <thead>
 	<tr>
@@ -71,24 +73,24 @@
   <tbody>
 	{% for rank in object.get_ranking %}
 	<tr>
-	  <td></td>
-	  <td></td>
-	  <td></td>
-	  <td></td>
-	  <td></td>
-	  <td></td>
-	  <td></td>
+	  <td class="text-center">{{ rank.rank }}{% if rank.ex_aequo %} - {% trans "Ex" %}{% endif %}</td>
+	  <td>{{ rank.team.name }}</td>
+	  <td class="text-center">{{ rank.points }}</td>
+	  <td class="text-center">{{ rank.ends }}</td>
+	  <td class="text-center">{{ rank.stones }}</td>
+	  <td class="text-center">{{ rank.ends_received }}</td>
+	  <td class="text-center">{{ rank.stones_received }}</td>
 	</tr>	  
 	{% endfor %}
   </tbody>
 </table>
 
 {% else %}
-<h3>{% trans "Matches" %}&nbsp;:</h3>
+<h3>{% trans "Matches" %} :</h3>
 <table class="table table-striped table-bordered table-vertical-align">
   <thead>
 	<tr>
-	  <th>{% trans "Sheet" %}</th><th>{% trans "Team" %}&nbsp;1</th><th>{% trans "Team" %}&nbsp;2</th>
+	  <th>{% trans "Sheet" %}</th><th>{% trans "Team" %} 1</th><th>{% trans "Team" %} 2</th>
 	</tr>
   </thead>
   <tbody>
@@ -110,12 +112,12 @@
 {% if object.current or object.finished %}
 <a class="btn btn-block btn-large btn-success"
    href="{% url 'tournament_schenkel:schenkelgroup-scoring-board' ct_tournament.pk ct_round.pk object.pk %}">
-  <i class="icon-tasks icon-white"></i>&nbsp;{% trans "Scoring Board" %}</a>
+  <i class="icon-tasks icon-white"></i> {% trans "Scoring Board" %}</a>
 
 {% else %}
 {% if object.is_ready %}
 <a class="btn btn-block btn-large btn-success"
    href="{% url 'tournament_schenkel:schenkelgroup-start-matches' ct_tournament.pk ct_round.pk object.pk %}">
-  <i class="icon-play icon-white"></i>&nbsp;{% trans "Start matches" %}</a>
+  <i class="icon-play icon-white"></i> {% trans "Start matches" %}</a>
 {% endif %}{% endif %}
 {% endblock object_extra_actions %}

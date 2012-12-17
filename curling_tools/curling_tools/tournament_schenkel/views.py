@@ -209,7 +209,8 @@ class STGroupFinishMatchesView(View):
         self.group.finished = True
         self.group.current = False
         self.group.save()
-        # Compute Ranking : TODO
+        # Compute Ranking : TEST
+        self.group.round.compute_ranking_for_group(self.group)
         # MSG if no errors
         messages.success(request, _(u'Group is now finished.'))
         # Go to detail view
