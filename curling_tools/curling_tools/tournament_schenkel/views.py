@@ -148,7 +148,19 @@ class STGroupUpdateView(STGroupMixin, STBaseUpdateView):
     model = SchenkelGroup
     form_class = STGroupForm
 
-class STGroupDetailView(STGroupMixin, STBaseDetailView): pass
+class STGroupDetailView(STGroupMixin, STBaseDetailView):
+    
+    def get_context_data(self, **kwargs):
+        context = super(STGroupDetailView, self).get_context_data(**kwargs)
+        # FIXME: Sure to be populated..
+        # Useful in Ranking Round if the last group of previous round
+        # is not in the last round (like 'Finalistes')
+        if not self.object.is_ready:
+            prev_group = SchenkelGroup.objects.get_prev_round(self.object)
+            if prev_group.finished:
+                self.object.populate_matches()
+        # End of tweak
+        return context
 
 class STGroupStartMatchesView(STGroupMixin, STBaseMixin, View):
 
@@ -209,11 +221,6 @@ class STGroupFinishMatchesView(View):
         self.group.finished = True
         self.group.current = False
         self.group.save()
-        # Compute Ranking : TEST
-        self.group.round.compute_ranking_for_group(self.group)
-        if self.group.round.finished():
-            print "ROUND FINISHED !!"
-            print self.group.round.get_ranking()
         # MSG if no errors
         messages.success(request, _(u'Group is now finished.'))
         # Go to detail view

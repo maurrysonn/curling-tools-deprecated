@@ -101,7 +101,6 @@ class SchenkelTournament(CTModel):
 class SchenkelRoundManager(models.Manager):
 
     def get_prev(self, current_round):
-        print "Round :", current_round, type(current_round)
         if current_round.order <= 1:
             return None
         try:
@@ -111,7 +110,6 @@ class SchenkelRoundManager(models.Manager):
             return None
 
     def get_next(self, current_round):
-        print "Round :", current_round, type(current_round)
         try:
             return super(SchenkelRoundManager, self).get_query_set().get(tournament=current_round.tournament,
                                                                          order=current_round.order+1)
@@ -153,33 +151,21 @@ class SchenkelRound(STModelMixin, CTModel):
         pass
 
     def compute_ranking_for_group(self, group):
-        print "Round.compute_ranking_for_group() : ", group
         if not group.finished:
             return []
         if self.type == 'G':
-            print "Round type : G"
             # Get results for the group
             results = group.get_results()
-            print "Current Results :"
-            print results
             # Get old ranking if exists
             # and compute new global results
             if self.order > 1:
                 prev_group = SchenkelGroup.objects.get_prev_round(group)
-                print "Prev group :", prev_group
                 prev_ranking_db = prev_group.get_ranking()
-                print "Prev ranking :", prev_ranking_db
                 new_results = add_results_to_ranking(convert_ranking_db_to_team_results(prev_ranking_db), results)
             else:
-                print "No prev group..."
                 new_results = results
-            print "New results :"
-            print new_results
             # Compute new ranking
             new_ranking = compute_ranking(new_results)
-            print "NEW RANKING:"
-            for rank in new_ranking:
-                print '\t', rank
             # Create GoupRanking objects
             new_ranking_objs = []
             for rank in new_ranking:
@@ -191,8 +177,36 @@ class SchenkelRound(STModelMixin, CTModel):
             # Try to prepare matches of next round
             next_round_group = SchenkelGroup.objects.get_next_round(group)
             if next_round_group:
-                next_round_group.populate_matches(ranking_list=new_ranking_objs)
+                next_round_group.populate_matches()
             return new_ranking_objs
+        elif self.type == 'R':
+            # Get results for the group
+            results = group.get_results()
+            # Get global ranking of previous round
+            # and compute new results
+            if self.order > 1:
+                prev_round = SchenkelRound.objects.get_prev(self)
+                prev_ranking_db = prev_round.get_ranking()
+                new_results = add_results_to_ranking(convert_ranking_db_to_team_results(prev_ranking_db), results)
+            else:
+                new_results = results
+            # Compute new ranking
+            new_ranking = compute_ranking(new_results)
+            # Create GoupRanking objects
+            new_ranking_objs = []
+            for rank in new_ranking:
+                obj = SchenkelGroupRanking.objects.create(group=group, team=rank.team,
+                                                          rank=rank.rank, ex_aequo=rank.ex_aequo,
+                                                          points=rank.points, ends=rank.ends, stones=rank.stones,
+                                                          ends_received=rank.ends_received, stones_received=rank.stones_received)
+                new_ranking_objs.append(obj)
+            # Try to prepare matches of next round
+            next_round_group = SchenkelGroup.objects.get_next_round(group)
+            if next_round_group:
+                next_round_group.populate_matches()
+            return new_ranking_objs
+        else:
+            raise NotImplementedError()
 
     def populate_matches_for_group(self, group):
         if self.order == 1:
@@ -206,6 +220,19 @@ class SchenkelRound(STModelMixin, CTModel):
                     match.team_1 = i_ranking.next().team
                     match.team_2 = i_ranking.next().team
                     match.save()
+        elif self.type == 'R':
+            # Get global ranking of previous round
+            prev_round = SchenkelRound.objects.get_prev(self)
+            if not prev_round.finished():
+                return
+            prev_ranking_list = prev_round.get_ranking()
+            # Get all matches of this round
+            matches_list = SchenkelMatch.objects.filter(group__round=self).order_by('group__order', 'sheet__order')
+            i_ranking = iter(prev_ranking_list)
+            for match in matches_list:
+                match.team_1 = i_ranking.next().team
+                match.team_2 = i_ranking.next().team
+                match.save()
         else:
             raise NotImplementedError()
             
@@ -213,7 +240,7 @@ class SchenkelRound(STModelMixin, CTModel):
     def get_ranking_for_group(self, group):
         if not group.finished:
             return []
-        if self.type == 'G':
+        if self.type == 'G' or self.type == 'R':
             ranking = SchenkelGroupRanking.objects.filter(group=group).order_by('rank', 'team')
             if not ranking:
                 return self.compute_ranking_for_group(group)
@@ -227,12 +254,8 @@ class SchenkelRound(STModelMixin, CTModel):
         results_list = []
         for group in self.groups_list():
             results_list.extend(convert_ranking_db_to_team_results(group.get_ranking()))
-        print "COMPLETE RESULTS ROUND :"
-        print results_list
         # Compute ranks
         ranking_round = compute_ranking(results_list)
-        print "GLOBAL RANKING of ROUND:"
-        print ranking_round
         return ranking_round
         
     def get_name(self):
