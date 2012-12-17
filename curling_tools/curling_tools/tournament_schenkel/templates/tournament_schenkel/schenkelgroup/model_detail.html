@@ -57,33 +57,7 @@
   </tbody>
 </table>
 
-<h3>{% trans "Ranking" %} :</h3>
-<table class="table table-striped table-bordered table-vertical-align">
-  <thead>
-	<tr>
-	  <th class="text-center">{% trans "Rank" %}</th>
-	  <th class="text-center">{% trans "Team" %}</th>
-	  <th class="text-center">{% trans "Points" %}</th>
-	  <th class="text-center">{% trans "Ends" %}</th>
-	  <th class="text-center">{% trans "Stones" %}</th>
-	  <th class="text-center">{% trans "Ends Received" %}</th>
-	  <th class="text-center">{% trans "Stones Received" %}</th>
-	</tr>
-  </thead>
-  <tbody>
-	{% for rank in object.get_ranking %}
-	<tr>
-	  <td class="text-center">{{ rank.rank }}{% if rank.ex_aequo %} - {% trans "Ex" %}{% endif %}</td>
-	  <td>{{ rank.team.name }}</td>
-	  <td class="text-center">{{ rank.points }}</td>
-	  <td class="text-center">{{ rank.ends }}</td>
-	  <td class="text-center">{{ rank.stones }}</td>
-	  <td class="text-center">{{ rank.ends_received }}</td>
-	  <td class="text-center">{{ rank.stones_received }}</td>
-	</tr>	  
-	{% endfor %}
-  </tbody>
-</table>
+{% include "tournament_schenkel/snippets/ranking_snippet.html" %}
 
 {% else %}
 <h3>{% trans "Matches" %} :</h3>

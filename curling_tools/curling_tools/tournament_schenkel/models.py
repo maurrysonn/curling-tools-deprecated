@@ -8,7 +8,6 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.template.defaultfilters import default
 from django.utils.translation import ugettext as _
 
 
@@ -103,11 +102,19 @@ class SchenkelRoundManager(models.Manager):
 
     def get_prev(self, current_round):
         print "Round :", current_round, type(current_round)
-        if round.order <= 1:
+        if current_round.order <= 1:
             return None
         try:
-            return super(SchenkelRoundManager, self).get_query_set().get(tournament=round.tournament,
-                                                                         order=round.order-1)
+            return super(SchenkelRoundManager, self).get_query_set().get(tournament=current_round.tournament,
+                                                                         order=current_round.order-1)
+        except SchenkelRound.DoesNotExist:
+            return None
+
+    def get_next(self, current_round):
+        print "Round :", current_round, type(current_round)
+        try:
+            return super(SchenkelRoundManager, self).get_query_set().get(tournament=current_round.tournament,
+                                                                         order=current_round.order+1)
         except SchenkelRound.DoesNotExist:
             return None
 
@@ -139,7 +146,7 @@ class SchenkelRound(STModelMixin, CTModel):
         return self.groups.order_by('order')
 
     def finished(self):
-        return self.gourps.filter(finished=False).count() == 0
+        return self.groups.filter(finished=False).count() == 0
 
     def get_results(self):
         # TODO
@@ -181,7 +188,27 @@ class SchenkelRound(STModelMixin, CTModel):
                                                           points=rank.points, ends=rank.ends, stones=rank.stones,
                                                           ends_received=rank.ends_received, stones_received=rank.stones_received)
                 new_ranking_objs.append(obj)
+            # Try to prepare matches of next round
+            next_round_group = SchenkelGroup.objects.get_next_round(group)
+            if next_round_group:
+                next_round_group.populate_matches(ranking_list=new_ranking_objs)
             return new_ranking_objs
+
+    def populate_matches_for_group(self, group):
+        if self.order == 1:
+            return
+        if self.type == 'G':
+            prev_round_group = SchenkelGroup.objects.get_prev_round(group)
+            ranking_list = prev_round_group.get_ranking()
+            if ranking_list:
+                i_ranking = iter(ranking_list)
+                for match in group.matches_list:
+                    match.team_1 = i_ranking.next().team
+                    match.team_2 = i_ranking.next().team
+                    match.save()
+        else:
+            raise NotImplementedError()
+            
 
     def get_ranking_for_group(self, group):
         if not group.finished:
@@ -194,9 +221,20 @@ class SchenkelRound(STModelMixin, CTModel):
         return []
 
     def get_ranking(self):
-        # TODO
-        pass
-
+        if not self.finished():
+            return []
+        # Get all group rankings
+        results_list = []
+        for group in self.groups_list():
+            results_list.extend(convert_ranking_db_to_team_results(group.get_ranking()))
+        print "COMPLETE RESULTS ROUND :"
+        print results_list
+        # Compute ranks
+        ranking_round = compute_ranking(results_list)
+        print "GLOBAL RANKING of ROUND:"
+        print ranking_round
+        return ranking_round
+        
     def get_name(self):
         if self.name:
             return self.name
@@ -239,6 +277,15 @@ class SchenkelGroupManager(models.Manager):
                 pass
         return None
 
+    def get_next_round(self, group):
+        next_round = SchenkelRound.objects.get_next(group.round)
+        if next_round:
+            try:
+                return super(SchenkelGroupManager, self).get_query_set().get(round=next_round, order=group.order)
+            except SchenkelGroup.DoesNotExist:
+                pass
+        return None
+    
     def get_current(self, tournament):
         return super(SchenkelGroupManager, self).get_query_set().get(round__tournament=tournament,
                                                                      current=True)
@@ -309,6 +356,10 @@ class SchenkelGroup(STModelMixin, CTModel):
                 SchenkelMatch.objects.get_or_create(group=self, sheet=sheet)
                 sheet = Sheet.objects.get_next(current_sheet=sheet)
 
+    def populate_matches(self, ranking_list=None):
+        if not self.is_ready:
+            self.round.populate_matches_for_group(self)
+    
     @property
     def tournament(self):
         return self.round.tournament
@@ -400,7 +451,7 @@ class SchenkelGroupRanking(models.Model):
         verbose_name = _(u"Ranking")
         verbose_name_plural = _(u"Rankings")        
         ordering = ('group', 'rank')
-        
+        unique_together = ('group', 'team')
         
 class SchenkelMatch(models.Model):
     """

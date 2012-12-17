@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
+from curling_tools.tournament_schenkel.models import SchenkelTournament, \
+    SchenkelRound, SchenkelGroup, SchenkelGroupRanking, SchenkelResult, \
+    SchenkelMatch
 from django.contrib import admin
-# Models module
-from curling_tools.tournament_schenkel.models import *
 
 admin.site.register(SchenkelTournament)
 admin.site.register(SchenkelRound)

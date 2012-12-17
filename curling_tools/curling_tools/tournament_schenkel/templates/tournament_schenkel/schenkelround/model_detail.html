@@ -5,7 +5,7 @@
 {% block object_fields %}
 <tr><th>{% trans "Tournament" %}</th><td>{{ object.tournament }}</td></tr>
 <tr><th>{% trans "Name" %}</th><td>{{ object.name }}</td></tr>
-<tr><th>{% trans "Level" %}</th><td>{{ object.level }}</td></tr>
+<tr><th>{% trans "Level" %}</th><td>{{ object.order }}</td></tr>
 <tr><th>{% trans "Type" %}</th><td>{{ object.get_type_display }}</td></tr>
 {% endblock object_fields %}
 
@@ -30,6 +30,11 @@
 	{% endfor %}
   </tbody>
 </table>
+
+{% if object.finished %}
+{% include "tournament_schenkel/snippets/ranking_snippet.html" %}
+{% endif %}
+
 {% endblock extra_object_infos %}
 
 {% block object_extra_actions %}

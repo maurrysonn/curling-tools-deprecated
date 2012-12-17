@@ -113,12 +113,12 @@ def add_results_to_ranking(prev_ranking, results):
     for result in results:
         results_decorated[result.team] = result
     # Compute new results
-    for team, result in results_decorated.get_items():
+    for team, result in results_decorated.items():
         prev_result = prev_ranking_decorated.get(team, None)
         if prev_result:
             result = result + prev_result
     # Return results
-    return results_decorated  
+    return results_decorated.values()  
 
 def compute_ranking(results_list):
     # Sort the list

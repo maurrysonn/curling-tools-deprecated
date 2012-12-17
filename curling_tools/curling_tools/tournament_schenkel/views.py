@@ -211,6 +211,9 @@ class STGroupFinishMatchesView(View):
         self.group.save()
         # Compute Ranking : TEST
         self.group.round.compute_ranking_for_group(self.group)
+        if self.group.round.finished():
+            print "ROUND FINISHED !!"
+            print self.group.round.get_ranking()
         # MSG if no errors
         messages.success(request, _(u'Group is now finished.'))
         # Go to detail view
@@ -266,10 +269,10 @@ class STMatchScoreEndView(View):
                 msg=_(u'Match on sheet %s is already finished.' % match.sheet.name))
         # Create the result
         try:
-            result = SchenkelResult.objects.create(match=match,
-                                                   team=team,
-                                                   end=end,
-                                                   scoring=score)
+            SchenkelResult.objects.create(match=match,
+                                          team=team,
+                                          end=end,
+                                          scoring=score)
         except Exception as e:
             return render_json_response_500(msg=e)
         # Check if match is now finished
