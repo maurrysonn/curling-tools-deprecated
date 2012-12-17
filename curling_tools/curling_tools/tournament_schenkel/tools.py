@@ -39,3 +39,18 @@ def get_complete_results_for_match(match):
     global_results['team_2']['stones_received'] = global_results['team_1']['stones']
     # Return results
     return global_results
+
+
+def cmp_result():
+    pass
+
+
+def compute_ranking(match_results):
+    ranking_list = []
+    for result in match_results:
+        for team_key in ['team_1', 'team_2']:
+            ranking_list.append(result[team_key])
+    # Sort list
+    
+    return ranking_list
+    

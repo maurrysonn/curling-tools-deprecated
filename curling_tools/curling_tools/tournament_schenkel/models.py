@@ -9,6 +9,7 @@ from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.translation import ugettext as _
+from django.template.defaultfilters import default
 
 
 class STModelMixin(object):
@@ -139,11 +140,31 @@ class SchenkelRound(STModelMixin, CTModel):
 
     def finished(self):
         return self.gourps.filter(finished=False).count() == 0
-    
 
     def get_results(self):
         # TODO
         pass
+
+    def compute_ranking_for_group(self, group):
+        if not group.finished:
+            return None
+        if self.type == 'G':
+            # Compute ranking
+            results = round.get_resulst()
+            if self.order > 1:
+                # Get old ranking
+                # TODO
+                pass
+            
+            # Create/update GoupRanking objects
+        pass
+
+    def get_ranking_for_group(self, group):
+        if not group.finished:
+            return None
+        if self.type == 'G':
+            return []
+        return None
 
     def get_ranking(self):
         # TODO
@@ -308,7 +329,7 @@ class SchenkelGroup(STModelMixin, CTModel):
 
     def get_ranking(self):
         if self.finished:
-            return []
+            return self.round.get_ranking_for_group(self)
         return None
 
     class Meta:
@@ -318,7 +339,7 @@ class SchenkelGroup(STModelMixin, CTModel):
         unique_together = ('round', 'order')
 
 
-class GroupRanking(models.Model):
+class SchenkelGroupRanking(models.Model):
     """
     Model which regroups informations about ranking of round for a specific group.
 
@@ -328,12 +349,13 @@ class GroupRanking(models.Model):
     group = models.ForeignKey(SchenkelGroup)
     team = models.ForeignKey(Team)
     
-    rank = models.IntegerField(_(u"rank"))
-    points = models.IntegerField(_(u"points"))
-    ends = models.IntegerField(_(u"ends"))
-    stones = models.IntegerField(_(u"stones"))
-    ends_received = models.IntegerField(_(u"ends received"))
-    stones_received = models.IntegerField(_(u"stones received"))
+    rank = models.PositiveIntegerField(_(u"rank"))
+    ex_aequo = models.BooleanField(_(u"ex aequo"), default=False)
+    points = models.PositiveIntegerField(_(u"points"))
+    ends = models.PositiveIntegerField(_(u"ends"))
+    stones = models.PositiveIntegerField(_(u"stones"))
+    ends_received = models.PositiveIntegerField(_(u"ends received"))
+    stones_received = models.PositiveIntegerField(_(u"stones received"))
 
     def __unicode__(self):
         return _(u"Rank : %s - %s : %s (P:%s E:%s S:%s ER:%s SR:%s)") \

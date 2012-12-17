@@ -1,37 +1,20 @@
 # -*- coding: utf-8 -*-
-# Django tools
-from django.utils.translation import ugettext as _
+from curling_tools.base.models import Team
+from curling_tools.core.utils import render_json_response, \
+    render_json_response_500
+from curling_tools.core.views import CTTemplateView, CTSubmenuMixin, \
+    CTAppHomeView, CTCreateView, CTListView, CTDetailView, CTUpdateView, \
+    CTDeleteView
+from curling_tools.tournament_base.models import End
+from curling_tools.tournament_schenkel.forms import STGroupForm
+from curling_tools.tournament_schenkel.models import SchenkelTournament, \
+    SchenkelGroup, SchenkelRound, SchenkelResult, SchenkelMatch
+from django.contrib import messages
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.shortcuts import get_object_or_404, redirect
-from django.contrib import messages
-import json
-from django.utils.simplejson import dumps
-# Django View
+from django.utils.translation import ugettext as _
 from django.views.generic import View
-# CT Tools
-from curling_tools.core.utils import render_json_response, render_json_response_500
-# CT views
-from curling_tools.core.views import (CTTemplateView,
-                                      CTSubmenuMixin,
-                                      CTAppHomeView,
-                                      CTCreateView,
-                                      CTListView,
-                                      CTDetailView,
-                                      CTUpdateView,
-                                      CTDeleteView)
-# CT Base models
-from curling_tools.base.models import Team
-# CT Tournament Base models
-from curling_tools.tournament_base.models import End
-# Module models
-from curling_tools.tournament_base.models import End
-from curling_tools.tournament_schenkel.models import (SchenkelTournament,
-                                                      SchenkelGroup,
-                                                      SchenkelRound,
-                                                      SchenkelResult,
-                                                      SchenkelMatch)
-# Module forms
-from curling_tools.tournament_schenkel.forms import STGroupForm, STGroupAutoFilledForm
+import django.utils.simplejson as json
 
 
 # -------------------------------------
@@ -186,7 +169,7 @@ class STGroupStartMatchesView(STGroupMixin, STBaseMixin, View):
         try:
             current_group = SchenkelGroup.objects.get_current(self.tournament)
             # Msg for user
-            messages.error(request, 'Another group already in progress.')
+            messages.error(request, 'Another group already in progress : %s' % current_group)
             # Redirect to detail group view
             return redirect(self.group)
         except SchenkelGroup.DoesNotExist:
