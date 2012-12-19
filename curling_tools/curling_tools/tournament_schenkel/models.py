@@ -3,7 +3,8 @@ from curling_tools.base.models import Club, Rink, Team
 from curling_tools.core.models import CTModel
 from curling_tools.tournament_base.models import End, Sheet
 from curling_tools.tournament_schenkel.tools import get_results_for_match, \
-    add_results_to_ranking, convert_ranking_db_to_team_results, compute_ranking
+    add_results_to_ranking, convert_ranking_db_to_team_results, compute_ranking, \
+    TeamResult
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
@@ -68,7 +69,9 @@ class SchenkelTournament(CTModel):
     end_date = models.DateField(_("end_date"))
     club = models.ForeignKey(Club, related_name="tournaments", null=True, blank=True)
     rink = models.ForeignKey(Rink, related_name="tournaments", null=True, blank=True)
-
+    # Tournament Settings
+    final_blocked = models.BooleanField(_(u'final is blocked ?'), default=False)
+    # last_group_blocked = models.BooleanField(_(u'Last group is blocked ?'))
 
     def rounds_list(self):
         return self.rounds.order_by('order')
@@ -140,11 +143,17 @@ class SchenkelRound(STModelMixin, CTModel):
     # Manager
     objects = SchenkelRoundManager()
 
+    @property
+    def proxy(self):
+        # TODO proxies to eliminate 'if' statements
+        pass
+    
     def groups_list(self):
         return self.groups.order_by('order')
 
     def finished(self):
-        return self.groups.filter(finished=False).count() == 0
+        return self.groups.count() > 0 and \
+            self.groups.filter(finished=False).count() == 0
 
     def get_results(self):
         # TODO
@@ -153,14 +162,23 @@ class SchenkelRound(STModelMixin, CTModel):
     def compute_ranking_for_group(self, group):
         if not group.finished:
             return []
-        if self.type == 'G':
+        if self.type == 'G' or self.type == 'R':
             # Get results for the group
             results = group.get_results()
             # Get old ranking if exists
             # and compute new global results
             if self.order > 1:
-                prev_group = SchenkelGroup.objects.get_prev_round(group)
-                prev_ranking_db = prev_group.get_ranking()
+                # Type 'Group'
+                if self.type == 'G':
+                    # Get only results of the group for previous round
+                    prev_group = SchenkelGroup.objects.get_prev_round(group)
+                    prev_ranking_db = prev_group.get_ranking()
+                # Type 'Ranking'
+                else:
+                    # Get all results of all groups for the previous round
+                    prev_round = SchenkelRound.objects.get_prev(self)
+                    prev_ranking_db = prev_round.get_ranking()
+                # Compute new results
                 new_results = add_results_to_ranking(convert_ranking_db_to_team_results(prev_ranking_db), results)
             else:
                 new_results = results
@@ -179,32 +197,18 @@ class SchenkelRound(STModelMixin, CTModel):
             if next_round_group:
                 next_round_group.populate_matches()
             return new_ranking_objs
-        elif self.type == 'R':
-            # Get results for the group
-            results = group.get_results()
-            # Get global ranking of previous round
-            # and compute new results
-            if self.order > 1:
-                prev_round = SchenkelRound.objects.get_prev(self)
-                prev_ranking_db = prev_round.get_ranking()
-                new_results = add_results_to_ranking(convert_ranking_db_to_team_results(prev_ranking_db), results)
-            else:
-                new_results = results
-            # Compute new ranking
-            new_ranking = compute_ranking(new_results)
-            # Create GoupRanking objects
-            new_ranking_objs = []
-            for rank in new_ranking:
-                obj = SchenkelGroupRanking.objects.create(group=group, team=rank.team,
-                                                          rank=rank.rank, ex_aequo=rank.ex_aequo,
-                                                          points=rank.points, ends=rank.ends, stones=rank.stones,
-                                                          ends_received=rank.ends_received, stones_received=rank.stones_received)
-                new_ranking_objs.append(obj)
-            # Try to prepare matches of next round
-            next_round_group = SchenkelGroup.objects.get_next_round(group)
-            if next_round_group:
-                next_round_group.populate_matches()
-            return new_ranking_objs
+        elif self.type == 'F':
+            # If final of tournament not bloked
+            # => return same ranking of type 'Ranking'
+            # Else:
+            #  - Check if only 2 first teams can win the tournament:
+            #  - If yes:
+            #    - Compute "normal" ranking for other team
+            #    - Add the 2 finalist at the begining of the ranking (winner in 1st, looser in 2nd)
+            #  - If no:
+            #    - Same ranking like type 'Ranking'
+            raise NotImplementedError()
+            
         else:
             raise NotImplementedError()
 
@@ -220,7 +224,7 @@ class SchenkelRound(STModelMixin, CTModel):
                     match.team_1 = i_ranking.next().team
                     match.team_2 = i_ranking.next().team
                     match.save()
-        elif self.type == 'R':
+        elif self.type == 'R' or self.type == 'F':
             # Get global ranking of previous round
             prev_round = SchenkelRound.objects.get_prev(self)
             if not prev_round.finished():
@@ -240,22 +244,26 @@ class SchenkelRound(STModelMixin, CTModel):
     def get_ranking_for_group(self, group):
         if not group.finished:
             return []
-        if self.type == 'G' or self.type == 'R':
-            ranking = SchenkelGroupRanking.objects.filter(group=group).order_by('rank', 'team')
-            if not ranking:
-                return self.compute_ranking_for_group(group)
-            return ranking
-        return []
+        ranking = SchenkelGroupRanking.objects.filter(group=group).order_by('rank', 'team')
+        if not ranking:
+            return self.compute_ranking_for_group(group)
+        return ranking
 
     def get_ranking(self):
         if not self.finished():
             return []
-        # Get all group rankings
-        results_list = []
-        for group in self.groups_list():
-            results_list.extend(convert_ranking_db_to_team_results(group.get_ranking()))
-        # Compute ranks
-        ranking_round = compute_ranking(results_list)
+        if self.type == 'G' or self.type == 'R':
+            # Get all group rankings
+            results_list = []
+            for group in self.groups_list():
+                results_list.extend(convert_ranking_db_to_team_results(group.get_ranking()))
+            # Compute ranks
+            ranking_round = compute_ranking(results_list)
+        elif self.type == 'F':
+            # Check if final is blocked
+            # and apply like compute_ranking_for_group() method.
+            # TODO
+            raise NotImplementedError()
         return ranking_round
         
     def get_name(self):
@@ -408,6 +416,14 @@ class SchenkelGroup(STModelMixin, CTModel):
         return self.matches.order_by('sheet')
     
     @property
+    def teams_list(self):
+        teams_list = []
+        for m in self.matches_list:
+            teams_list.append(m.team_1)
+            teams_list.append(m.team_2)
+        return teams_list
+    
+    @property
     def is_ready(self):
         # Group is ready if all its matches are ready.
         matches = self.matches.all()
@@ -439,6 +455,32 @@ class SchenkelGroup(STModelMixin, CTModel):
         if self.finished:
             return self.round.get_ranking_for_group(self)
         return []
+
+    def check_if_final_blocked(self):
+        print "CHECK IF FINAL BLOCKED :", self
+        # Get ranking of previous round
+        prev_round = SchenkelRound.objects.get_prev(self.round)
+        prev_ranking = prev_round.get_ranking()
+        # print "PREV RANKING"
+        # for rank in prev_ranking: print "\t", rank
+        # Filter teams in group
+        teams_list = self.teams_list
+        prev_ranking = [rank for rank in prev_ranking if rank.team in teams_list]
+        # print "PREV RANKING FILTERD"
+        # for rank in prev_ranking: print "\t", rank
+        # Compute the potential new ranking
+        # (worst result for team #1, team #2 and best for team #3)
+        new_results = [TeamResult(team=prev_ranking[0].team, points=1),
+                       TeamResult(team=prev_ranking[1].team, points=1),
+                       TeamResult(team=prev_ranking[2].team, points=2, ends=8, stones=64)]
+        new_ranking = compute_ranking(add_results_to_ranking(prev_ranking[:3], new_results))
+        print "NEW POTENTIAL RANKING"
+        for rank in new_ranking: print "\t", rank
+        # If team #3 win, final can't be blocked
+        if new_ranking[0].team == prev_ranking[2].team:
+            return False
+        return True
+
 
     class Meta:
         verbose_name = _(u'group')

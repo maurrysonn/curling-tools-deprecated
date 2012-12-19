@@ -42,7 +42,7 @@ class TeamResult(object):
         return -cmp(self.stones_received, other.stones_received)
 
     def __add__(self, other):
-        if self.team != other.team:
+        if other.team is not None and self.team != other.team:
             return
         self.rank = None
         self.ex_aequo = None
@@ -53,7 +53,11 @@ class TeamResult(object):
         self.stones_received = self.stones_received + other.stones_received
 
     def __repr__(self, *args, **kwargs):
-        return u'%s : R:%s EA: %s P:%s E:%s S:%s ER:%s SR:%s' % (self.team.name, self.rank, self.ex_aequo,
+        if self.team is not None:
+            name = self.team.name
+        else:
+            name = 'None'
+        return u'%s : R:%s EA: %s P:%s E:%s S:%s ER:%s SR:%s' % (name, self.rank, self.ex_aequo,
                                                                  self.points, self.ends, self.stones,
                                                                  self.ends_received, self.stones_received)
 
@@ -139,4 +143,4 @@ def compute_ranking(results_list):
     for equal_result in equals_results:
         equal_result.rank = current_rank
         equal_result.ex_aequo = len(equals_results) > 1
-    return results_list
+    return results_list    

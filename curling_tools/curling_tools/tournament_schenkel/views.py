@@ -157,7 +157,7 @@ class STGroupDetailView(STGroupMixin, STBaseDetailView):
         # is not in the last round (like 'Finalistes')
         if not self.object.is_ready:
             prev_group = SchenkelGroup.objects.get_prev_round(self.object)
-            if prev_group.finished:
+            if prev_group is not None and prev_group.finished:
                 self.object.populate_matches()
         # End of tweak
         return context
