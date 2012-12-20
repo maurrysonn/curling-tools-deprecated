@@ -3,11 +3,21 @@
     "pk": 1, 
     "model": "tournament_schenkel.schenkeltournament", 
     "fields": {
-      "name": "Final Test", 
-      "end_date": "2013-06-01", 
       "club": 1, 
-      "final_blocked": true, 
       "rink": 1, 
+      "name": "TEST", 
+      "end_date": "2013-06-02", 
+      "start_date": "2013-06-01"
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "tournament_schenkel.schenkeltournament", 
+    "fields": {
+      "club": 1, 
+      "rink": 1, 
+      "name": "TEST 2", 
+      "end_date": "2013-06-02", 
       "start_date": "2013-06-01"
     }
   }, 
@@ -26,8 +36,38 @@
     "model": "tournament_schenkel.schenkelround", 
     "fields": {
       "tournament": 1, 
+      "type": "R", 
+      "name": "2", 
+      "order": 2
+    }
+  }, 
+  {
+    "pk": 3, 
+    "model": "tournament_schenkel.schenkelround", 
+    "fields": {
+      "tournament": 1, 
       "type": "F", 
-      "name": "Finale", 
+      "name": "Final", 
+      "order": 3
+    }
+  }, 
+  {
+    "pk": 4, 
+    "model": "tournament_schenkel.schenkelround", 
+    "fields": {
+      "tournament": 2, 
+      "type": "G", 
+      "name": "1", 
+      "order": 1
+    }
+  }, 
+  {
+    "pk": 5, 
+    "model": "tournament_schenkel.schenkelround", 
+    "fields": {
+      "tournament": 2, 
+      "type": "F", 
+      "name": "2", 
       "order": 2
     }
   }, 
@@ -37,11 +77,12 @@
     "fields": {
       "time_start": "08:00:00", 
       "name": "A", 
-      "nb_teams": 6, 
+      "nb_teams": 4, 
+      "final_blocked": null, 
       "time_end": "10:00:00", 
       "round": 1, 
       "current": false, 
-      "finished": false, 
+      "finished": true, 
       "date": "2013-06-01", 
       "order": 1
     }
@@ -52,11 +93,12 @@
     "fields": {
       "time_start": "10:00:00", 
       "name": "B", 
-      "nb_teams": 6, 
+      "nb_teams": 4, 
+      "final_blocked": null, 
       "time_end": "12:00:00", 
       "round": 1, 
       "current": false, 
-      "finished": false, 
+      "finished": true, 
       "date": "2013-06-01", 
       "order": 2
     }
@@ -67,13 +109,574 @@
     "fields": {
       "time_start": "14:00:00", 
       "name": "1", 
-      "nb_teams": 6, 
+      "nb_teams": 4, 
+      "final_blocked": null, 
       "time_end": "16:00:00", 
       "round": 2, 
       "current": false, 
-      "finished": false, 
+      "finished": true, 
       "date": "2013-06-01", 
       "order": 1
+    }
+  }, 
+  {
+    "pk": 4, 
+    "model": "tournament_schenkel.schenkelgroup", 
+    "fields": {
+      "time_start": "16:00:00", 
+      "name": "2", 
+      "nb_teams": 4, 
+      "final_blocked": null, 
+      "time_end": "18:00:00", 
+      "round": 2, 
+      "current": false, 
+      "finished": true, 
+      "date": "2013-06-01", 
+      "order": 2
+    }
+  }, 
+  {
+    "pk": 5, 
+    "model": "tournament_schenkel.schenkelgroup", 
+    "fields": {
+      "time_start": "18:00:00", 
+      "name": "1", 
+      "nb_teams": 4, 
+      "final_blocked": true, 
+      "time_end": "20:00:00", 
+      "round": 3, 
+      "current": false, 
+      "finished": true, 
+      "date": "2013-06-01", 
+      "order": 1
+    }
+  }, 
+  {
+    "pk": 6, 
+    "model": "tournament_schenkel.schenkelgroup", 
+    "fields": {
+      "time_start": "08:00:00", 
+      "name": "A", 
+      "nb_teams": 4, 
+      "final_blocked": null, 
+      "time_end": "10:00:00", 
+      "round": 4, 
+      "current": false, 
+      "finished": true, 
+      "date": "2013-06-01", 
+      "order": 1
+    }
+  }, 
+  {
+    "pk": 7, 
+    "model": "tournament_schenkel.schenkelgroup", 
+    "fields": {
+      "time_start": "10:00:00", 
+      "name": "B", 
+      "nb_teams": 4, 
+      "final_blocked": null, 
+      "time_end": "12:00:00", 
+      "round": 4, 
+      "current": false, 
+      "finished": true, 
+      "date": "2013-06-01", 
+      "order": 2
+    }
+  }, 
+  {
+    "pk": 8, 
+    "model": "tournament_schenkel.schenkelgroup", 
+    "fields": {
+      "time_start": "14:00:00", 
+      "name": "1", 
+      "nb_teams": 4, 
+      "final_blocked": false, 
+      "time_end": "16:00:00", 
+      "round": 5, 
+      "current": false, 
+      "finished": true, 
+      "date": "2013-06-01", 
+      "order": 1
+    }
+  }, 
+  {
+    "pk": 1, 
+    "model": "tournament_schenkel.schenkelgroupranking", 
+    "fields": {
+      "stones": 25, 
+      "ends": 8, 
+      "group": 1, 
+      "stones_received": 0, 
+      "ex_aequo": false, 
+      "rank": 1, 
+      "points": 2, 
+      "ends_received": 0, 
+      "team": 1
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "tournament_schenkel.schenkelgroupranking", 
+    "fields": {
+      "stones": 1, 
+      "ends": 1, 
+      "group": 1, 
+      "stones_received": 1, 
+      "ex_aequo": true, 
+      "rank": 2, 
+      "points": 1, 
+      "ends_received": 1, 
+      "team": 3
+    }
+  }, 
+  {
+    "pk": 3, 
+    "model": "tournament_schenkel.schenkelgroupranking", 
+    "fields": {
+      "stones": 1, 
+      "ends": 1, 
+      "group": 1, 
+      "stones_received": 1, 
+      "ex_aequo": true, 
+      "rank": 2, 
+      "points": 1, 
+      "ends_received": 1, 
+      "team": 4
+    }
+  }, 
+  {
+    "pk": 4, 
+    "model": "tournament_schenkel.schenkelgroupranking", 
+    "fields": {
+      "stones": 0, 
+      "ends": 0, 
+      "group": 1, 
+      "stones_received": 25, 
+      "ex_aequo": false, 
+      "rank": 4, 
+      "points": 0, 
+      "ends_received": 8, 
+      "team": 2
+    }
+  }, 
+  {
+    "pk": 5, 
+    "model": "tournament_schenkel.schenkelgroupranking", 
+    "fields": {
+      "stones": 2, 
+      "ends": 2, 
+      "group": 2, 
+      "stones_received": 1, 
+      "ex_aequo": false, 
+      "rank": 1, 
+      "points": 2, 
+      "ends_received": 1, 
+      "team": 7
+    }
+  }, 
+  {
+    "pk": 6, 
+    "model": "tournament_schenkel.schenkelgroupranking", 
+    "fields": {
+      "stones": 4, 
+      "ends": 2, 
+      "group": 2, 
+      "stones_received": 4, 
+      "ex_aequo": true, 
+      "rank": 2, 
+      "points": 1, 
+      "ends_received": 2, 
+      "team": 5
+    }
+  }, 
+  {
+    "pk": 7, 
+    "model": "tournament_schenkel.schenkelgroupranking", 
+    "fields": {
+      "stones": 4, 
+      "ends": 2, 
+      "group": 2, 
+      "stones_received": 4, 
+      "ex_aequo": true, 
+      "rank": 2, 
+      "points": 1, 
+      "ends_received": 2, 
+      "team": 6
+    }
+  }, 
+  {
+    "pk": 8, 
+    "model": "tournament_schenkel.schenkelgroupranking", 
+    "fields": {
+      "stones": 1, 
+      "ends": 1, 
+      "group": 2, 
+      "stones_received": 2, 
+      "ex_aequo": false, 
+      "rank": 4, 
+      "points": 0, 
+      "ends_received": 2, 
+      "team": 8
+    }
+  }, 
+  {
+    "pk": 9, 
+    "model": "tournament_schenkel.schenkelgroupranking", 
+    "fields": {
+      "stones": 41, 
+      "ends": 16, 
+      "group": 3, 
+      "stones_received": 0, 
+      "ex_aequo": false, 
+      "rank": 1, 
+      "points": 4, 
+      "ends_received": 0, 
+      "team": 1
+    }
+  }, 
+  {
+    "pk": 10, 
+    "model": "tournament_schenkel.schenkelgroupranking", 
+    "fields": {
+      "stones": 5, 
+      "ends": 3, 
+      "group": 3, 
+      "stones_received": 5, 
+      "ex_aequo": true, 
+      "rank": 2, 
+      "points": 2, 
+      "ends_received": 3, 
+      "team": 5
+    }
+  }, 
+  {
+    "pk": 11, 
+    "model": "tournament_schenkel.schenkelgroupranking", 
+    "fields": {
+      "stones": 5, 
+      "ends": 3, 
+      "group": 3, 
+      "stones_received": 5, 
+      "ex_aequo": true, 
+      "rank": 2, 
+      "points": 2, 
+      "ends_received": 3, 
+      "team": 6
+    }
+  }, 
+  {
+    "pk": 12, 
+    "model": "tournament_schenkel.schenkelgroupranking", 
+    "fields": {
+      "stones": 2, 
+      "ends": 2, 
+      "group": 3, 
+      "stones_received": 17, 
+      "ex_aequo": false, 
+      "rank": 4, 
+      "points": 2, 
+      "ends_received": 9, 
+      "team": 7
+    }
+  }, 
+  {
+    "pk": 13, 
+    "model": "tournament_schenkel.schenkelgroupranking", 
+    "fields": {
+      "stones": 5, 
+      "ends": 4, 
+      "group": 4, 
+      "stones_received": 5, 
+      "ex_aequo": false, 
+      "rank": 1, 
+      "points": 2, 
+      "ends_received": 3, 
+      "team": 3
+    }
+  }, 
+  {
+    "pk": 14, 
+    "model": "tournament_schenkel.schenkelgroupranking", 
+    "fields": {
+      "stones": 5, 
+      "ends": 3, 
+      "group": 4, 
+      "stones_received": 5, 
+      "ex_aequo": false, 
+      "rank": 2, 
+      "points": 2, 
+      "ends_received": 4, 
+      "team": 4
+    }
+  }, 
+  {
+    "pk": 15, 
+    "model": "tournament_schenkel.schenkelgroupranking", 
+    "fields": {
+      "stones": 3, 
+      "ends": 2, 
+      "group": 4, 
+      "stones_received": 4, 
+      "ex_aequo": false, 
+      "rank": 3, 
+      "points": 1, 
+      "ends_received": 3, 
+      "team": 8
+    }
+  }, 
+  {
+    "pk": 16, 
+    "model": "tournament_schenkel.schenkelgroupranking", 
+    "fields": {
+      "stones": 2, 
+      "ends": 1, 
+      "group": 4, 
+      "stones_received": 27, 
+      "ex_aequo": false, 
+      "rank": 4, 
+      "points": 1, 
+      "ends_received": 9, 
+      "team": 2
+    }
+  }, 
+  {
+    "pk": 17, 
+    "model": "tournament_schenkel.schenkelgroupranking", 
+    "fields": {
+      "stones": 11, 
+      "ends": 9, 
+      "group": 5, 
+      "stones_received": 10, 
+      "ex_aequo": false, 
+      "rank": 1, 
+      "points": 4, 
+      "ends_received": 5, 
+      "team": 3
+    }
+  }, 
+  {
+    "pk": 18, 
+    "model": "tournament_schenkel.schenkelgroupranking", 
+    "fields": {
+      "stones": 46, 
+      "ends": 18, 
+      "group": 5, 
+      "stones_received": 6, 
+      "ex_aequo": false, 
+      "rank": 2, 
+      "points": 4, 
+      "ends_received": 5, 
+      "team": 1
+    }
+  }, 
+  {
+    "pk": 19, 
+    "model": "tournament_schenkel.schenkelgroupranking", 
+    "fields": {
+      "stones": 29, 
+      "ends": 11, 
+      "group": 5, 
+      "stones_received": 5, 
+      "ex_aequo": false, 
+      "rank": 3, 
+      "points": 4, 
+      "ends_received": 3, 
+      "team": 5
+    }
+  }, 
+  {
+    "pk": 20, 
+    "model": "tournament_schenkel.schenkelgroupranking", 
+    "fields": {
+      "stones": 5, 
+      "ends": 3, 
+      "group": 5, 
+      "stones_received": 29, 
+      "ex_aequo": false, 
+      "rank": 4, 
+      "points": 2, 
+      "ends_received": 11, 
+      "team": 6
+    }
+  }, 
+  {
+    "pk": 21, 
+    "model": "tournament_schenkel.schenkelgroupranking", 
+    "fields": {
+      "stones": 8, 
+      "ends": 5, 
+      "group": 6, 
+      "stones_received": 7, 
+      "ex_aequo": false, 
+      "rank": 1, 
+      "points": 2, 
+      "ends_received": 3, 
+      "team": 1
+    }
+  }, 
+  {
+    "pk": 22, 
+    "model": "tournament_schenkel.schenkelgroupranking", 
+    "fields": {
+      "stones": 5, 
+      "ends": 4, 
+      "group": 6, 
+      "stones_received": 3, 
+      "ex_aequo": false, 
+      "rank": 2, 
+      "points": 2, 
+      "ends_received": 2, 
+      "team": 3
+    }
+  }, 
+  {
+    "pk": 23, 
+    "model": "tournament_schenkel.schenkelgroupranking", 
+    "fields": {
+      "stones": 7, 
+      "ends": 3, 
+      "group": 6, 
+      "stones_received": 8, 
+      "ex_aequo": false, 
+      "rank": 3, 
+      "points": 0, 
+      "ends_received": 5, 
+      "team": 2
+    }
+  }, 
+  {
+    "pk": 24, 
+    "model": "tournament_schenkel.schenkelgroupranking", 
+    "fields": {
+      "stones": 3, 
+      "ends": 2, 
+      "group": 6, 
+      "stones_received": 5, 
+      "ex_aequo": false, 
+      "rank": 4, 
+      "points": 0, 
+      "ends_received": 4, 
+      "team": 4
+    }
+  }, 
+  {
+    "pk": 25, 
+    "model": "tournament_schenkel.schenkelgroupranking", 
+    "fields": {
+      "stones": 7, 
+      "ends": 6, 
+      "group": 7, 
+      "stones_received": 4, 
+      "ex_aequo": false, 
+      "rank": 1, 
+      "points": 2, 
+      "ends_received": 2, 
+      "team": 5
+    }
+  }, 
+  {
+    "pk": 26, 
+    "model": "tournament_schenkel.schenkelgroupranking", 
+    "fields": {
+      "stones": 5, 
+      "ends": 4, 
+      "group": 7, 
+      "stones_received": 5, 
+      "ex_aequo": false, 
+      "rank": 2, 
+      "points": 1, 
+      "ends_received": 3, 
+      "team": 7
+    }
+  }, 
+  {
+    "pk": 27, 
+    "model": "tournament_schenkel.schenkelgroupranking", 
+    "fields": {
+      "stones": 5, 
+      "ends": 3, 
+      "group": 7, 
+      "stones_received": 5, 
+      "ex_aequo": false, 
+      "rank": 3, 
+      "points": 1, 
+      "ends_received": 4, 
+      "team": 8
+    }
+  }, 
+  {
+    "pk": 28, 
+    "model": "tournament_schenkel.schenkelgroupranking", 
+    "fields": {
+      "stones": 4, 
+      "ends": 2, 
+      "group": 7, 
+      "stones_received": 7, 
+      "ex_aequo": false, 
+      "rank": 4, 
+      "points": 0, 
+      "ends_received": 6, 
+      "team": 6
+    }
+  }, 
+  {
+    "pk": 29, 
+    "model": "tournament_schenkel.schenkelgroupranking", 
+    "fields": {
+      "stones": 20, 
+      "ends": 12, 
+      "group": 8, 
+      "stones_received": 3, 
+      "ex_aequo": false, 
+      "rank": 1, 
+      "points": 4, 
+      "ends_received": 2, 
+      "team": 3
+    }
+  }, 
+  {
+    "pk": 30, 
+    "model": "tournament_schenkel.schenkelgroupranking", 
+    "fields": {
+      "stones": 11, 
+      "ends": 10, 
+      "group": 8, 
+      "stones_received": 8, 
+      "ex_aequo": false, 
+      "rank": 2, 
+      "points": 3, 
+      "ends_received": 5, 
+      "team": 5
+    }
+  }, 
+  {
+    "pk": 31, 
+    "model": "tournament_schenkel.schenkelgroupranking", 
+    "fields": {
+      "stones": 12, 
+      "ends": 8, 
+      "group": 8, 
+      "stones_received": 11, 
+      "ex_aequo": false, 
+      "rank": 3, 
+      "points": 3, 
+      "ends_received": 7, 
+      "team": 1
+    }
+  }, 
+  {
+    "pk": 32, 
+    "model": "tournament_schenkel.schenkelgroupranking", 
+    "fields": {
+      "stones": 5, 
+      "ends": 4, 
+      "group": 8, 
+      "stones_received": 20, 
+      "ex_aequo": false, 
+      "rank": 4, 
+      "points": 1, 
+      "ends_received": 11, 
+      "team": 7
     }
   }, 
   {
@@ -83,9 +686,9 @@
       "sheet": 1, 
       "team_1": 1, 
       "team_2": 2, 
-      "finished": false, 
+      "finished": true, 
       "group": 1, 
-      "hammer": 1
+      "hammer": null
     }
   }, 
   {
@@ -95,57 +698,57 @@
       "sheet": 2, 
       "team_1": 3, 
       "team_2": 4, 
-      "finished": false, 
+      "finished": true, 
       "group": 1, 
-      "hammer": 4
+      "hammer": null
     }
   }, 
   {
     "pk": 3, 
     "model": "tournament_schenkel.schenkelmatch", 
     "fields": {
-      "sheet": 3, 
+      "sheet": 1, 
       "team_1": 5, 
       "team_2": 6, 
-      "finished": false, 
-      "group": 1, 
-      "hammer": 5
+      "finished": true, 
+      "group": 2, 
+      "hammer": null
     }
   }, 
   {
     "pk": 4, 
     "model": "tournament_schenkel.schenkelmatch", 
     "fields": {
-      "sheet": 1, 
+      "sheet": 2, 
       "team_1": 7, 
       "team_2": 8, 
-      "finished": false, 
+      "finished": true, 
       "group": 2, 
-      "hammer": 8
+      "hammer": null
     }
   }, 
   {
     "pk": 5, 
     "model": "tournament_schenkel.schenkelmatch", 
     "fields": {
-      "sheet": 2, 
-      "team_1": 9, 
-      "team_2": 10, 
-      "finished": false, 
-      "group": 2, 
-      "hammer": 10
+      "sheet": 1, 
+      "team_1": 1, 
+      "team_2": 7, 
+      "finished": true, 
+      "group": 3, 
+      "hammer": null
     }
   }, 
   {
     "pk": 6, 
     "model": "tournament_schenkel.schenkelmatch", 
     "fields": {
-      "sheet": 3, 
-      "team_1": 11, 
-      "team_2": 12, 
-      "finished": false, 
-      "group": 2, 
-      "hammer": 12
+      "sheet": 2, 
+      "team_1": 5, 
+      "team_2": 6, 
+      "finished": true, 
+      "group": 3, 
+      "hammer": null
     }
   }, 
   {
@@ -153,10 +756,10 @@
     "model": "tournament_schenkel.schenkelmatch", 
     "fields": {
       "sheet": 1, 
-      "team_1": null, 
-      "team_2": null, 
-      "finished": false, 
-      "group": 3, 
+      "team_1": 3, 
+      "team_2": 4, 
+      "finished": true, 
+      "group": 4, 
       "hammer": null
     }
   }, 
@@ -165,10 +768,10 @@
     "model": "tournament_schenkel.schenkelmatch", 
     "fields": {
       "sheet": 2, 
-      "team_1": null, 
-      "team_2": null, 
-      "finished": false, 
-      "group": 3, 
+      "team_1": 8, 
+      "team_2": 2, 
+      "finished": true, 
+      "group": 4, 
       "hammer": null
     }
   }, 
@@ -176,12 +779,1056 @@
     "pk": 9, 
     "model": "tournament_schenkel.schenkelmatch", 
     "fields": {
-      "sheet": 3, 
-      "team_1": null, 
-      "team_2": null, 
-      "finished": false, 
-      "group": 3, 
+      "sheet": 1, 
+      "team_1": 1, 
+      "team_2": 3, 
+      "finished": true, 
+      "group": 5, 
       "hammer": null
+    }
+  }, 
+  {
+    "pk": 10, 
+    "model": "tournament_schenkel.schenkelmatch", 
+    "fields": {
+      "sheet": 2, 
+      "team_1": 5, 
+      "team_2": 6, 
+      "finished": true, 
+      "group": 5, 
+      "hammer": null
+    }
+  }, 
+  {
+    "pk": 11, 
+    "model": "tournament_schenkel.schenkelmatch", 
+    "fields": {
+      "sheet": 1, 
+      "team_1": 1, 
+      "team_2": 2, 
+      "finished": true, 
+      "group": 6, 
+      "hammer": null
+    }
+  }, 
+  {
+    "pk": 12, 
+    "model": "tournament_schenkel.schenkelmatch", 
+    "fields": {
+      "sheet": 2, 
+      "team_1": 3, 
+      "team_2": 4, 
+      "finished": true, 
+      "group": 6, 
+      "hammer": null
+    }
+  }, 
+  {
+    "pk": 13, 
+    "model": "tournament_schenkel.schenkelmatch", 
+    "fields": {
+      "sheet": 1, 
+      "team_1": 5, 
+      "team_2": 6, 
+      "finished": true, 
+      "group": 7, 
+      "hammer": null
+    }
+  }, 
+  {
+    "pk": 14, 
+    "model": "tournament_schenkel.schenkelmatch", 
+    "fields": {
+      "sheet": 2, 
+      "team_1": 7, 
+      "team_2": 8, 
+      "finished": true, 
+      "group": 7, 
+      "hammer": null
+    }
+  }, 
+  {
+    "pk": 15, 
+    "model": "tournament_schenkel.schenkelmatch", 
+    "fields": {
+      "sheet": 1, 
+      "team_1": 5, 
+      "team_2": 1, 
+      "finished": true, 
+      "group": 8, 
+      "hammer": null
+    }
+  }, 
+  {
+    "pk": 16, 
+    "model": "tournament_schenkel.schenkelmatch", 
+    "fields": {
+      "sheet": 2, 
+      "team_1": 3, 
+      "team_2": 7, 
+      "finished": true, 
+      "group": 8, 
+      "hammer": null
+    }
+  }, 
+  {
+    "pk": 1, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 3, 
+      "end": 1, 
+      "match": 1, 
+      "team": 1
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 3, 
+      "end": 2, 
+      "match": 1, 
+      "team": 1
+    }
+  }, 
+  {
+    "pk": 3, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 3, 
+      "end": 3, 
+      "match": 1, 
+      "team": 1
+    }
+  }, 
+  {
+    "pk": 4, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 3, 
+      "end": 4, 
+      "match": 1, 
+      "team": 1
+    }
+  }, 
+  {
+    "pk": 5, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 3, 
+      "end": 5, 
+      "match": 1, 
+      "team": 1
+    }
+  }, 
+  {
+    "pk": 6, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 4, 
+      "end": 6, 
+      "match": 1, 
+      "team": 1
+    }
+  }, 
+  {
+    "pk": 7, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 3, 
+      "end": 7, 
+      "match": 1, 
+      "team": 1
+    }
+  }, 
+  {
+    "pk": 19, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 3, 
+      "end": 8, 
+      "match": 1, 
+      "team": 1
+    }
+  }, 
+  {
+    "pk": 9, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 1, 
+      "end": 1, 
+      "match": 2, 
+      "team": 3
+    }
+  }, 
+  {
+    "pk": 10, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 1, 
+      "end": 2, 
+      "match": 2, 
+      "team": 4
+    }
+  }, 
+  {
+    "pk": 20, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 1, 
+      "match": 3, 
+      "team": 5
+    }
+  }, 
+  {
+    "pk": 21, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 2, 
+      "match": 3, 
+      "team": 5
+    }
+  }, 
+  {
+    "pk": 22, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 3, 
+      "match": 3, 
+      "team": 6
+    }
+  }, 
+  {
+    "pk": 23, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 4, 
+      "match": 3, 
+      "team": 6
+    }
+  }, 
+  {
+    "pk": 16, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 1, 
+      "end": 1, 
+      "match": 4, 
+      "team": 7
+    }
+  }, 
+  {
+    "pk": 18, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 1, 
+      "end": 3, 
+      "match": 4, 
+      "team": 7
+    }
+  }, 
+  {
+    "pk": 17, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 1, 
+      "end": 2, 
+      "match": 4, 
+      "team": 8
+    }
+  }, 
+  {
+    "pk": 24, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 1, 
+      "match": 5, 
+      "team": 1
+    }
+  }, 
+  {
+    "pk": 25, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 2, 
+      "match": 5, 
+      "team": 1
+    }
+  }, 
+  {
+    "pk": 26, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 3, 
+      "match": 5, 
+      "team": 1
+    }
+  }, 
+  {
+    "pk": 27, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 4, 
+      "match": 5, 
+      "team": 1
+    }
+  }, 
+  {
+    "pk": 28, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 5, 
+      "match": 5, 
+      "team": 1
+    }
+  }, 
+  {
+    "pk": 29, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 6, 
+      "match": 5, 
+      "team": 1
+    }
+  }, 
+  {
+    "pk": 30, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 7, 
+      "match": 5, 
+      "team": 1
+    }
+  }, 
+  {
+    "pk": 34, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 8, 
+      "match": 5, 
+      "team": 1
+    }
+  }, 
+  {
+    "pk": 32, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 1, 
+      "end": 1, 
+      "match": 6, 
+      "team": 5
+    }
+  }, 
+  {
+    "pk": 33, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 1, 
+      "end": 2, 
+      "match": 6, 
+      "team": 6
+    }
+  }, 
+  {
+    "pk": 35, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 1, 
+      "match": 7, 
+      "team": 3
+    }
+  }, 
+  {
+    "pk": 36, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 1, 
+      "end": 2, 
+      "match": 7, 
+      "team": 3
+    }
+  }, 
+  {
+    "pk": 37, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 1, 
+      "end": 3, 
+      "match": 7, 
+      "team": 3
+    }
+  }, 
+  {
+    "pk": 38, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 4, 
+      "match": 7, 
+      "team": 4
+    }
+  }, 
+  {
+    "pk": 39, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 5, 
+      "match": 7, 
+      "team": 4
+    }
+  }, 
+  {
+    "pk": 41, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 2, 
+      "match": 8, 
+      "team": 2
+    }
+  }, 
+  {
+    "pk": 40, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 1, 
+      "match": 8, 
+      "team": 8
+    }
+  }, 
+  {
+    "pk": 42, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 1, 
+      "end": 1, 
+      "match": 9, 
+      "team": 1
+    }
+  }, 
+  {
+    "pk": 44, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 0, 
+      "end": 3, 
+      "match": 9, 
+      "team": 1
+    }
+  }, 
+  {
+    "pk": 48, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 4, 
+      "end": 7, 
+      "match": 9, 
+      "team": 1
+    }
+  }, 
+  {
+    "pk": 43, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 2, 
+      "match": 9, 
+      "team": 3
+    }
+  }, 
+  {
+    "pk": 45, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 1, 
+      "end": 4, 
+      "match": 9, 
+      "team": 3
+    }
+  }, 
+  {
+    "pk": 46, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 1, 
+      "end": 5, 
+      "match": 9, 
+      "team": 3
+    }
+  }, 
+  {
+    "pk": 47, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 1, 
+      "end": 6, 
+      "match": 9, 
+      "team": 3
+    }
+  }, 
+  {
+    "pk": 49, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 1, 
+      "end": 8, 
+      "match": 9, 
+      "team": 3
+    }
+  }, 
+  {
+    "pk": 50, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 1, 
+      "end": 1, 
+      "match": 10, 
+      "team": 5
+    }
+  }, 
+  {
+    "pk": 51, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 2, 
+      "match": 10, 
+      "team": 5
+    }
+  }, 
+  {
+    "pk": 52, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 3, 
+      "match": 10, 
+      "team": 5
+    }
+  }, 
+  {
+    "pk": 53, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 4, 
+      "match": 10, 
+      "team": 5
+    }
+  }, 
+  {
+    "pk": 54, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 5, 
+      "match": 10, 
+      "team": 5
+    }
+  }, 
+  {
+    "pk": 55, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 6, 
+      "end": 6, 
+      "match": 10, 
+      "team": 5
+    }
+  }, 
+  {
+    "pk": 56, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 4, 
+      "end": 7, 
+      "match": 10, 
+      "team": 5
+    }
+  }, 
+  {
+    "pk": 57, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 5, 
+      "end": 8, 
+      "match": 10, 
+      "team": 5
+    }
+  }, 
+  {
+    "pk": 58, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 1, 
+      "match": 11, 
+      "team": 1
+    }
+  }, 
+  {
+    "pk": 60, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 3, 
+      "match": 11, 
+      "team": 1
+    }
+  }, 
+  {
+    "pk": 61, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 4, 
+      "match": 11, 
+      "team": 1
+    }
+  }, 
+  {
+    "pk": 63, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 1, 
+      "end": 6, 
+      "match": 11, 
+      "team": 1
+    }
+  }, 
+  {
+    "pk": 65, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 1, 
+      "end": 8, 
+      "match": 11, 
+      "team": 1
+    }
+  }, 
+  {
+    "pk": 59, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 2, 
+      "match": 11, 
+      "team": 2
+    }
+  }, 
+  {
+    "pk": 62, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 3, 
+      "end": 5, 
+      "match": 11, 
+      "team": 2
+    }
+  }, 
+  {
+    "pk": 64, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 7, 
+      "match": 11, 
+      "team": 2
+    }
+  }, 
+  {
+    "pk": 66, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 1, 
+      "match": 12, 
+      "team": 3
+    }
+  }, 
+  {
+    "pk": 68, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 1, 
+      "end": 3, 
+      "match": 12, 
+      "team": 3
+    }
+  }, 
+  {
+    "pk": 69, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 0, 
+      "end": 4, 
+      "match": 12, 
+      "team": 3
+    }
+  }, 
+  {
+    "pk": 70, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 1, 
+      "end": 5, 
+      "match": 12, 
+      "team": 3
+    }
+  }, 
+  {
+    "pk": 72, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 1, 
+      "end": 7, 
+      "match": 12, 
+      "team": 3
+    }
+  }, 
+  {
+    "pk": 67, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 2, 
+      "match": 12, 
+      "team": 4
+    }
+  }, 
+  {
+    "pk": 71, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 1, 
+      "end": 6, 
+      "match": 12, 
+      "team": 4
+    }
+  }, 
+  {
+    "pk": 73, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 1, 
+      "match": 13, 
+      "team": 5
+    }
+  }, 
+  {
+    "pk": 74, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 1, 
+      "end": 2, 
+      "match": 13, 
+      "team": 5
+    }
+  }, 
+  {
+    "pk": 76, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 1, 
+      "end": 4, 
+      "match": 13, 
+      "team": 5
+    }
+  }, 
+  {
+    "pk": 78, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 1, 
+      "end": 6, 
+      "match": 13, 
+      "team": 5
+    }
+  }, 
+  {
+    "pk": 79, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 1, 
+      "end": 7, 
+      "match": 13, 
+      "team": 5
+    }
+  }, 
+  {
+    "pk": 80, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 1, 
+      "end": 8, 
+      "match": 13, 
+      "team": 5
+    }
+  }, 
+  {
+    "pk": 75, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 3, 
+      "match": 13, 
+      "team": 6
+    }
+  }, 
+  {
+    "pk": 77, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 5, 
+      "match": 13, 
+      "team": 6
+    }
+  }, 
+  {
+    "pk": 81, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 1, 
+      "end": 1, 
+      "match": 14, 
+      "team": 7
+    }
+  }, 
+  {
+    "pk": 83, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 3, 
+      "match": 14, 
+      "team": 7
+    }
+  }, 
+  {
+    "pk": 84, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 1, 
+      "end": 4, 
+      "match": 14, 
+      "team": 7
+    }
+  }, 
+  {
+    "pk": 85, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 1, 
+      "end": 5, 
+      "match": 14, 
+      "team": 7
+    }
+  }, 
+  {
+    "pk": 82, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 2, 
+      "match": 14, 
+      "team": 8
+    }
+  }, 
+  {
+    "pk": 86, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 6, 
+      "match": 14, 
+      "team": 8
+    }
+  }, 
+  {
+    "pk": 87, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 1, 
+      "end": 7, 
+      "match": 14, 
+      "team": 8
+    }
+  }, 
+  {
+    "pk": 98, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 3, 
+      "match": 15, 
+      "team": 1
+    }
+  }, 
+  {
+    "pk": 101, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 1, 
+      "end": 6, 
+      "match": 15, 
+      "team": 1
+    }
+  }, 
+  {
+    "pk": 103, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 1, 
+      "end": 8, 
+      "match": 15, 
+      "team": 1
+    }
+  }, 
+  {
+    "pk": 96, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 1, 
+      "end": 1, 
+      "match": 15, 
+      "team": 5
+    }
+  }, 
+  {
+    "pk": 97, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 0, 
+      "end": 2, 
+      "match": 15, 
+      "team": 5
+    }
+  }, 
+  {
+    "pk": 99, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 1, 
+      "end": 4, 
+      "match": 15, 
+      "team": 5
+    }
+  }, 
+  {
+    "pk": 100, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 1, 
+      "end": 5, 
+      "match": 15, 
+      "team": 5
+    }
+  }, 
+  {
+    "pk": 102, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 1, 
+      "end": 7, 
+      "match": 15, 
+      "team": 5
+    }
+  }, 
+  {
+    "pk": 88, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 1, 
+      "match": 16, 
+      "team": 3
+    }
+  }, 
+  {
+    "pk": 89, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 2, 
+      "match": 16, 
+      "team": 3
+    }
+  }, 
+  {
+    "pk": 90, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 3, 
+      "match": 16, 
+      "team": 3
+    }
+  }, 
+  {
+    "pk": 91, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 4, 
+      "match": 16, 
+      "team": 3
+    }
+  }, 
+  {
+    "pk": 92, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 5, 
+      "match": 16, 
+      "team": 3
+    }
+  }, 
+  {
+    "pk": 93, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 6, 
+      "match": 16, 
+      "team": 3
+    }
+  }, 
+  {
+    "pk": 94, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 2, 
+      "end": 7, 
+      "match": 16, 
+      "team": 3
+    }
+  }, 
+  {
+    "pk": 95, 
+    "model": "tournament_schenkel.schenkelresult", 
+    "fields": {
+      "scoring": 1, 
+      "end": 8, 
+      "match": 16, 
+      "team": 3
     }
   }
 ]

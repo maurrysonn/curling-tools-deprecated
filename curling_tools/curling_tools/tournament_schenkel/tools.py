@@ -5,11 +5,22 @@ from django.db.models import Sum
 class TeamResult(object):
 
     def __init__(self, **kwargs):
+        self._init_attrs()
         if 'db_object' in kwargs:
             self._init_from_db_object(kwargs['db_object'])
         else:
             self._init_from_params(**kwargs)
-            
+
+    def _init_attrs(self):
+        self._rank = None
+        self._ex_aequo = False
+        self._team = None
+        self._points = 0
+        self._ends = 0
+        self._stones = 0
+        self._ends_received = 0
+        self._stones_received = 0
+
     def _init_from_params(self, team=None,
                           rank=None, ex_aequo=False,
                           points=0, ends=0, stones=0,
@@ -28,6 +39,86 @@ class TeamResult(object):
                                obj.rank, obj.ex_aequo,
                                obj.points, obj.ends, obj.stones,
                                obj.ends_received, obj.stones_received)
+
+    @property
+    def team(self): return self._team
+    @team.setter
+    def team(self, value): self._team = value
+    @property
+    def ex_aequo(self): return self._ex_aequo
+    @ex_aequo.setter
+    def ex_aequo(self, value):
+        if value is not None:
+            try:
+                value = bool(value)
+            except ValueError:
+                value = None
+        self._ex_aequo = value
+
+    @property
+    def rank(self): return self._rank
+    @rank.setter
+    def rank(self, value):
+        if value is not None:
+            try:
+                value = int(value)
+                if value <= 0: raise ValueError
+            except ValueError:
+                value = None
+        self._rank = value
+        
+    @property
+    def points(self):
+        return self._points
+    @points.setter
+    def points(self, value):
+        try:
+            value = int(value)
+            if value < 0: raise ValueError
+        except ValueError:
+            value = 0
+        self._points = value
+    @property
+    def ends(self):
+        return self._ends
+    @ends.setter
+    def ends(self, value):
+        try:
+            value = int(value)
+            if value < 0: raise ValueError
+        except ValueError:
+            value = 0
+        self._ends = value
+    @property
+    def stones(self): return self._stones
+    @stones.setter
+    def stones(self, value):
+        try:
+            value = int(value)
+            if value < 0: raise ValueError
+        except ValueError:
+            value = 0
+        self._stones = value
+    @property
+    def ends_received(self): return self._ends_received
+    @ends_received.setter
+    def ends_received(self, value):
+        try:
+            value = int(value)
+            if value < 0: raise ValueError
+        except ValueError:
+            value = 0
+        self._ends_received = value
+    @property
+    def stones_received(self): return self._stones_received
+    @stones_received.setter
+    def stones_received(self, value):
+        try:
+            value = int(value)
+            if value < 0: raise ValueError
+        except ValueError:
+            value = 0
+        self._stones_received = value
 
     def __cmp__(self, other):
         cmp_param_list = ['points', 'ends', 'stones']
@@ -80,12 +171,13 @@ def get_results_for_match(match):
     # Get all positive results for each team
     results_team_1 = match.results.filter(team=match.team_1).exclude(scoring=0)
     results_team_2 = match.results.filter(team=match.team_2).exclude(scoring=0)
-    # Compute Stones
-    team_1.stones = results_team_1.aggregate(Sum('scoring'))['scoring__sum']
-    team_2.stones = results_team_2.aggregate(Sum('scoring'))['scoring__sum']
-    # Compute Ends
-    team_1.ends = results_team_1.count()
-    team_2.ends = results_team_2.count()
+    # Compute Stones - # Compute Ends
+    if results_team_1:
+        team_1.stones = results_team_1.aggregate(Sum('scoring'))['scoring__sum']
+        team_1.ends = results_team_1.count()
+    if results_team_2:
+        team_2.stones = results_team_2.aggregate(Sum('scoring'))['scoring__sum']
+        team_2.ends = results_team_2.count()
     # Compute Points
     if team_1.stones > team_2.stones:
         team_1.points = 2
@@ -124,11 +216,11 @@ def add_results_to_ranking(prev_ranking, results):
     # Return results
     return results_decorated.values()  
 
-def compute_ranking(results_list):
+def compute_ranking(results_list, first_rank=1):
     # Sort the list
     results_list.sort(reverse=True)
     # Upadte ranks and ex-aequo
-    current_rank = 1
+    current_rank = first_rank
     equals_results = [results_list[0]]
     for result in results_list[1:]:
         if result == equals_results[0]:
@@ -143,4 +235,4 @@ def compute_ranking(results_list):
     for equal_result in equals_results:
         equal_result.rank = current_rank
         equal_result.ex_aequo = len(equals_results) > 1
-    return results_list    
+    return results_list

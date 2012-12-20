@@ -1,0 +1,15 @@
+{% load i18n %}
+
+{% with object.final_is_blocked as final_blocked %}
+{% if final_blocked != None %}
+<div class="alert alert-warning text-center">
+	<strong>
+	{% if final_blocked %}
+  	{% trans "Final is blocked" %}
+	{% else %}
+  	{% trans "Final is not blocked" %}
+  	{% endif %}
+  	</strong>
+</div>
+{% endif %}
+{% endwith %}

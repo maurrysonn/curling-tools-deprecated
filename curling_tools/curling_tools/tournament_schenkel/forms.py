@@ -16,7 +16,7 @@ class STRoundForm(CTModelForm):
 class STGroupForm(CTModelForm):
     class Meta:
         model = SchenkelGroup
-        exclude = ('current', 'finished', 'order')
+        exclude = ('current', 'finished', 'order', 'final_blocked')
         widgets = {'round': forms.HiddenInput}
 
 class STGroupAutoFilledForm(CTModelForm):
